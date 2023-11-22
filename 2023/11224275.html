@@ -4,15 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Hexo">
-    <meta name="description" content="如何提高仿真器的效率了解仿真器的底层原理，合适的code style会节省仿真时间。
-仿真算法：
-
-基于时间的（spice仿真器）
-每个时间节点对所有元件都进行计算，效率低。
-
-基于事件的（Verilog XL，NC verilog）
-只有">
+    <meta name="keywords" content="如何提高仿真器的效率, Hexo">
+    <meta name="description" content="了解仿真器的底层原理，合适的code style会节省仿真时间。">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -24,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Hexo</title>
+    <title>如何提高仿真器的效率 | Hexo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -297,12 +290,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/6.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title"></h1>
+                    <h1 class="description center-align post-title">如何提高仿真器的效率</h1>
                 </div>
             </div>
         </div>
@@ -324,12 +317,25 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/verilog/">
+                                <span class="chip bg-color">verilog</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E4%BB%BF%E7%9C%9F%E5%99%A8/" class="post-category">
+                                仿真器
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -399,21 +405,21 @@
 <p>测试案例：8选1数据选择器，</p>
 <p>仿真发现：基于case的多路选择器，CPU仿真时间更短。</p>
 </li>
-<li><h6 id="带有begin-end和不带begin-end"><a href="#带有begin-end和不带begin-end" class="headerlink" title="带有begin end和不带begin end"></a>带有begin end和不带begin end</h6><pre><code>always @(posedge clk or negedge nrst)
-begin
-    if(a) c &lt;= b;
-    else  c &lt;= d;
-end
+<li><h6 id="带有begin-end和不带begin-end"><a href="#带有begin-end和不带begin-end" class="headerlink" title="带有begin end和不带begin end"></a>带有begin end和不带begin end</h6><pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
+<span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span> c <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
+    <span class="token keyword">else</span>  c <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
 
-always @(posedge clk or negedge nrst)
-    if(a) c &lt;= b;
-    else  c &lt;= d;
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span> c <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
+    <span class="token keyword">else</span>  c <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
 </code></pre>
 </li>
 </ul>
 <p>​		测试结果：nobegin表述的内存利用率和仿真时间要优一些。</p>
 <ul>
-<li><h6 id="define-和-parameters"><a href="#define-和-parameters" class="headerlink" title="&#96;define 和 parameters"></a>&#96;define 和 parameters</h6><img src="C:\Users\DELL\AppData\Roaming\Typora\typora-user-images\image-20231122095305349.png" alt="image-20231122095305349" style="zoom: 50%;" /></li>
+<li><h6 id="define-和-parameters"><a href="#define-和-parameters" class="headerlink" title="&#96;define 和 parameters"></a>&#96;define 和 parameters</h6><img src="/2023/11224275/define1.jpg"></li>
 </ul>
 <p>​		parameters要更好一些。</p>
 <ul>
@@ -438,7 +444,8 @@ always @(posedge clk or negedge nrst)
     <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> out4 <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 </code></pre>
-<img src="C:\Users\DELL\AppData\Roaming\Typora\typora-user-images\image-20231122100101428.png" alt="image-20231122100101428" style="zoom: 50%;" /></li>
+<p><img src="/2023/11224275/image-20231122100101428.png" alt="image-20231122100101428"></p>
+</li>
 </ul>
 <p>​		group的仿真时间明显缩短了。</p>
 
@@ -457,7 +464,7 @@ always @(posedge clk or negedge nrst)
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="/about" rel="external nofollow noreferrer">John Doe</a>
+                    <a href="/about" rel="external nofollow noreferrer">刘瑞彪</a>
                 </span>
             </div>
             <div class="reprint__type">
@@ -467,7 +474,7 @@ always @(posedge clk or negedge nrst)
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://xiaoliu6688.github.io/2023/11220.html">https://xiaoliu6688.github.io/2023/11220.html</a>
+                    <a href="https://xiaoliu6688.github.io/2023/11224275.html">https://xiaoliu6688.github.io/2023/11224275.html</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -480,7 +487,7 @@ always @(posedge clk or negedge nrst)
                     本博客所有文章除特別声明外，均采用
                     <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
                     许可协议。转载请注明来源
-                    <a href="/about" target="_blank">John Doe</a>
+                    <a href="/about" target="_blank">刘瑞彪</a>
                     !
                 </span>
             </div>
@@ -504,7 +511,11 @@ always @(posedge clk or negedge nrst)
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/verilog/">
+                                    <span class="chip bg-color">verilog</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -581,18 +592,17 @@ always @(posedge clk or negedge nrst)
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/11220.html">
+                <a href="/2023/112238712.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
+                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="abc">
                         
-                        <span class="card-title"></span>
+                        <span class="card-title">abc</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -602,9 +612,9 @@ always @(posedge clk or negedge nrst)
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-11-22
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-11-22
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -613,7 +623,6 @@ always @(posedge clk or negedge nrst)
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
@@ -889,10 +898,6 @@ always @(posedge clk or negedge nrst)
 
 
 
-
-    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
-        <i class="fas fa-rss"></i>
-    </a>
 
 </div>
     </div>
