@@ -376,8 +376,7 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <h2 id="如何提高仿真器的效率"><a href="#如何提高仿真器的效率" class="headerlink" title="如何提高仿真器的效率"></a>如何提高仿真器的效率</h2><p>了解仿真器的底层原理，合适的code style会节省仿真时间。</p>
-<p>仿真算法：</p>
-<ol>
+<h4 id="仿真算法："><a href="#仿真算法：" class="headerlink" title="仿真算法："></a><strong>仿真算法：</strong></h4><ol>
 <li><p>基于时间的（spice仿真器）</p>
 <p>每个时间节点对所有元件都进行计算，效率低。</p>
 </li>
@@ -390,7 +389,7 @@
 </ol>
 <p>​	以下的测试都是基于Verilog-XL</p>
 <ul>
-<li><h6 id="case语句和多if-else-if语句"><a href="#case语句和多if-else-if语句" class="headerlink" title="case语句和多if else if语句"></a>case语句和多if else if语句</h6><pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// case                         // if else-if                    </span>
+<li><h4 id="case语句和多if-else-if语句"><a href="#case语句和多if-else-if语句" class="headerlink" title="case语句和多if else if语句"></a>case语句和多if else if语句</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// case                         // if else-if                    </span>
 <span class="token important">always @</span>（<span class="token operator">*</span>）<span class="token keyword">begin</span>                <span class="token important">always @</span>（<span class="token operator">*</span>）<span class="token keyword">begin</span>                
     <span class="token function">case</span><span class="token punctuation">(</span>sel<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>                  <span class="token function">if</span><span class="token punctuation">(</span>sel <span class="token operator">==</span> <span class="token number">2'b00</span><span class="token punctuation">)</span>             
         <span class="token number">2'b00</span><span class="token punctuation">:</span> out <span class="token operator">=</span> a<span class="token punctuation">;</span>                 out <span class="token operator">=</span> a<span class="token punctuation">;</span>                
@@ -405,7 +404,7 @@
 <p>测试案例：8选1数据选择器，</p>
 <p>仿真发现：基于case的多路选择器，CPU仿真时间更短。</p>
 </li>
-<li><h6 id="带有begin-end和不带begin-end"><a href="#带有begin-end和不带begin-end" class="headerlink" title="带有begin end和不带begin end"></a>带有begin end和不带begin end</h6><pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
+<li><h4 id="带有begin-end和不带begin-end"><a href="#带有begin-end和不带begin-end" class="headerlink" title="带有begin end和不带begin end"></a>带有begin end和不带begin end</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
 <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span> c <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
     <span class="token keyword">else</span>  c <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
@@ -419,11 +418,11 @@
 </ul>
 <p>​		测试结果：nobegin表述的内存利用率和仿真时间要优一些。</p>
 <ul>
-<li><h6 id="define-和-parameters"><a href="#define-和-parameters" class="headerlink" title="&#96;define 和 parameters"></a>&#96;define 和 parameters</h6><img src="/2023/11224275/define1.jpg"></li>
+<li><h4 id="define-和-parameters"><a href="#define-和-parameters" class="headerlink" title="&#96;define 和 parameters"></a>&#96;define 和 parameters</h4><img src="/2023/11224275/define1.jpg" alt="define&amp;parameters"></li>
 </ul>
 <p>​		parameters要更好一些。</p>
 <ul>
-<li><h6 id="always-group和nogroup"><a href="#always-group和nogroup" class="headerlink" title="always group和nogroup"></a>always group和nogroup</h6><pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+<li><h4 id="always-group和nogroup"><a href="#always-group和nogroup" class="headerlink" title="always group和nogroup"></a>always group和nogroup</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> <span class="token keyword">begin</span>
         out1 <span class="token operator">&lt;=</span> a<span class="token punctuation">;</span>
         out2 <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
@@ -444,10 +443,10 @@
     <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> out4 <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 </code></pre>
-<p><img src="/2023/11224275/image-20231122100101428.png" alt="image-20231122100101428"></p>
+<p><img src="/2023/11224275/image-20231122100101428.png" alt="group&amp;nogroup"></p>
+<p>group的仿真时间明显缩短了。</p>
 </li>
 </ul>
-<p>​		group的仿真时间明显缩短了。</p>
 
                 
             </div>
@@ -592,36 +591,50 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2023/112238712.html">
+                <a href="/2023/11224275.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="abc">
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="如何提高仿真器的效率">
                         
-                        <span class="card-title">abc</span>
+                        <span class="card-title">如何提高仿真器的效率</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            了解仿真器的底层原理，合适的code style会节省仿真时间。
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-11-22
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-11-22
+                            </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            John Doe
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E4%BB%BF%E7%9C%9F%E5%99%A8/" class="post-category">
+                                    仿真器
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/verilog/">
+                        <span class="chip bg-color">verilog</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -630,35 +643,48 @@
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+                本篇&nbsp;<i class="far fa-dot-circle"></i>
             </div>
             <div class="card">
-                <a href="/2023/111563534.html">
+                <a href="/2023/11224275.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="test">
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="如何提高仿真器的效率">
                         
-                        <span class="card-title">test</span>
+                        <span class="card-title">如何提高仿真器的效率</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            了解仿真器的底层原理，合适的code style会节省仿真时间。
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-11-15
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-11-22
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            John Doe
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E4%BB%BF%E7%9C%9F%E5%99%A8/" class="post-category">
+                                    仿真器
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/verilog/">
+                        <span class="chip bg-color">verilog</span>
+                    </a>
+                    
                 </div>
                 
             </div>
