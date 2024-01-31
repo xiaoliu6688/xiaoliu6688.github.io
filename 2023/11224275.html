@@ -4,8 +4,13 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="如何提高仿真器的效率, Hexo">
-    <meta name="description" content="了解仿真器的底层原理，合适的code style会节省仿真时间。">
+    <meta name="keywords" content="数字开源EDA工具, Hexo">
+    <meta name="description" content="
+DigitalJS
+
+支持网页版的综合。网址如下：
+https://digitaljs.tilk.eu/
+">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +22,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>如何提高仿真器的效率 | Hexo</title>
+    <title>数字开源EDA工具 | Hexo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -290,12 +295,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/6.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">如何提高仿真器的效率</h1>
+                    <h1 class="description center-align post-title">数字开源EDA工具</h1>
                 </div>
             </div>
         </div>
@@ -353,7 +358,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    471
+                    17
                 </div>
                 
 
@@ -375,81 +380,11 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="如何提高仿真器的效率"><a href="#如何提高仿真器的效率" class="headerlink" title="如何提高仿真器的效率"></a>如何提高仿真器的效率</h2><p>了解仿真器的底层原理，合适的code style会节省仿真时间。</p>
-<h4 id="仿真算法："><a href="#仿真算法：" class="headerlink" title="仿真算法："></a><strong>仿真算法：</strong></h4><ol>
-<li><p>基于时间的（spice仿真器）</p>
-<p>每个时间节点对所有元件都进行计算，效率低。</p>
-</li>
-<li><p>基于事件的（Verilog XL，NC verilog）</p>
-<p>只有电路发生变化时，才进行处理。效率高。</p>
-</li>
-<li><p>基于周期的（Verilator ）</p>
-<p>只在时钟边沿计算，不管时序，使用两值逻辑。仅适用于同步电路，效率高。比如CPU的仿真。</p>
-</li>
-</ol>
-<p>​	以下的测试都是基于Verilog-XL</p>
-<ul>
-<li><h4 id="case语句和多if-else-if语句"><a href="#case语句和多if-else-if语句" class="headerlink" title="case语句和多if else if语句"></a>case语句和多if else if语句</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// case                         // if else-if                    </span>
-<span class="token important">always @</span>（<span class="token operator">*</span>）<span class="token keyword">begin</span>                <span class="token important">always @</span>（<span class="token operator">*</span>）<span class="token keyword">begin</span>                
-    <span class="token function">case</span><span class="token punctuation">(</span>sel<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>                  <span class="token function">if</span><span class="token punctuation">(</span>sel <span class="token operator">==</span> <span class="token number">2'b00</span><span class="token punctuation">)</span>             
-        <span class="token number">2'b00</span><span class="token punctuation">:</span> out <span class="token operator">=</span> a<span class="token punctuation">;</span>                 out <span class="token operator">=</span> a<span class="token punctuation">;</span>                
-        <span class="token number">2'b01</span><span class="token punctuation">:</span> out <span class="token operator">=</span> b<span class="token punctuation">;</span>             <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>sel <span class="token operator">==</span> <span class="token number">2'b01</span><span class="token punctuation">)</span>             
-        <span class="token number">2'b10</span><span class="token punctuation">:</span> out <span class="token operator">=</span> c<span class="token punctuation">;</span>                 out <span class="token operator">=</span> b<span class="token punctuation">;</span>                
-        <span class="token number">2'b11</span><span class="token punctuation">:</span> out <span class="token operator">=</span> d<span class="token punctuation">;</span>             <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>sel <span class="token operator">==</span> <span class="token number">2'b10</span><span class="token punctuation">)</span>             
-        <span class="token keyword">default</span> <span class="token punctuation">:</span> out <span class="token operator">=</span> a<span class="token punctuation">;</span>              out <span class="token operator">=</span> c<span class="token punctuation">;</span>                
-    <span class="token keyword">endcase</span>                         <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>sel <span class="token operator">==</span> <span class="token number">2'b11</span><span class="token punctuation">)</span>             
-<span class="token keyword">end</span>                                     out <span class="token operator">=</span> d<span class="token punctuation">;</span>                
-                                   <span class="token keyword">end</span>      
-</code></pre>
-<p>测试案例：8选1数据选择器，</p>
-<p>仿真发现：基于case的多路选择器，CPU仿真时间更短。</p>
-</li>
-<li><h4 id="带有begin-end和不带begin-end"><a href="#带有begin-end和不带begin-end" class="headerlink" title="带有begin end和不带begin end"></a>带有begin end和不带begin end</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
-<span class="token keyword">begin</span>
-    <span class="token function">if</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span> c <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
-    <span class="token keyword">else</span>  c <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
-<span class="token keyword">end</span>
-
-<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
-    <span class="token function">if</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span> c <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
-    <span class="token keyword">else</span>  c <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
-</code></pre>
-</li>
+                <ul>
+<li>DigitalJS</li>
 </ul>
-<p>​		测试结果：nobegin表述的内存利用率和仿真时间要优一些。</p>
-<ul>
-<li><h4 id="define-和-parameters"><a href="#define-和-parameters" class="headerlink" title="&#96;define 和 parameters"></a>&#96;define 和 parameters</h4><img src="/2023/11224275/define1.jpg" alt="define&amp;parameters"></li>
-</ul>
-<p>​		parameters要更好一些。</p>
-<ul>
-<li><h4 id="always-group和nogroup"><a href="#always-group和nogroup" class="headerlink" title="always group和nogroup"></a>always group和nogroup</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-        out1 <span class="token operator">&lt;=</span> a<span class="token punctuation">;</span>
-        out2 <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
-        out3 <span class="token operator">&lt;=</span> c<span class="token punctuation">;</span>
-        out4 <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
-    <span class="token keyword">end</span>
-<span class="token keyword">end</span>
-<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> out1 <span class="token operator">&lt;=</span> a<span class="token punctuation">;</span>
-<span class="token keyword">end</span>
-<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> out2 <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
-<span class="token keyword">end</span>
-<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> out3 <span class="token operator">&lt;=</span> c<span class="token punctuation">;</span>
-<span class="token keyword">end</span>
-<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> out4 <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
-<span class="token keyword">end</span>
-</code></pre>
-<p><img src="/2023/11224275/image-20231122100101428.png" alt="group&amp;nogroup"></p>
-<p>group的仿真时间明显缩短了。</p>
-</li>
-<li><p>verilog可综合</p>
-</li>
-</ul>
-<p>​	左移，右移逻辑的操作数，可以是常数，也可以是变量，都是可以综合的，综合结果不一样。 常数的操作数，综合 出来是一个定值，变量的操作数综合出来是一个mux。</p>
+<p>支持网页版的综合。网址如下：</p>
+<p><a target="_blank" rel="noopener" href="https://digitaljs.tilk.eu/">https://digitaljs.tilk.eu/</a></p>
 
                 
             </div>
@@ -598,24 +533,24 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/112317390.html">
+                <a href="/2023/11224275.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="add delay to verilog models">
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="如何提高仿真器的效率">
                         
-                        <span class="card-title">add delay to verilog models</span>
+                        <span class="card-title">如何提高仿真器的效率</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            verilog中常用的延迟建模方法
+                            了解仿真器的底层原理，合适的code style会节省仿真时间。
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-11-23
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-11-22
                         </span>
                         <span class="publish-author">
                             
@@ -651,15 +586,15 @@
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="如何提高仿真器的效率">
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="数字开源EDA工具">
                         
-                        <span class="card-title">如何提高仿真器的效率</span>
+                        <span class="card-title">数字开源EDA工具</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            了解仿真器的底层原理，合适的code style会节省仿真时间。
+                            
                         
                     </div>
                     <div class="publish-info">
@@ -869,7 +804,7 @@
         <div class="col s12 m8 l8 copy-right">
             Copyright&nbsp;&copy;
             
-                <span id="year">2023</span>
+                <span id="year">2023-2024</span>
             
             <a href="/about" target="_blank">John Doe</a>
             |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
@@ -878,7 +813,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">2.1k</span>
+                        class="white-color">9.1k</span>
             
             
             
