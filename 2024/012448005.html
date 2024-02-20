@@ -343,7 +343,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    256
+                    1.2k
                 </div>
                 
 
@@ -388,7 +388,76 @@
 <li><p>面积优化策略</p>
 <p>面积：加法器 &gt; 比较器 &gt; 选择器.<br>乘法器本质也是加法器。<br>策略：<strong>先选后加，先选后比，先选后乘</strong></p>
 </li>
+<li><p>表达式位宽</p>
+<p>利用中间值，使得结果没有歧义，比如乘法的结果是a+b的位宽之和，$unsigned(a*b)的位宽是a&#x2F;b中最大的一个，与z的定义不同。</p>
+<p><img src="/2024/012448005/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzIxODQyMDk3,size_16,color_FFFFFF,t_70.png" alt="img"></p>
+</li>
+<li><p>有符号数的部分选择</p>
+</li>
 </ul>
+<p>​	部分选择有符号数，得到的切片仍然是无符号数。哪怕选择了整个向量也是无符号的，如 input signed[7:0] a 中 a[7:0] 也会被认为是无符号的。</p>
+<p>​	若表达式中有一个数为无符号数，Verilog会把整个表述为无符号的，导致功能失常。</p>
+<ul>
+<li><p>有符号数运算</p>
+<p>如果是有符号数的运算，在定义时使用signed声明比较好，而不是用无符号数模拟有符号数，这样综合得到的电路更好。但是如果运算中既有无符号数，又有有符号数，结果就是无符号数的计算。</p>
+<p><img src="/2024/012448005/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzIxODQyMDk3,size_16,color_FFFFFF,t_70-1706971897728-3.png" alt="img"></p>
+</li>
+<li><p>条件完备的case是没有优先级的，条件不完备是有优先级的。</p>
+</li>
+</ul>
+<h3 id="亚稳态问题"><a href="#亚稳态问题" class="headerlink" title="亚稳态问题"></a>亚稳态问题</h3><p>当数据不满足建立setup和保持hold时间时，会出现亚稳态问题。<br>解决办法（单bit）：1. 多级同步器 2. 时钟倍频电路的多级同步器<br>方法1需要较长时间去响应异步输入，解决办法：使用倍频时钟作为两个同步器的时钟输入。（Altera的FPGA中具有这项称为时钟倍频的技术，减小异步信号输入的延迟）</p>
+<img src="/2024/012448005/image-20240219205135401.png" alt="时钟倍频电路的多级同步器" style="zoom:50%;">
+
+
+
+<ul>
+<li><p>寄存器的输出 驱动 另一个寄存器的异步复位端</p>
+<p>第二级寄存器的时钟和复位之间存在潜在的竞争关系。</p>
+</li>
+</ul>
+<img src="/2024/012448005/image-20240219223205525.png" alt="异步复位" style="zoom: 33%;">
+
+<ul>
+<li><p>锁存器生成对应的电路</p>
+<pre><code>always @(clk) 
+  if(clk) begin
+      b = 0;
+      a = 1;
+  end else begin
+      b = 0;
+  end
+</code></pre>
+</li>
+</ul>
+<img src="/2024/012448005/image-20240219225204769.png" alt="image-20240219225204769" style="zoom:50%;">
+
+<p>​	某些FPGA架构不支持锁存器，在综合时会将锁存器综合成 带有反馈的组合逻辑实现。</p>
+<img src="/2024/012448005/image-20240219225414951.png" alt="image-20240219225414951" style="zoom: 50%;">
+
+<p>​	<strong>虽然该结构有锁存数据的能力，但是可能会违背建立时间和保持时间的要求，跟带电平触发的锁存器是不一样的。在设计中不应包含任何组合逻辑环路</strong>。<br>​	锁存器并不是不能存在的，可以用来挪用周期或借用时间来满足关键路径的要求。（time borrowing)</p>
+<ul>
+<li>内部时钟产生</li>
+</ul>
+<p>​	毛刺出现在数据上，不会有太大影响，因为是边沿采样；如果毛刺出现在时钟上，会产生明显的影响。比如，由于时钟毛刺，使得计数器的值多增加1。因此，寄存器的输入时钟最好不是经过组合逻辑处理得到的。<br>​	解决办法：将组合逻辑输出的时钟，打拍寄存器输出。</p>
+<ul>
+<li><p>门控时钟和时钟使能技术</p>
+<p>门控时钟：当门控关闭后，时钟网络和内部的组合逻辑停止翻转，减小功耗。</p>
+<img src="/2024/012448005/image-20240220103515514.png" alt="image-20240220103515514" style="zoom:67%;"></li>
+</ul>
+<p>​	同步时钟使能：以同步的方式，将输出拉死，并没有关闭时钟，而是将寄存器的输出保持不变，无法降低功耗。</p>
+<img src="/2024/012448005/image-20240220103631732.png" alt="image-20240220103631732" style="zoom:67%;">
+
+<ul>
+<li><p>门控时钟电路</p>
+<p><strong>不带锁存器的门控时钟</strong>，使用“与”门 或者 “或”门实现。</p>
+<img src="/2024/012448005/image-20240220104808503.png" alt="image-20240220104808503" style="zoom:50%;"></li>
+</ul>
+<p>​	存在问题：en和clk是完全异步的，使得时钟输出畸形；</p>
+<img src="/2024/012448005/image-20240220104905125.png" alt="image-20240220104905125" style="zoom:50%;">
+
+<p>​	<strong>带锁存器的门控时钟</strong></p>
+<p>​	为了防止高电平被意外截断，需要使用锁存器保证 在CLK为1时，即使EN拉低，GATED_CLK输出保持不变。所以需要负锁存器，在CLK拉低时，对EN进行采样，CLK拉高时锁存器的输出不变。这样可以得到完整的时钟波形</p>
+<img src="/2024/012448005/image-20240220105432984.png" alt="image-20240220105432984" style="zoom: 50%;">
 
                 
             </div>
@@ -788,7 +857,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">9.1k</span>
+                        class="white-color">13.1k</span>
             
             
             
