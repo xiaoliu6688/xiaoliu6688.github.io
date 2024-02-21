@@ -11,9 +11,9 @@
 带同步复位的寄存器后紧跟一个不带复位的寄存器
 
 always @(posedge clk) begin
-    if(!nrst)	q1 &amp;lt;= 1&amp;#39;b0;
+    if(!nrst)	q1 &amp;lt;= 1&#39;b0;
     else begin
-        q1">
+        q1 &amp;lt">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -348,7 +348,7 @@ always @(posedge clk) begin
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    884
+                    1.2k
                 </div>
                 
 
@@ -375,16 +375,16 @@ always @(posedge clk) begin
 <ol>
 <li>带同步复位的寄存器后紧跟一个不带复位的寄存器</li>
 </ol>
-<pre><code>always @(posedge clk) begin
-    if(!nrst)	q1 &lt;= 1&#39;b0;
-    else begin
-        q1 &lt;= d;
-        q2 &lt;= q1;
-    end
-end
-// 错误的复位方式    q2没有被正确的复位，并且综合生成的电路也非常奇怪。
+<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>	q1 <span class="token operator">&lt;=</span> <span class="token number">1'b0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token keyword">begin</span>
+        q1 <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
+        q2 <span class="token operator">&lt;=</span> q1<span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span class="token comment" spellcheck="true">// 错误的复位方式    q2没有被正确的复位，并且综合生成的电路也非常奇怪。</span>
 </code></pre>
-<img src="/2023/122543491/image-20231225203911890.png" alt="image-20231225203911890" style="zoom:50%;"></li>
+<img src="/2023/122543491/image-20231225203911890.png" alt="image-20231225203911890" style="zoom: 33%;"></li>
 </ul>
 <p>​	因为在rst_n有效时，q2没有动作，所以rst_n作为第二级寄存器的ld_en信号，将q1的结果输出在q2上。</p>
 <p><strong>正确的code style</strong></p>
@@ -395,27 +395,38 @@ end
 always @(posedge clk)
     q2 &lt;= q1;
 </code></pre>
-<img src="/2023/122543491/image-20231225204528665.png" alt="image-20231225204528665" style="zoom:50%;">
+<img src="/2023/122543491/image-20231225204528665.png" alt="image-20231225204528665" style="zoom: 33%;">
 
 <p><strong>同步复位</strong>：复位信号，只在clk的有效边沿才会发挥作用，参与输入信号d的组合逻辑，相当于做“与”逻辑。这种情况下，if-else的优先级就很重要。reset需要在if中发挥作用。</p>
+<p>使用同步复位出现的问题：综合工具DC无法分辨复位信号和其他数据信号。<br>带同步复位的可加载触发器如下</p>
+<img src="/2023/122543491/image-20240220164819082.png" alt="image-20240220164819082" style="zoom:50%;">
+
+<p>​	综合工具也可能会综合成下面的结构，两者实现的功能相同。</p>
+<img src="/2023/122543491/image-20240220164859844.png" alt="image-20240220164859844" style="zoom:50%;">
+
+<p>​	第二种方式在门级仿真时，如果rst_n信号为低，mux的输入都是0，如果load是x态，导致触发器会输出x态，而不会复位。<strong>本质区别是 rst_n的优先级，第一种方式rst_n的优先级要高于第二种，第一种可以保证在仿真时复位的有效性</strong>，这两种方式在实际硬件中，都是可以正常复位的。因此，在仿真过程中，使用编译指令，告知综合工具，让复位信号rst_n尽可能靠近触发器，提高复位信号的优先级。</p>
 <p><strong>优点：</strong></p>
-<pre><code>1. 综合生成较小的寄存器。但是由于增加了组合逻辑，所以总晶体管数目不会发生太多变化，但是总的面积会减小。对于面积有限的电路是有用的，但是当前大规模的ASIC设计，这个节省没必要。
-1. 可以使用基于周期仿真的模拟器，比如verilator。
-1. 确保了所有的电路都是同步的。
-1. 由于是时钟有效时，才可以复位，所以可以过滤一些reset的毛刺。
+<pre><code>1. 可以使用基于周期仿真的模拟器，比如verilator。
+2. 确保了所有的电路都是同步的。
+3. 由于是时钟有效时，才可以复位，所以可以过滤一些reset的毛刺。
 </code></pre>
 <p><strong>缺点：</strong></p>
 <ol>
 <li>同步复位可能需要脉冲展宽器来保证复位脉冲足够宽</li>
 <li>对于时钟门控的寄存器，同步复位无效。</li>
 </ol>
-<p>为了防止芯片上电时，内部三态总线上的总线竞争，芯片必须具有异步复位的功能。</p>
-<img src="/2023/122543491/image-20231225235555437.png" alt="image-20231225235555437" style="zoom:50%;">
+<ul>
+<li><strong>三态总线的复位</strong></li>
+</ul>
+<p>为了防止芯片上电时，内部三态总线上的总线竞争，就迫切需要时钟产生复位；</p>
+<p>因此，芯片需要具有异步复位的功能。</p>
+<img src="/2023/122543491/image-20231225235555437.png" alt="image-20231225235555437" style="zoom: 33%;">
 
-<p>也可以使用同步复位的方式实现，但是三态门的输入oe必须与resetn做与；</p>
-<img src="/2023/122543491/image-20231225235658088.png" alt="image-20231225235658088" style="zoom:50%;">
+<p>也可以使用同步复位的方式实现，但是也必须使用复位信号直接撤销三态门的使能，寄存器的输出必须与rst_n做与；</p>
+<img src="/2023/122543491/image-20231225235658088.png" alt="image-20231225235658088" style="zoom: 33%;">
 
-<h4 id="异步复位"><a href="#异步复位" class="headerlink" title="异步复位"></a>异步复位</h4><p>​	异步复位最大的问题是 复位信号的释放。</p>
+<h4 id="异步复位"><a href="#异步复位" class="headerlink" title="异步复位"></a>异步复位</h4><p>​	异步复位可以保证 数据路径上没有复位信号的参与，在复位时，数据路径是干净的。		</p>
+<p>​	异步复位最大的问题是 复位信号的释放。</p>
 <p>​	在DC阶段，对于clock和reset信号，通过设置输入驱动为0，表示驱动能力最强，<code>set_drive 0</code>。并设置<code>set_dont_touch_network</code>保护clk和reset信号不被修改。这样做的目的是 因为综合时，没有布局布线信息，在dc时即使插入buffer对clk和reset信号优化，也是没有意义的，到ICC阶段也会重新插buffer。反而，可能会对物理实现带来负面影响。所以最好的办法是不处理，在CTS时才真正的解决clk和reset。</p>
 <p><strong>优点：</strong></p>
 <pre><code> 1. 保证复位信号不会参与到数据路径中，保证数据路径是干净的。
@@ -425,7 +436,14 @@ always @(posedge clk)
 <ol>
 <li>不能使用基于周期的仿真器</li>
 <li>异步复位时，不会有亚稳态的影响，但是在释放时，很有可能clk是上升沿会采到rstn在变化，造成亚稳态。导致复位后的稳定状态丢失。</li>
+<li>会受到毛刺的影响</li>
+<li>异步复位 带来时序分析的困难</li>
 </ol>
+<ul>
+<li><p>异步复位和异步置位寄存器</p>
+<p>尽可能避免出现该类型的寄存器，否则，可能会造成综合前后结果不一致的问题。</p>
+</li>
+</ul>
 <p>异步复位需要考虑recovery time和removal time的违例。</p>
 <p>recovery time类似于setup time，在有效时钟沿上升之前，rst发生变化的最短时间。</p>
 <p>removal time类似hold time，在有效时钟沿上升之后，rst发生变化所需要的最短时间。</p>
@@ -447,6 +465,12 @@ always @(posedge clk)
 第二级的nrst2是为了消除，第一级异步复位信号释放带来的任何亚稳态。
 </code></pre>
 <img src="/2023/122543491/image-20231226100118399.png" alt="image-20231226100118399" style="zoom:50%;">
+
+<ul>
+<li><p><strong>异步复位毛刺过滤器</strong></p>
+<p>通过延迟电路，将延迟前后的信号做”与”，即可得到真正的复位信号。</p>
+<img src="/2023/122543491/image-20240220172053034.png" alt="image-20240220172053034" style="zoom: 50%;"></li>
+</ul>
 
                 
             </div>
@@ -858,7 +882,7 @@ always @(posedge clk)
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">13.1k</span>
+                        class="white-color">14.9k</span>
             
             
             

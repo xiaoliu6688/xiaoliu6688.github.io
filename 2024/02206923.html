@@ -4,23 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="makefile, Hexo">
-    <meta name="description" content="
-wildcard
-
-#显示扩展名
-$(wildcard *.v)  
-
-
-readlink
-
-打印解析符号链接或符号链接的规范文件名
--f 通过递归给出指定名称的符号链接
-当前脚本的绝对路径：
-    readlink -m $0
-
-
-$">
+    <meta name="keywords" content="dc_flow, Hexo">
+    <meta name="description" content="dc_topo模式dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。流程：       1. dct生成一版网表netlist，给ICC，导出floorplan的DEF文件       2. 根据icc导出的de">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -32,7 +17,7 @@ $">
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>makefile | Hexo</title>
+    <title>dc_flow | Hexo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -305,12 +290,12 @@ $">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/18.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/14.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">makefile</h1>
+                    <h1 class="description center-align post-title">dc_flow</h1>
                 </div>
             </div>
         </div>
@@ -346,7 +331,7 @@ $">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-11-27
+                    2024-02-20
                 </div>
                 
 
@@ -355,7 +340,7 @@ $">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    151
+                    379
                 </div>
                 
 
@@ -377,30 +362,34 @@ $">
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <ul>
-<li><strong>wildcard</strong></li>
-</ul>
-<pre class=" language-makefile"><code class="language-makefile"><span class="token comment" spellcheck="true">#显示扩展名</span>
-<span class="token variable">$</span><span class="token punctuation">(</span><span class="token keyword">wildcard</span> *.v<span class="token punctuation">)</span>  
+                <h2 id="dc-topo模式"><a href="#dc-topo模式" class="headerlink" title="dc_topo模式"></a>dc_topo模式</h2><p>dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。<br>流程：<br>       1. dct生成一版网表netlist，给ICC，导出floorplan的DEF文件<br>       2. 根据icc导出的def文件，重新在dct模式下综合，得到的网表更准确<br>       3. compile_ultra</p>
+<img src="/2024/02206923/image-20240220161903358.png" alt="image-20240220161903358" style="zoom: 50%;">
+
+<pre class=" language-tcl"><code class="language-tcl"><span class="token operator">/</span><span class="token operator">/</span> icc 写def 命令
+write_def <span class="token operator">-</span>output name.def
+<span class="token operator">/</span><span class="token operator">/</span> dct 读def命令
+extract_physical_constraints name.def
 </code></pre>
-<ul>
-<li>readlink</li>
-</ul>
-<pre><code>打印解析符号链接或符号链接的规范文件名
--f 通过递归给出指定名称的符号链接
-当前脚本的绝对路径：
-    readlink -m $0
+<p><strong>注意事项：第一次时，topo模式需要创建milkway，第二次进入dct模式时，已经有def文件，但是不需要创建milkway库，直接打开就可以</strong></p>
+<h2 id="常见命令"><a href="#常见命令" class="headerlink" title="常见命令"></a>常见命令</h2><h3 id="link"><a href="#link" class="headerlink" title="link"></a>link</h3><ol>
+<li><p>将设计与工艺库中stdcel进行对应。</p>
+</li>
+<li><p>将设计连接到这些库单元上。</p>
+<p>link后，生成没有工艺库对应的getch库文件，以ddc的格式保存。</p>
+<p>link后，进行uniquify，创建同一个reference的不同instance，以便根据不同的物理环境做优化。</p>
+</li>
+</ol>
+<h3 id="report-芯片面积"><a href="#report-芯片面积" class="headerlink" title="report 芯片面积"></a>report 芯片面积</h3><p>三种方式描述面积：1. 晶体管级 transitor 2. 2输入与非门的个数 3. 实际的面积</p>
+<p>report_area 输出实际的面积,也会显示综合后的标准单元个数。如果想要转换到与非门的个数，将报出的面积除以与非门的面积，得到2输入与非门个数。</p>
+<p>查看综合后的网表有多少门</p>
+<pre><code>sizeof_collection [get_cells * h]
 </code></pre>
-<ul>
-<li>$$ 用法</li>
-</ul>
-<pre><code>SRC := A.c B.c
-process:
-    for i in $(SRC); do \
-        readlink -f $$i &gt;&gt; $file \
-    done
-使用两个$$，是因为i在shell的for循环中展开，属于shell的变量，相当于两层变量的嵌套。make读到$$i时候，会进行转义，展开成$i，然后交给shell解释程序。施加了$$的变量，需要两次展开，才能得到变量的值。
-</code></pre>
+<p>查看2输入与非门的面积：</p>
+<ol>
+<li>打开logic 库，查看NA2的面积，<strong>tsmc65大概是2.16平方微米</strong>。</li>
+<li>tcl查询，NAND2的属性 attribution <code>get_attribute[get_lib_cell */nand2]</code> </li>
+<li>单独综合一个与非门，查看面积。</li>
+</ol>
 
                 
             </div>
@@ -427,7 +416,7 @@ process:
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://xiaoliu6688.github.io/2023/11277120.html">https://xiaoliu6688.github.io/2023/11277120.html</a>
+                    <a href="https://xiaoliu6688.github.io/2024/02206923.html">https://xiaoliu6688.github.io/2024/02206923.html</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -545,13 +534,13 @@ process:
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/12244275.html">
+                <a href="/2024/022118538.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="数字后端 ICC">
+                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="分频器设计">
                         
-                        <span class="card-title">数字后端 ICC</span>
+                        <span class="card-title">分频器设计</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -562,27 +551,15 @@ process:
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-12-24
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-21
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/ASIC%E6%95%B0%E5%AD%97%E6%B5%81%E7%A8%8B/" class="post-category">
-                                    ASIC数字流程
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            John Doe
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E6%95%B0%E5%AD%97%E5%90%8E%E7%AB%AF/">
-                        <span class="chip bg-color">数字后端</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -594,13 +571,13 @@ process:
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2023/112521332.html">
+                <a href="/2024/021950375.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="编辑器-vim、vscode">
+                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="一生一芯-CPU流水线设计（一）">
                         
-                        <span class="card-title">编辑器-vim、vscode</span>
+                        <span class="card-title">一生一芯-CPU流水线设计（一）</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -611,7 +588,7 @@ process:
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-11-25
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-19
                             </span>
                         <span class="publish-author">
                             

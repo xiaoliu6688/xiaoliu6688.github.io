@@ -395,7 +395,7 @@
 </code></pre>
 <img src="/2024/021950375/image-20240220150606788.png" alt="image-20240220150606788" style="zoom: 50%;">
 
-<h3 id="数据冒险-控制冒险-冲突"><a href="#数据冒险-控制冒险-冲突" class="headerlink" title="数据冒险+控制冒险 冲突"></a>数据冒险+控制冒险 冲突</h3><p>当译码阶段的指令是jalr时，rs1发生了数据冒险，且是load-use类型，bypass模块发出stall和nop信号；bru模块发出jump和nop信号。对于IF_ID寄存器，同时收到了bypass的stall和bru的nop信号。<strong>此时，产生了冒险冲突</strong></p>
+<h2 id="数据冒险-控制冒险-冲突"><a href="#数据冒险-控制冒险-冲突" class="headerlink" title="数据冒险+控制冒险 冲突"></a>数据冒险+控制冒险 冲突</h2><p>当译码阶段的指令是jalr时，rs1发生了数据冒险，且是load-use类型，bypass模块发出stall和nop信号；bru模块发出jump和nop信号。对于IF_ID寄存器，同时收到了bypass的stall和bru的nop信号。<strong>此时，产生了冒险冲突</strong></p>
 <p>解决办法：<strong>先stall处理完数据冒险，再nop处理控制冒险保证处理控制冒险时，跳转地址的计算是正确的。</strong></p>
 <pre class=" language-systemverilog"><code class="language-systemverilog">// ex
 auipc a5 0x0
@@ -550,18 +550,17 @@ jalr  a5
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/021950375.html">
+                <a href="/2024/02206923.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="一生一芯-CPU流水线设计（一）">
+                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="dc_flow">
                         
-                        <span class="card-title">一生一芯-CPU流水线设计（一）</span>
+                        <span class="card-title">dc_flow</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -571,9 +570,9 @@ jalr  a5
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-19
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-20
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -582,7 +581,6 @@ jalr  a5
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
@@ -811,7 +809,7 @@ jalr  a5
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">13.1k</span>
+                        class="white-color">14.9k</span>
             
             
             

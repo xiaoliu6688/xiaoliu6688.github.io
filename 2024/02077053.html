@@ -341,7 +341,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    545
+                    561
                 </div>
                 
 
@@ -367,6 +367,7 @@
 <p>只有INCR burst类型，才支持burst 超过16 beats</p>
 <p><img src="/2024/02077053/image-20240207000854573.png" alt="image-20240207000854573"></p>
 <p>实际使用中，很少使用burst超过16 beats的操作，因为长时间占用总线会影响系统性能。而且burst 一旦开始，无法停止。</p>
+<p>axi4协议规定 一次burst，最多传输256笔数据。</p>
 <h5 id="2-Write-interleaving"><a href="#2-Write-interleaving" class="headerlink" title="2. Write interleaving"></a>2. Write interleaving</h5><p>AXI4去掉了WID，不再支持写交织（write interleaving）。<br>这就限制了写入的数据必须和写入的地址顺序相同且连续。不同write burst的beat不可以相互交织。</p>
 <p>原因：发送端必须要缓存多个ID的wdata，不管是maser还是总线interconnection都必须要增加大量的缓存，所以增加了面积；另外，Write interleaving增加了系统总线设计的复杂度，而且很容易造成死锁，</p>
 <h5 id="3-Write-response-dependencies"><a href="#3-Write-response-dependencies" class="headerlink" title="3. Write response dependencies"></a>3. Write response dependencies</h5><p>修改了BVALID拉高的要求</p>
@@ -780,7 +781,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">13.1k</span>
+                        class="white-color">14.9k</span>
             
             
             
