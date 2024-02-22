@@ -4,9 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="AXI协议, Hexo">
-    <meta name="description" content="AXI协议AXI3和AXI4的区别1. BurstAXI4对burst length进行了扩展AXI4支持最大256 beats，AxLEN位宽为8；AXI3最大支持burst 16 beats，AxLEN位宽为4；
-只有INCR burs">
+    <meta name="keywords" content="一生一芯-乘除法器设计, Hexo">
+    <meta name="description" content="乘法器设计本设计采用基于4 Booth和华莱士树乘法器相结合的方式实现乘法；一般乘法运算采用移位累加的方式实现，当乘法位数较大时，组合逻辑很大，且中间结果不易插入寄存器。在本设计的乘法中，Booth算法减小了部分积的个数，华莱士树算法提高了">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>AXI协议 | Hexo</title>
+    <title>一生一芯-乘除法器设计 | Hexo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -291,12 +290,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/17.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/15.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">AXI协议</h1>
+                    <h1 class="description center-align post-title">一生一芯-乘除法器设计</h1>
                 </div>
             </div>
         </div>
@@ -332,7 +331,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2024-02-07
+                    2024-02-22
                 </div>
                 
 
@@ -341,7 +340,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    561
+                    1.6k
                 </div>
                 
 
@@ -363,25 +362,161 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="AXI协议"><a href="#AXI协议" class="headerlink" title="AXI协议"></a>AXI协议</h3><h4 id="AXI3和AXI4的区别"><a href="#AXI3和AXI4的区别" class="headerlink" title="AXI3和AXI4的区别"></a>AXI3和AXI4的区别</h4><h5 id="1-Burst"><a href="#1-Burst" class="headerlink" title="1. Burst"></a>1. Burst</h5><p>AXI4对burst length进行了扩展<br>AXI4支持最大256 beats，AxLEN位宽为8；AXI3最大支持burst 16 beats，AxLEN位宽为4；</p>
-<p>只有INCR burst类型，才支持burst 超过16 beats</p>
-<p><img src="/2024/02077053/image-20240207000854573.png" alt="image-20240207000854573"></p>
-<p>实际使用中，很少使用burst超过16 beats的操作，因为长时间占用总线会影响系统性能。而且burst 一旦开始，无法停止。</p>
-<p>axi4协议规定 一次burst，最多传输256笔数据。</p>
-<h5 id="2-Write-interleaving"><a href="#2-Write-interleaving" class="headerlink" title="2. Write interleaving"></a>2. Write interleaving</h5><p>AXI4去掉了WID，不再支持写交织（write interleaving）。<br>这就限制了写入的数据必须和写入的地址顺序相同且连续。不同write burst的beat不可以相互交织。</p>
-<p>原因：发送端必须要缓存多个ID的wdata，不管是maser还是总线interconnection都必须要增加大量的缓存，所以增加了面积；另外，Write interleaving增加了系统总线设计的复杂度，而且很容易造成死锁，</p>
-<h5 id="3-Write-response-dependencies"><a href="#3-Write-response-dependencies" class="headerlink" title="3. Write response dependencies"></a>3. Write response dependencies</h5><p>修改了BVALID拉高的要求</p>
-<p>AXI3握手依赖</p>
-<p><img src="/2024/02077053/v2-0160a446a10236e56609b0bc7fcc541e_1440w.png" alt="img"></p>
-<p>AXI3必须等到了WVALID和WREADY后才能把BVALID置高来响应，也就是说只要收到了所有数据，SLAVE就可以发写响应。</p>
-<p>AXI4握手依赖</p>
-<p><img src="/2024/02077053/v2-12a2457485825157ceaaa25f358b7ae7_1440w.png" alt="img"></p>
-<p>​	AXI4规定，必须等到AWVALID,AWREADY,WVALID, WREADY, and WLAST 都为高(不是同一时刻都为高)后，SLAVE才能发BVALID进行写响应。也就是不仅仅要等数据通路，而且要等地址通路，并且明确了要等WLAST。这样能保证响应的时候Transaction是真正完成的</p>
-<h5 id="4-Locked-transactions"><a href="#4-Locked-transactions" class="headerlink" title="4. Locked transactions"></a>4. Locked transactions</h5><p>​	AXI4去掉了locked 传输。AxLOCK缩为2bit</p>
-<img src="/2024/02077053/v2-52896f5fa4a0dfe4c2c6a4a4645664a9_1440w.png" alt="img" style="zoom:67%;">
+                <h2 id="乘法器设计"><a href="#乘法器设计" class="headerlink" title="乘法器设计"></a>乘法器设计</h2><p>本设计采用基于4 Booth和华莱士树乘法器相结合的方式实现乘法；<br>一般乘法运算采用移位累加的方式实现，当乘法位数较大时，组合逻辑很大，且中间结果不易插入寄存器。在本设计的乘法中，<strong>Booth算法减小了部分积的个数，华莱士树算法提高了计算累加和的速度，且可以在中间插入寄存器，进一步提高主频和数据吞吐量</strong></p>
+<h4 id="Booth算法"><a href="#Booth算法" class="headerlink" title="Booth算法"></a>Booth算法</h4><h5 id="booth乘法算法的条件"><a href="#booth乘法算法的条件" class="headerlink" title="booth乘法算法的条件"></a>booth乘法算法的条件</h5><ol>
+<li>乘数和被乘数都是偶数，如果不是需要扩展符号位</li>
+<li>补码运算，如果想要实现无符号数运算，需要在乘数和被乘数前面扩展两个0，然后按照补码运算</li>
+</ol>
+<p>编码的计算需要将乘数后面补0，一次完整的乘法共有N&#x2F;2个码元</p>
+<img src="/2024/022240394/Booth_multiplication with shifter.png" alt="使用移位加实现Booth乘法" style="zoom: 33%;">
 
-<p>​	Locked access作用的对象是总线，一旦发生Locked access，那么其他的master都不能使用总线了，在一个复杂的SOC系统中，Locked access对系统的影响就太大了，万一发生Locked access的master出点啥问题，整个系统就挂死了</p>
-<p>​	Exclusive access 作用的对象是对应的Slave，支持Exclusive access的Slave会在slave中实现一个Exclusive access monitor，如果monitor记录了能够访问的master，那么对应的master就能通过Exclusive access来访问，其他的未记录的Exclusive access就都不能访问。Exclusive access对总线系统是没有要求的，只是对slave做了特殊要求，即使出错也不会影响系统其他部分，最多访问失败而已。</p>
+<h5 id="key-point"><a href="#key-point" class="headerlink" title="key point"></a>key point</h5><ul>
+<li><p>扩展符号位成偶数时，需要根据有无符号位进行扩展，如果是无符号，扩展0，如果有符号位，扩展符号位</p>
+</li>
+<li><p>在进行部分积累加中，每个cycle需要将累加寄存器右移两位，为的是对齐，得到真实的部分和，在下次加法时，保证是对齐的</p>
+</li>
+<li><p>在累加器右移过程中，需要扩展两位符号位，因为右移了2位，在下次操作时就要用到这两位符号位</p>
+</li>
+<li><p>booth两位运算规则</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>yi+1</th>
+<th>yi</th>
+<th>yi-1</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>+0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>+X补</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>+X补</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>+2X补</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>-2X补</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>-X补</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>-X补</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>+0</td>
+</tr>
+</tbody></table>
+<p>本设计中乘法运算为 64bit * 64bit，booth算法本身是带符号的补码运算，如果要兼容无符号运算，需要在符号位前面扩展1bit，但是算法又规定乘数和被乘数都是偶数，所以还需要扩展1bit 符号位0，总共扩展2bit，exp_B为(66+1)bit，代码如下</p>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">assign</span> exp_B <span class="token operator">=</span> <span class="token operator">&amp;</span><span class="token number">#123</span><span class="token punctuation">;</span><span class="token number">1'b0</span><span class="token punctuation">,</span> unsigned_flag<span class="token punctuation">,</span> B<span class="token punctuation">,</span> <span class="token number">1'b0</span><span class="token operator">&amp;</span><span class="token number">#125</span><span class="token punctuation">;</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">// 最后补0是必须的，unsigned_flag = 1 => 表示无符号运算</span>
+</code></pre>
+<p>按照有符号补码运算，64bit的乘数，产生32个部分积；考虑无符号运算，还需要产生一个部分积，该部分积的产生规则如下：</p>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token keyword">case</span> <span class="token punctuation">(</span>y<span class="token punctuation">)</span>
+    <span class="token number">3'b000</span><span class="token punctuation">,</span> <span class="token number">3'b111</span><span class="token punctuation">,</span> <span class="token number">3'b001</span> <span class="token punctuation">:</span>   P <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>     
+    <span class="token number">3'b010</span> <span class="token punctuation">:</span> <span class="token function">if</span><span class="token punctuation">(</span>unsigned_flag<span class="token punctuation">)</span> P <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>   
+             <span class="token keyword">else</span>   P <span class="token operator">=</span> X<span class="token punctuation">;</span>
+    <span class="token number">3'b110</span><span class="token punctuation">,</span> <span class="token number">3'b101</span> <span class="token punctuation">:</span> P <span class="token operator">=</span> <span class="token operator">~</span>X <span class="token operator">+</span> <span class="token number">1'b1</span><span class="token punctuation">;</span>                             
+    <span class="token number">3'b011</span> <span class="token punctuation">:</span> <span class="token function">if</span><span class="token punctuation">(</span>unsigned_flag<span class="token punctuation">)</span> P <span class="token operator">=</span> X<span class="token punctuation">;</span>
+            <span class="token keyword">else</span> P <span class="token operator">=</span> X <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token number">3'b100</span> <span class="token punctuation">:</span> P <span class="token operator">=</span> <span class="token operator">~</span><span class="token punctuation">(</span>X <span class="token operator">&lt;&lt;</span> <span class="token number">2</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">1'b1</span><span class="token punctuation">;</span>                                             
+  <span class="token keyword">endcase</span>
+<span class="token keyword">end</span>
+<span class="token comment" spellcheck="true">// 无符号数运算，如果乘数的最高位为0，部分积为0；如果乘数的最高位为1，部分积为被乘数</span>
+</code></pre>
+<p><strong>最后，将部分积进行移位累加即可（每次累加和 移位2bit）</strong></p>
+<h3 id="华莱士树算法"><a href="#华莱士树算法" class="headerlink" title="华莱士树算法"></a>华莱士树算法</h3><p><strong>本质是</strong> <strong>对累加的各个部分积进行压缩，最终压缩到单个C和S，通过加法器计算得到结果</strong></p>
+<h4 id="进位保存加法器"><a href="#进位保存加法器" class="headerlink" title="进位保存加法器"></a><strong>进位保存加法器</strong></h4><ul>
+<li>CAS （carry save adder）</li>
+</ul>
+<p>基本思想：将3个加数和减少为2个加数的和，将进位C和结果S分别计算保存，每个比特可以独立计算C和S，速度极快，一位的全加器相当于进位保留加法器 &#x3D;&gt; 3:2 压缩器。</p>
+<p>比如一个算式如：Sum &#x3D; A + B + C + D，可以设计N bit的CAS结构，将多个数合并，经过两级CSA，最后将进位C[N-1:0]和Sum[N-1:0]通过一个加法器相加（<strong>注意将进位传给下面的CAS计算时，需要将C左移一位</strong>），得到最终结果。</p>
+<img src="/2024/022240394/2.8_walloc_tree.4b50192e.png" alt="image" style="zoom: 67%;">
+
+<p>上图是17bit的华莱士树，因为进位和输出结果都是同一个方向的，所以可以在每层之间插入寄存器打拍，提高主频。</p>
+<p>相同bit的华莱士树有多种实现方式，如下图所示</p>
+<img src="/2024/022240394/WORONG_exaxple of walllace tree.png" alt="两种错误的8个数相加的一位华莱士树" style="zoom: 33%;">
+
+<p>完成的功能相同，但是两者之间存在区别。<strong>关键点在于延迟</strong>，假设每个CSA部件的延迟为1，左面结构的结果延迟为5，右面为4。左面结构插入寄存器时，就会导致结果错误。</p>
+<img src="/2024/022240394/image-20230811215003860.png" alt="image-20230811215003860" style="zoom: 33%;">
+
+<p>在设计华莱士树时，<strong>保证华莱士树的数据流是单向的，不会在该层之前进行操作，比如左图的进位C3，导致整个数据流发生了交叠</strong>。</p>
+<h3 id="Booth算法×华莱士树算法"><a href="#Booth算法×华莱士树算法" class="headerlink" title="Booth算法×华莱士树算法"></a>Booth算法×华莱士树算法</h3><p>32位的乘法器结构如下，其中Switch模块完成将booth模块输出的结果打一拍，避免组合逻辑的延迟较长。</p>
+<img src="/2024/022240394/image-20240222231842246.png" alt="image-20240222231842246" style="zoom: 33%;">
+
+<p>其中，booth输出的部分积，需要进行移位加才能进入到CSA模块中。代码如下</p>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// phase 1</span>
+<span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">67</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> S0_1<span class="token punctuation">,</span> S1_1<span class="token punctuation">,</span> S2_1<span class="token punctuation">,</span> S3_1<span class="token punctuation">,</span> S4_1<span class="token punctuation">;</span>
+<span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">67</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> C0_1<span class="token punctuation">,</span> C1_1<span class="token punctuation">,</span> C2_1<span class="token punctuation">,</span> C3_1<span class="token punctuation">,</span> C4_1<span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa1</span><span class="token punctuation">(</span>in0<span class="token punctuation">,</span> in1<span class="token operator">&lt;&lt;</span><span class="token number">2</span><span class="token punctuation">,</span> in2<span class="token operator">&lt;&lt;</span><span class="token number">4</span><span class="token punctuation">,</span> S0_1<span class="token punctuation">,</span> C0_1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa2</span><span class="token punctuation">(</span>in3<span class="token operator">&lt;&lt;</span><span class="token number">6</span><span class="token punctuation">,</span> in4<span class="token operator">&lt;&lt;</span><span class="token number">8</span><span class="token punctuation">,</span> in5<span class="token operator">&lt;&lt;</span><span class="token number">10</span><span class="token punctuation">,</span> S1_1<span class="token punctuation">,</span> C1_1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa3</span><span class="token punctuation">(</span>in6<span class="token operator">&lt;&lt;</span><span class="token number">12</span><span class="token punctuation">,</span> in7<span class="token operator">&lt;&lt;</span><span class="token number">14</span><span class="token punctuation">,</span> in8<span class="token operator">&lt;&lt;</span><span class="token number">16</span><span class="token punctuation">,</span> S2_1<span class="token punctuation">,</span> C2_1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa4</span><span class="token punctuation">(</span>in9<span class="token operator">&lt;&lt;</span><span class="token number">18</span><span class="token punctuation">,</span> in10<span class="token operator">&lt;&lt;</span><span class="token number">20</span><span class="token punctuation">,</span> in11<span class="token operator">&lt;&lt;</span><span class="token number">22</span><span class="token punctuation">,</span> S3_1<span class="token punctuation">,</span> C3_1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa5</span><span class="token punctuation">(</span>in12<span class="token operator">&lt;&lt;</span><span class="token number">24</span><span class="token punctuation">,</span> in13<span class="token operator">&lt;&lt;</span><span class="token number">26</span><span class="token punctuation">,</span> in14<span class="token operator">&lt;&lt;</span><span class="token number">28</span><span class="token punctuation">,</span> S4_1<span class="token punctuation">,</span> C4_1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">// phase 2</span>
+<span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">67</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> C0_2<span class="token punctuation">,</span> C1_2<span class="token punctuation">,</span> C2_2<span class="token punctuation">,</span> C3_2<span class="token punctuation">;</span>
+<span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">67</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> S0_2<span class="token punctuation">,</span> S1_2<span class="token punctuation">,</span> S2_2<span class="token punctuation">,</span> S3_2<span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa6</span><span class="token punctuation">(</span>S0_1<span class="token punctuation">,</span> S1_1<span class="token punctuation">,</span> S2_1<span class="token punctuation">,</span> S0_2<span class="token punctuation">,</span> C0_2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa7</span><span class="token punctuation">(</span>S3_1<span class="token punctuation">,</span> S4_1<span class="token punctuation">,</span> in15<span class="token operator">&lt;&lt;</span><span class="token number">30</span><span class="token punctuation">,</span> S1_2<span class="token punctuation">,</span> C1_2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa8</span><span class="token punctuation">(</span><span class="token punctuation">(</span>C0_1 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>C1_1 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>C2_1 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> S2_2<span class="token punctuation">,</span> C2_2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa9</span><span class="token punctuation">(</span><span class="token punctuation">(</span>C3_1 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>C4_1 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> in16<span class="token operator">&lt;&lt;</span><span class="token number">32</span><span class="token punctuation">,</span> S3_2<span class="token punctuation">,</span> C3_2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">// phase 3</span>
+<span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">67</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> S0_3<span class="token punctuation">,</span> C0_3<span class="token punctuation">;</span>
+<span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">67</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> S1_3<span class="token punctuation">,</span> C1_3<span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa10</span><span class="token punctuation">(</span>S0_2<span class="token punctuation">,</span> S1_2<span class="token punctuation">,</span> S2_2<span class="token punctuation">,</span> S0_3<span class="token punctuation">,</span> C0_3<span class="token punctuation">)</span><span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa11</span><span class="token punctuation">(</span>S3_2<span class="token punctuation">,</span> <span class="token punctuation">(</span>C0_2 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>C1_2 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> S1_3<span class="token punctuation">,</span> C1_3<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">// phase 4</span>
+<span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">67</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> S0_4<span class="token punctuation">,</span> C0_4<span class="token punctuation">;</span>
+<span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">67</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> S1_4<span class="token punctuation">,</span> C1_4<span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa12</span><span class="token punctuation">(</span>S0_3<span class="token punctuation">,</span> S1_3<span class="token punctuation">,</span> <span class="token punctuation">(</span>C0_3 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> S0_4<span class="token punctuation">,</span> C0_4<span class="token punctuation">)</span><span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa13</span><span class="token punctuation">(</span><span class="token punctuation">(</span>C2_2 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>C3_2 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>C1_3 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> S1_4<span class="token punctuation">,</span> C1_4<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">// phase 5</span>
+<span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">67</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> S0_5<span class="token punctuation">,</span> C0_5<span class="token punctuation">;</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa14</span><span class="token punctuation">(</span>S0_4<span class="token punctuation">,</span> S1_4<span class="token punctuation">,</span> <span class="token punctuation">(</span>C0_4 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> S0_5<span class="token punctuation">,</span> C0_5<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment" spellcheck="true">// phase 6</span>
+CSA #<span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token function">WIDTH</span><span class="token punctuation">(</span><span class="token number">68</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token function">csa15</span><span class="token punctuation">(</span>S0_5<span class="token punctuation">,</span> <span class="token punctuation">(</span>C0_5 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>C1_4 <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> S<span class="token punctuation">,</span> C<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">assign</span> OUT <span class="token operator">=</span> S <span class="token operator">+</span> <span class="token punctuation">(</span>C <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<h2 id="除法器设计"><a href="#除法器设计" class="headerlink" title="除法器设计"></a>除法器设计</h2><h2 id="乘除法器-接入流水线CPU"><a href="#乘除法器-接入流水线CPU" class="headerlink" title="乘除法器 接入流水线CPU"></a>乘除法器 接入流水线CPU</h2><p>乘除法器都是多个周期才出结果，因此，需要握手信号。当乘除法指令到执行阶段时，Div&#x2F;Mul模块发出stall信号，等待valid和ready信号握手，输出计算结果，撤销stall信号，继续执行后续指令。</p>
+<img src="/2024/022240394/image-20240222232209980.png" alt="image-20240222232209980" style="zoom:50%;">
 
                 
             </div>
@@ -408,7 +543,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://xiaoliu6688.github.io/2024/02077053.html">https://xiaoliu6688.github.io/2024/02077053.html</a>
+                    <a href="https://xiaoliu6688.github.io/2024/022240394.html">https://xiaoliu6688.github.io/2024/022240394.html</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -522,54 +657,18 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2024/021721611.html">
+                <a href="/2024/022240394.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="awk用法">
+                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="一生一芯-乘除法器设计">
                         
-                        <span class="card-title">awk用法</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-17
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            John Doe
-                            
-                        </span>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2024/020534087.html">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="低功耗设计">
-                        
-                        <span class="card-title">低功耗设计</span>
+                        <span class="card-title">一生一芯-乘除法器设计</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -580,7 +679,45 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-05
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-22
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            John Doe
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/022113792.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="一生一芯-Cache设计（二）">
+                        
+                        <span class="card-title">一生一芯-Cache设计（二）</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-21
                             </span>
                         <span class="publish-author">
                             

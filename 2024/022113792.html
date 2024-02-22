@@ -4,9 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="AXI协议, Hexo">
-    <meta name="description" content="AXI协议AXI3和AXI4的区别1. BurstAXI4对burst length进行了扩展AXI4支持最大256 beats，AxLEN位宽为8；AXI3最大支持burst 16 beats，AxLEN位宽为4；
-只有INCR burs">
+    <meta name="keywords" content="一生一芯-Cache设计（二）, Hexo">
+    <meta name="description" content="fence.i原因：store指令可能会对内存中的程序区进行修改，而icache可能看不到程序的修改，而读取错误的指令，导致程序运行错误。目的：为了解决数据与指令的一致性问题，即icache和dcache的一致性。当执行fence.i指令时">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>AXI协议 | Hexo</title>
+    <title>一生一芯-Cache设计（二） | Hexo</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -291,12 +290,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/17.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/9.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">AXI协议</h1>
+                    <h1 class="description center-align post-title">一生一芯-Cache设计（二）</h1>
                 </div>
             </div>
         </div>
@@ -332,7 +331,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2024-02-07
+                    2024-02-21
                 </div>
                 
 
@@ -341,7 +340,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    561
+                    495
                 </div>
                 
 
@@ -363,25 +362,50 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="AXI协议"><a href="#AXI协议" class="headerlink" title="AXI协议"></a>AXI协议</h3><h4 id="AXI3和AXI4的区别"><a href="#AXI3和AXI4的区别" class="headerlink" title="AXI3和AXI4的区别"></a>AXI3和AXI4的区别</h4><h5 id="1-Burst"><a href="#1-Burst" class="headerlink" title="1. Burst"></a>1. Burst</h5><p>AXI4对burst length进行了扩展<br>AXI4支持最大256 beats，AxLEN位宽为8；AXI3最大支持burst 16 beats，AxLEN位宽为4；</p>
-<p>只有INCR burst类型，才支持burst 超过16 beats</p>
-<p><img src="/2024/02077053/image-20240207000854573.png" alt="image-20240207000854573"></p>
-<p>实际使用中，很少使用burst超过16 beats的操作，因为长时间占用总线会影响系统性能。而且burst 一旦开始，无法停止。</p>
-<p>axi4协议规定 一次burst，最多传输256笔数据。</p>
-<h5 id="2-Write-interleaving"><a href="#2-Write-interleaving" class="headerlink" title="2. Write interleaving"></a>2. Write interleaving</h5><p>AXI4去掉了WID，不再支持写交织（write interleaving）。<br>这就限制了写入的数据必须和写入的地址顺序相同且连续。不同write burst的beat不可以相互交织。</p>
-<p>原因：发送端必须要缓存多个ID的wdata，不管是maser还是总线interconnection都必须要增加大量的缓存，所以增加了面积；另外，Write interleaving增加了系统总线设计的复杂度，而且很容易造成死锁，</p>
-<h5 id="3-Write-response-dependencies"><a href="#3-Write-response-dependencies" class="headerlink" title="3. Write response dependencies"></a>3. Write response dependencies</h5><p>修改了BVALID拉高的要求</p>
-<p>AXI3握手依赖</p>
-<p><img src="/2024/02077053/v2-0160a446a10236e56609b0bc7fcc541e_1440w.png" alt="img"></p>
-<p>AXI3必须等到了WVALID和WREADY后才能把BVALID置高来响应，也就是说只要收到了所有数据，SLAVE就可以发写响应。</p>
-<p>AXI4握手依赖</p>
-<p><img src="/2024/02077053/v2-12a2457485825157ceaaa25f358b7ae7_1440w.png" alt="img"></p>
-<p>​	AXI4规定，必须等到AWVALID,AWREADY,WVALID, WREADY, and WLAST 都为高(不是同一时刻都为高)后，SLAVE才能发BVALID进行写响应。也就是不仅仅要等数据通路，而且要等地址通路，并且明确了要等WLAST。这样能保证响应的时候Transaction是真正完成的</p>
-<h5 id="4-Locked-transactions"><a href="#4-Locked-transactions" class="headerlink" title="4. Locked transactions"></a>4. Locked transactions</h5><p>​	AXI4去掉了locked 传输。AxLOCK缩为2bit</p>
-<img src="/2024/02077053/v2-52896f5fa4a0dfe4c2c6a4a4645664a9_1440w.png" alt="img" style="zoom:67%;">
+                <h3 id="fence-i"><a href="#fence-i" class="headerlink" title="fence.i"></a>fence.i</h3><p>原因：store指令可能会对内存中的程序区进行修改，而icache可能看不到程序的修改，而读取错误的指令，导致程序运行错误。<br>目的：为了解决数据与指令的一致性问题，即icache和dcache的一致性。当执行fence.i指令时，fence之前的所有存储操作，io操作必须完成后，fence指令后面的指令才能访问内存。</p>
+<h4 id="实现方式："><a href="#实现方式：" class="headerlink" title="实现方式："></a>实现方式：</h4><p>译码阶段遇到fence.i指令，icache和dcache的具体操作：</p>
+<ol>
+<li>对icache中的cachemem进行刷新，完成初始化，保证后面的所有取指令操作都是从内存中获取。</li>
+<li>对dcache中cachemem的所有dirty置1的cacheline写到内存中，保证内存中代码区和数据区的一致性。</li>
+</ol>
+<h5 id="icache"><a href="#icache" class="headerlink" title="icache"></a>icache</h5><p>fence模块发出flash，stall和nop使能信号，将取指令的pc地址保持不变，将进入if阶段的fence指令通过nop冲刷掉，也就是说icache的cachemem一个周期就要完成冲刷。</p>
+<img src="/2024/022113792/image-20240222105149731.png" alt="image-20240222105149731" style="zoom:50%;">
 
-<p>​	Locked access作用的对象是总线，一旦发生Locked access，那么其他的master都不能使用总线了，在一个复杂的SOC系统中，Locked access对系统的影响就太大了，万一发生Locked access的master出点啥问题，整个系统就挂死了</p>
-<p>​	Exclusive access 作用的对象是对应的Slave，支持Exclusive access的Slave会在slave中实现一个Exclusive access monitor，如果monitor记录了能够访问的master，那么对应的master就能通过Exclusive access来访问，其他的未记录的Exclusive access就都不能访问。Exclusive access对总线系统是没有要求的，只是对slave做了特殊要求，即使出错也不会影响系统其他部分，最多访问失败而已。</p>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
+    flash <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>fence_i<span class="token punctuation">)</span>
+    flash <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>flash_done<span class="token punctuation">)</span>
+    flash <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token keyword">assign</span> stall <span class="token operator">=</span> flash <span class="token operator">|</span> fence_i<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> nop <span class="token operator">=</span> stall<span class="token punctuation">;</span>
+</code></pre>
+<h5 id="dcache"><a href="#dcache" class="headerlink" title="dcache"></a>dcache</h5><p>设置FLASH和FLASH_DONE状态，等待到fence.i指令流水到访存阶段，进入FLASH状态，遍历所有cacheline，将所有脏（dirty）块写到内存中；cachesize为2k，cacheline为8byte，设置axi_wlen为255，突发传输256 beats，通过wstrb决定是否将wdata写入内存。</p>
+<p>遍历结束后，wlast拉高，进入FLASH_DONE状态，拉高flash_done，pc重新从内存中取指令，流水线继续执行，完成了icache和dcache的一致性。</p>
+<img src="/2024/022113792/image-20240222112053777.png" alt="image-20240222112053777" style="zoom: 50%;">
+
+<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token keyword">case</span> <span class="token punctuation">(</span>state<span class="token punctuation">)</span>
+        IDLE <span class="token punctuation">:</span> next_state <span class="token operator">=</span> flash <span class="token operator">?</span> FLASH <span class="token punctuation">:</span>
+                            <span class="token punctuation">(</span><span class="token operator">!</span>hit <span class="token operator">&amp;&amp;</span> dirty <span class="token operator">&amp;&amp;</span> valid<span class="token punctuation">)</span> <span class="token operator">?</span> WRITEBACK <span class="token punctuation">:</span>
+                            <span class="token punctuation">(</span><span class="token operator">!</span>hit <span class="token operator">&amp;&amp;</span> valid<span class="token punctuation">)</span> <span class="token operator">?</span> RADDR <span class="token punctuation">:</span> IDLE<span class="token punctuation">;</span>
+        WRITEBACK <span class="token punctuation">:</span> next_state <span class="token operator">=</span> WADDR<span class="token punctuation">;</span>
+        ALLOCATE <span class="token punctuation">:</span> next_state <span class="token operator">=</span> IDLE<span class="token punctuation">;</span>
+        RADDR <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_arvalid <span class="token operator">&amp;&amp;</span> axi_arready<span class="token punctuation">)</span> next_state <span class="token operator">=</span> RDATA<span class="token punctuation">;</span>
+        RDATA <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_rvalid  <span class="token operator">&amp;&amp;</span> axi_rready <span class="token punctuation">)</span> next_state <span class="token operator">=</span> ALLOCATE<span class="token punctuation">;</span>
+        WADDR <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_awvalid <span class="token operator">&amp;&amp;</span> axi_awready<span class="token punctuation">)</span> next_state <span class="token operator">=</span> WDATA<span class="token punctuation">;</span>
+        WDATA <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_wvalid  <span class="token operator">&amp;&amp;</span> axi_wready <span class="token operator">&amp;&amp;</span> axi_wlast <span class="token punctuation">)</span> next_state <span class="token operator">=</span> WRESP<span class="token punctuation">;</span>
+        WRESP <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_bvalid  <span class="token operator">&amp;&amp;</span> axi_bready <span class="token punctuation">)</span> next_state <span class="token operator">=</span> flash_flag <span class="token operator">?</span> FLASH_DONE <span class="token punctuation">:</span> RADDR<span class="token punctuation">;</span>
+        FLASH <span class="token punctuation">:</span> next_state <span class="token operator">=</span> WADDR<span class="token punctuation">;</span>
+        FLASH_DONE <span class="token punctuation">:</span> next_state <span class="token operator">=</span> IDLE<span class="token punctuation">;</span>
+        <span class="token keyword">default</span> <span class="token punctuation">:</span> next_state <span class="token operator">=</span> IDLE<span class="token punctuation">;</span>
+    <span class="token keyword">endcase</span>
+<span class="token keyword">end</span>
+<span class="token keyword">assign</span> axi_wstrb  <span class="token operator">=</span> <span class="token punctuation">(</span>flash_flag<span class="token operator">&amp;</span>dirty<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">8'b11111111</span> <span class="token punctuation">:</span> <span class="token punctuation">(</span>flash_flag<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">8'b0000_0000</span> <span class="token punctuation">:</span> byte_enable<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> axi_wlast  <span class="token operator">=</span> <span class="token punctuation">(</span>state <span class="token operator">==</span> WDATA<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>flash_cnt <span class="token operator">==</span> CACHE_SIZE<span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token operator">!</span>flash_flag<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
 
                 
             </div>
@@ -408,7 +432,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://xiaoliu6688.github.io/2024/02077053.html">https://xiaoliu6688.github.io/2024/02077053.html</a>
+                    <a href="https://xiaoliu6688.github.io/2024/022113792.html">https://xiaoliu6688.github.io/2024/022113792.html</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -526,13 +550,13 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/021721611.html">
+                <a href="/2024/022240394.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="awk用法">
+                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="一生一芯-乘除法器设计">
                         
-                        <span class="card-title">awk用法</span>
+                        <span class="card-title">一生一芯-乘除法器设计</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -543,7 +567,7 @@
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-17
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-22
                         </span>
                         <span class="publish-author">
                             
@@ -563,13 +587,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/020534087.html">
+                <a href="/2024/022118538.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="低功耗设计">
+                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="分频器设计">
                         
-                        <span class="card-title">低功耗设计</span>
+                        <span class="card-title">分频器设计</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -580,7 +604,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-05
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-21
                             </span>
                         <span class="publish-author">
                             
