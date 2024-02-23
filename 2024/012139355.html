@@ -254,12 +254,25 @@ decap cell的插入
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/ICC/">
+                                <span class="chip bg-color">ICC</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/ASIC%E6%95%B0%E5%AD%97%E5%90%8E%E7%AB%AF%E6%B5%81%E7%A8%8B/" class="post-category">
+                                ASIC数字后端流程
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -277,7 +290,7 @@ decap cell的插入
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    824
+                    1.9k
                 </div>
                 
 
@@ -371,6 +384,106 @@ icc_tcl:  spread_zrt_wires / widen_zrt_wires
 </li>
 </ul>
 <p>​	placement后，执行<code>check_legality</code></p>
+<ul>
+<li>ICC 在导入网表后，没有tie cell是正常的，因为是在placement才加入tie cell；High Fanout Net也是正常的，还没有插入buffer进行优化。</li>
+</ul>
+<p><img src="/2024/012139355/image-20231224214002120.png" alt="image-20231224214002120"></p>
+<ul>
+<li>后端流程</li>
+</ul>
+<p><img src="/2024/012139355/image-20231224215828226.png" alt="image-20231224215828226"></p>
+<ul>
+<li>时序库 （*.lib， *db）表征的2个模型</li>
+</ul>
+<p>​	.NLDM (non linear delay model)，65nm 之前工艺 </p>
+<p>​	.CCS （composite current source）, 更精确，同时能描述crosstalk （信号干扰）的信息 </p>
+<ul>
+<li>max_transition &#x2F; input_transition</li>
+</ul>
+<p>​	一般来说，sdc中关于max_transition的值参考lib库中给定的transition值，尽量取中间范围。transition设置的过小也不好，会导致工具插入很多cell，增大了芯片的面积。</p>
+<p>​	解决措施：在DC和ICC时设置max_transition为0.4，在PT时设置0.6</p>
+<p><img src="/2024/012139355/3158545f6cb70988f94b0214218380a.jpg" alt="3158545f6cb70988f94b0214218380a"></p>
+<p>出现上述问题的原因是因为在做lvs时，网表与版图不匹配，可以将icc生成的网表导入到calibre里面做lvs。在icc pr后的网表中，在module里面并没有上述的Q端口，而是使用的Qn，接一个反相器输出的，这个是和版图对应的。</p>
+<p>CCS的lib中有 crosstalk的信息；</p>
+<p>物理信息库<br>     1. LEF(library exchange format): cadence 的物理信息库，只有布局布线要用到信息，pins…<br>     2. milkway：synopsys的物理库<br>     3. GDS：流片用的信息，所有的层次都有<br>     4. CDL：器件级spice网表，lvs和仿真</p>
+<p><img src="/2024/012139355/wps2.jpg" alt="img">（LEF GDS)</p>
+<p>DC在做综合的时候，把DRC的约束优先级设置为最高，依次是：max_capacitance,max_transition, max_fanout</p>
+<p>DC中报告的漏电功耗是准的，动态功耗不准。</p>
+<ul>
+<li><h4 id="Formality"><a href="#Formality" class="headerlink" title="Formality"></a><strong>Formality</strong></h4><p>只验证逻辑，不验证功能。比较的原理：formality将设计分为多个logic cone和compare point</p>
+<img src="/2024/012139355/image-20240102224954497.png" alt="image-20240102224954497" style="zoom: 80%;"></li>
+</ul>
+<p><img src="/2024/012139355/image-20240102225055027.png" alt="image-20240102225055027"></p>
+<ul>
+<li><p>DC和PT分析时序路径的不同</p>
+<p>DC</p>
+<ol>
+<li>过约束，留出一定的裕量给后续的步骤</li>
+<li>时钟网络的延迟的不准确的，一定设置为ideal clock network</li>
+<li>线延迟也是基于库中的wire load model估计出来的</li>
+<li>通常在单一PVT的corner进行的，比如wc</li>
+</ol>
+<p>ICC</p>
+<ol>
+<li>不需要过约束，根据实际的电路计算</li>
+<li>所有网络 clock，wire network均为实际的</li>
+<li>可以从版图中抽取RC寄生参数，计算net delay</li>
+<li>需要在多个PVT corner下验证</li>
+</ol>
+</li>
+<li><p>修复setup违例</p>
+<p>满足 Tskew + Tclk &gt; Tlogic + Tsetup + Tclk2q</p>
+<ol>
+<li>提高Tclk，降低频率</li>
+<li>减小Tlogic，优化组合逻辑，划分流水线</li>
+<li>减小Tclk2q，将HVT管换成LVT管子，速度变快</li>
+</ol>
+</li>
+<li><p>修复hold违例</p>
+<p>满足Tclk2q + Tlogic(min) &gt; Thold + Tskew</p>
+<ol>
+<li>增加组合逻辑延迟，插入buffer</li>
+<li>降低Tskew，甚至用负的skew</li>
+</ol>
+</li>
+</ul>
+<p>SDF：标准延迟格式的文件，描述了设计中的时序信息，包括net delay和cell delay，sdf文件可以直接用于后仿</p>
+<p>SPEF：标准寄生格式交换文件，提供具体的R和C参数，延时计算相对准确。</p>
+<p><img src="/2024/012139355/image-20240103100523201.png" alt="image-20240103100523201"></p>
+<p>在PT中设置clock约束时和DC的区别</p>
+<p><img src="/2024/012139355/image-20240103100716030.png" alt="image-20240103100716030"></p>
+<p><img src="/2024/012139355/image-20240103101023594.png" alt="image-20240103101023594"></p>
+<p>ECO是在post layout上进行的。</p>
+<p>PT自动进行ECO，PT工具主要通过resizing cells和插入buffer来完成ECO</p>
+<ul>
+<li><p>OCV</p>
+<p><strong>只在post layout进行分析。</strong></p>
+</li>
+<li><p>约束输入端口</p>
+<pre><code>set_drive_cell
+set_drive
+set_input_transition
+</code></pre>
+<p>这三条语句都是约束输入端口的，但是适用场景不同。</p>
+<ol>
+<li><p>set_drive_cell</p>
+<p>应用场景：Block level<br>从库中找一个cell来驱动这个模块的输入端口port，更贴近实际的情况。这种应用于模块级别的。</p>
+</li>
+<li><p>set_drive</p>
+<p>应用场景：Chip level<br>通过为输入端口指定电阻值的方法来为其定义外部驱动强度，典型的值是0.05，单位取工艺库中电阻的单位，一般为kΩ；该值越小表示驱动能力越大</p>
+</li>
+<li><p>set_input_transition</p>
+<p>应用场景：Chip level<br>为输入端口指定一个固定的transition时间，transition时间相对独立于当前设计中的电容。transition time越大，导致短路电流越大，功耗也越大。</p>
+</li>
+</ol>
+</li>
+<li><p><strong>课题组项目后端的细节处理</strong></p>
+<ol>
+<li>在版图布局中，由于SPI模块与数字芯片core的位置距离较远，需要对数字芯片CORE的输入端口进行约束，设置input_transition_time为0.5；并在SPI的输入端口添加模拟的buffer，提高驱动能力。</li>
+<li>在之前的芯片测试时，发现控制字的输入有问题，有时候需要SPI写入两次才能起作用。后来怀疑是SPI模块给到数字core的时钟信号走线太长，到core时候，clk的驱动就比较弱了。再后面的流片时，在数字core的clk输入端口加了buffer，解决了这个问题。</li>
+</ol>
+</li>
+</ul>
 
                 
             </div>
@@ -434,7 +547,11 @@ icc_tcl:  spread_zrt_wires / widen_zrt_wires
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/ICC/">
+                                    <span class="chip bg-color">ICC</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -503,11 +620,23 @@ icc_tcl:  spread_zrt_wires / widen_zrt_wires
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            RayBiiao
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                    数字前端
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+                        <span class="chip bg-color">基础知识</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -540,11 +669,23 @@ icc_tcl:  spread_zrt_wires / widen_zrt_wires
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            RayBiiao
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/ASIC%E6%95%B0%E5%AD%97%E5%90%8E%E7%AB%AF%E6%B5%81%E7%A8%8B/" class="post-category">
+                                    ASIC数字后端流程
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/StarRC/">
+                        <span class="chip bg-color">StarRC</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -720,7 +861,7 @@ icc_tcl:  spread_zrt_wires / widen_zrt_wires
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">18.4k</span>
+                        class="white-color">18.3k</span>
             
             
             

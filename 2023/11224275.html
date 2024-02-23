@@ -4,13 +4,14 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="数字开源EDA工具, RayBiiao">
-    <meta name="description" content="
-DigitalJS
+    <meta name="keywords" content="提高RTL仿真速度, RayBiiao">
+    <meta name="description" content="如何提高仿真器的效率了解仿真器的底层原理，合适的code style会节省仿真时间。
+仿真算法：
+基于时间的（spice仿真器）
+每个时间节点对所有元件都进行计算，效率低。
 
-支持网页版的综合。网址如下：
-https://digitaljs.tilk.eu/
-">
+基于事件的（Verilog XL，NC verilog）
+只有电">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -22,7 +23,7 @@ https://digitaljs.tilk.eu/
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>数字开源EDA工具 | RayBiiao</title>
+    <title>提高RTL仿真速度 | RayBiiao</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -230,12 +231,12 @@ https://digitaljs.tilk.eu/
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">数字开源EDA工具</h1>
+                    <h1 class="description center-align post-title">提高RTL仿真速度</h1>
                 </div>
             </div>
         </div>
@@ -259,8 +260,8 @@ https://digitaljs.tilk.eu/
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/verilog/">
-                                <span class="chip bg-color">verilog</span>
+                            <a href="/tags/%E4%BB%BF%E7%9C%9F%E5%99%A8%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+                                <span class="chip bg-color">仿真器底层原理</span>
                             </a>
                         
                     </div>
@@ -271,8 +272,8 @@ https://digitaljs.tilk.eu/
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/%E4%BB%BF%E7%9C%9F%E5%99%A8/" class="post-category">
-                                仿真器
+                            <a href="/categories/RTL%E4%BB%BF%E7%9C%9F/" class="post-category">
+                                RTL仿真
                             </a>
                         
                     </div>
@@ -293,7 +294,7 @@ https://digitaljs.tilk.eu/
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    17
+                    1.1k
                 </div>
                 
 
@@ -315,11 +316,155 @@ https://digitaljs.tilk.eu/
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <ul>
-<li>DigitalJS</li>
+                <h2 id="如何提高仿真器的效率"><a href="#如何提高仿真器的效率" class="headerlink" title="如何提高仿真器的效率"></a>如何提高仿真器的效率</h2><p>了解仿真器的底层原理，合适的code style会节省仿真时间。</p>
+<h4 id="仿真算法："><a href="#仿真算法：" class="headerlink" title="仿真算法："></a><strong>仿真算法：</strong></h4><ol>
+<li><p>基于时间的（spice仿真器）</p>
+<p>每个时间节点对所有元件都进行计算，效率低。</p>
+</li>
+<li><p>基于事件的（Verilog XL，NC verilog）</p>
+<p>只有电路发生变化时，才进行处理。效率高。</p>
+</li>
+<li><p>基于周期的（Verilator ）</p>
+<p>只在时钟边沿计算，不管时序，使用两值逻辑。仅适用于同步电路，效率高。比如CPU的仿真。</p>
+</li>
+</ol>
+<p>​	以下的测试都是基于Verilog-XL</p>
+<ul>
+<li><h4 id="case语句和多if-else-if语句"><a href="#case语句和多if-else-if语句" class="headerlink" title="case语句和多if else if语句"></a>case语句和多if else if语句</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// case                         // if else-if                    </span>
+<span class="token important">always @</span>（<span class="token operator">*</span>）<span class="token keyword">begin</span>                <span class="token important">always @</span>（<span class="token operator">*</span>）<span class="token keyword">begin</span>                
+    <span class="token function">case</span><span class="token punctuation">(</span>sel<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>                  <span class="token function">if</span><span class="token punctuation">(</span>sel <span class="token operator">==</span> <span class="token number">2'b00</span><span class="token punctuation">)</span>             
+        <span class="token number">2'b00</span><span class="token punctuation">:</span> out <span class="token operator">=</span> a<span class="token punctuation">;</span>                 out <span class="token operator">=</span> a<span class="token punctuation">;</span>                
+        <span class="token number">2'b01</span><span class="token punctuation">:</span> out <span class="token operator">=</span> b<span class="token punctuation">;</span>             <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>sel <span class="token operator">==</span> <span class="token number">2'b01</span><span class="token punctuation">)</span>             
+        <span class="token number">2'b10</span><span class="token punctuation">:</span> out <span class="token operator">=</span> c<span class="token punctuation">;</span>                 out <span class="token operator">=</span> b<span class="token punctuation">;</span>                
+        <span class="token number">2'b11</span><span class="token punctuation">:</span> out <span class="token operator">=</span> d<span class="token punctuation">;</span>             <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>sel <span class="token operator">==</span> <span class="token number">2'b10</span><span class="token punctuation">)</span>             
+        <span class="token keyword">default</span> <span class="token punctuation">:</span> out <span class="token operator">=</span> a<span class="token punctuation">;</span>              out <span class="token operator">=</span> c<span class="token punctuation">;</span>                
+    <span class="token keyword">endcase</span>                         <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>sel <span class="token operator">==</span> <span class="token number">2'b11</span><span class="token punctuation">)</span>             
+<span class="token keyword">end</span>                                     out <span class="token operator">=</span> d<span class="token punctuation">;</span>                
+                                   <span class="token keyword">end</span>      
+</code></pre>
+<p>测试案例：8选1数据选择器，</p>
+<p>仿真发现：基于case的多路选择器，CPU仿真时间更短。</p>
+</li>
+<li><h4 id="带有begin-end和不带begin-end"><a href="#带有begin-end和不带begin-end" class="headerlink" title="带有begin end和不带begin end"></a>带有begin end和不带begin end</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
+<span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span> c <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
+    <span class="token keyword">else</span>  c <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span> c <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
+    <span class="token keyword">else</span>  c <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
+</code></pre>
+</li>
 </ul>
-<p>支持网页版的综合。网址如下：</p>
-<p><a target="_blank" rel="noopener" href="https://digitaljs.tilk.eu/">https://digitaljs.tilk.eu/</a></p>
+<p>​		测试结果：nobegin表述的内存利用率和仿真时间要优一些。</p>
+<ul>
+<li><h4 id="define-和-parameters"><a href="#define-和-parameters" class="headerlink" title="&#96;define 和 parameters"></a>&#96;define 和 parameters</h4><img src="/2023/11224275/define1.jpg" alt="define&amp;parameters"></li>
+</ul>
+<p>​		parameters要更好一些。</p>
+<ul>
+<li><h4 id="always-group和nogroup"><a href="#always-group和nogroup" class="headerlink" title="always group和nogroup"></a>always group和nogroup</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        out1 <span class="token operator">&lt;=</span> a<span class="token punctuation">;</span>
+        out2 <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
+        out3 <span class="token operator">&lt;=</span> c<span class="token punctuation">;</span>
+        out4 <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> out1 <span class="token operator">&lt;=</span> a<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> out2 <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> out3 <span class="token operator">&lt;=</span> c<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> out4 <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+</code></pre>
+<p><img src="/2023/11224275/image-20231122100101428.png" alt="group&amp;nogroup"></p>
+<p>group的仿真时间明显缩短了。</p>
+</li>
+<li><p>verilog可综合</p>
+</li>
+</ul>
+<p>​	左移，右移逻辑的操作数，可以是常数，也可以是变量，都是可以综合的，综合结果不一样。 常数的操作数，综合 出来是一个定值，变量的操作数综合出来是一个mux。</p>
+<ul>
+<li>DC时综合的原语</li>
+</ul>
+<pre class=" language-tcl"><code class="language-tcl"><span class="token operator">/</span><span class="token operator">/</span> synopsys translate_off
+忽略该部分的代码，DC时不会进行转移。
+<span class="token operator">/</span><span class="token operator">/</span> synopsys translate_on
+忽略的部分在前仿时是可以发挥作用的，如果错误使用translate_off on语句，会导致前仿和后仿的结果不一致。
+</code></pre>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// 小心使用translate off on</span>
+ex<span class="token punctuation">.</span>带两个异步复位信号的D触发器
+一般的实现方式如下：
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst <span class="token keyword">or</span> <span class="token keyword">negedge</span> nset<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// asyn</span>
+        q <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nset<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// asyn</span>
+        q <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> 
+        q <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+这种方式会导致前仿和后仿出现细微的区别。极端测试向量如下：
+如果nrst和nset同时拉低，则结果输出为<span class="token number">0</span><span class="token punctuation">.</span>经过半个周期后，nrst拉高了，输出结果依然为<span class="token number">0</span><span class="token punctuation">.</span>因为<span class="token important">always</span>块是边沿敏感触发的，但是nset和nrst都是异步的，nset此时为<span class="token number">0</span>，q输出结果应该为<span class="token number">1</span>；计算结果与实际电路不符。
+解决办法：
+    加入translate on off语句。配合<span class="token keyword">force</span> 和 relase
+正确code如下：
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst <span class="token keyword">or</span> <span class="token keyword">negedge</span> nset<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// asyn</span>
+        q <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nset<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// asyn</span>
+        q <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> 
+        q <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token comment" spellcheck="true">// synopsys translate_off</span>
+<span class="token important">always @</span><span class="token punctuation">(</span>nrst <span class="token keyword">or</span> nset<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>nrst <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>nset<span class="token punctuation">)</span>   <span class="token keyword">force</span> q <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span>                <span class="token keyword">release</span> q<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token comment" spellcheck="true">// synopsys translate_on</span>
+该代码可以保证，在nrst撤离时，nset如果为<span class="token number">0</span>，q输出结果为<span class="token number">1</span>；这是在前仿时需要加入的特殊语句，并加上原语。在实际综合过程中，不会被综合。保证了前仿和实际流片的结果完全一致。
+
+在工艺库中，有时钟，异步复位和异步置数的端口，也就是说<span class="token important">always</span>块中的敏感列表，最多可以有三个。但是不能是同时<span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> clk。一个信号不能依赖两个边沿。
+</code></pre>
+<ul>
+<li><p>verilog调试</p>
+<p>bg：verilog中的参数可以用 &#96;define和parameter指定，这种方式必须要求我们在编译前修改好，编译后就不能再修改了。但是为了节省编译时间，可以使用 $test$plusargs和$value$plusargs来指定。</p>
+</li>
+</ul>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token constant">`timescale</span> <span class="token number">1</span>ns<span class="token operator">/</span><span class="token number">1</span>ps
+<span class="token keyword">module</span> tb<span class="token punctuation">;</span>
+<span class="token keyword">reg</span><span class="token punctuation">[</span><span class="token number">255</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> testname<span class="token punctuation">;</span>
+<span class="token keyword">initial</span> <span class="token keyword">begin</span>
+<span class="token property">$display</span><span class="token punctuation">(</span><span class="token string">"**********************RESULT IS BELOW*********************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">if</span><span class="token punctuation">(</span><span class="token property">$test</span><span class="token property">$plusargs</span><span class="token punctuation">(</span><span class="token string">"TAISHAN"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token property">$display</span><span class="token punctuation">(</span><span class="token string">"****************TAISHAN is selected******************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">else</span>
+<span class="token property">$display</span><span class="token punctuation">(</span><span class="token string">"**********************$test$plusargs FAIL**************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token property">$value</span><span class="token property">$plusargs</span><span class="token punctuation">(</span><span class="token string">"TESTNAME=%s"</span><span class="token punctuation">,</span> testname<span class="token punctuation">[</span><span class="token number">255</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> 
+ <span class="token keyword">begin</span> 
+ <span class="token property">$display</span><span class="token punctuation">(</span><span class="token string">"*****************Running test %0s.********************"</span><span class="token punctuation">,</span> testname<span class="token punctuation">)</span><span class="token punctuation">;</span> 
+ <span class="token keyword">end</span>
+ <span class="token keyword">else</span>
+ <span class="token property">$display</span><span class="token punctuation">(</span><span class="token string">"**********************$value$plusargs FAIL**************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token property">$finish</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token keyword">endmodule</span>
+
+使用方式：
+<span class="token number">1</span><span class="token punctuation">.</span>	simv
+<span class="token number">2</span><span class="token punctuation">.</span>	simv<span class="token operator">+</span>TATSHAN
+<span class="token number">3</span><span class="token punctuation">.</span>	simv<span class="token operator">+</span>TAISHAN<span class="token operator">+</span>TESTNAME<span class="token operator">=</span>HUASHAN
+</code></pre>
+<p>在仿真时，0时刻会执行一些系统函数，有些数据没有准备好，导致发生系统仿真错误，因此，可以在代码中初始化变量的值。</p>
+<p><img src="/2023/11224275/image-20240203213035815.png" alt="image-20240203213035815"></p>
+<p><img src="/2023/11224275/image-20240203213107944.png" alt="image-20240203213107944"></p>
 
                 
             </div>
@@ -336,7 +481,7 @@ https://digitaljs.tilk.eu/
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="/about" rel="external nofollow noreferrer">刘瑞彪</a>
+                    <a href="/about" rel="external nofollow noreferrer">RayBiiao</a>
                 </span>
             </div>
             <div class="reprint__type">
@@ -359,7 +504,7 @@ https://digitaljs.tilk.eu/
                     本博客所有文章除特別声明外，均采用
                     <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
                     许可协议。转载请注明来源
-                    <a href="/about" target="_blank">刘瑞彪</a>
+                    <a href="/about" target="_blank">RayBiiao</a>
                     !
                 </span>
             </div>
@@ -384,8 +529,8 @@ https://digitaljs.tilk.eu/
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/verilog/">
-                                    <span class="chip bg-color">verilog</span>
+                                <a href="/tags/%E4%BB%BF%E7%9C%9F%E5%99%A8%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+                                    <span class="chip bg-color">仿真器底层原理</span>
                                 </a>
                             
                         </div>
@@ -435,31 +580,31 @@ https://digitaljs.tilk.eu/
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/11224275.html">
+                <a href="/2023/112324934.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="如何提高仿真器的效率">
+                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="小谈case语句">
                         
-                        <span class="card-title">如何提高仿真器的效率</span>
+                        <span class="card-title">小谈case语句</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            了解仿真器的底层原理，合适的code style会节省仿真时间。
+                            verilog中case语法小结
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-11-22
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-11-23
                         </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E4%BB%BF%E7%9C%9F%E5%99%A8/" class="post-category">
-                                    仿真器
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                    数字前端
                                 </a>
                             
                             
@@ -469,8 +614,8 @@ https://digitaljs.tilk.eu/
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/verilog/">
-                        <span class="chip bg-color">verilog</span>
+                    <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+                        <span class="chip bg-color">基础知识</span>
                     </a>
                     
                 </div>
@@ -488,9 +633,9 @@ https://digitaljs.tilk.eu/
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="数字开源EDA工具">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="提高RTL仿真速度">
                         
-                        <span class="card-title">数字开源EDA工具</span>
+                        <span class="card-title">提高RTL仿真速度</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -507,8 +652,8 @@ https://digitaljs.tilk.eu/
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E4%BB%BF%E7%9C%9F%E5%99%A8/" class="post-category">
-                                    仿真器
+                            <a href="/categories/RTL%E4%BB%BF%E7%9C%9F/" class="post-category">
+                                    RTL仿真
                                 </a>
                             
                             
@@ -519,8 +664,8 @@ https://digitaljs.tilk.eu/
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/verilog/">
-                        <span class="chip bg-color">verilog</span>
+                    <a href="/tags/%E4%BB%BF%E7%9C%9F%E5%99%A8%E5%BA%95%E5%B1%82%E5%8E%9F%E7%90%86/">
+                        <span class="chip bg-color">仿真器底层原理</span>
                     </a>
                     
                 </div>
@@ -698,7 +843,7 @@ https://digitaljs.tilk.eu/
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">18.4k</span>
+                        class="white-color">18.3k</span>
             
             
             

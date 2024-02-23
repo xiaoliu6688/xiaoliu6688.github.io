@@ -257,12 +257,25 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/PT/">
+                                <span class="chip bg-color">PT</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/ASIC%E6%95%B0%E5%AD%97%E5%90%8E%E7%AB%AF%E6%B5%81%E7%A8%8B/" class="post-category">
+                                ASIC数字后端流程
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -308,13 +321,13 @@
 </li>
 </ul>
 <p>​	反标问题我们是看Pin to pin nets的反标，如果这一行的Not Annotated非0，那么就一定存在RC反标问题。	常见反标问题原因：</p>
-<pre><code>spef正确，但netlist错误
+<pre class=" language-tcl"><code class="language-tcl">spef正确，但netlist错误
 Netlist正确，spef错误
 </code></pre>
 <img src="/2024/011821871/image-20240118192337980.png" alt="image-20240118192337980" style="zoom: 50%;">
 
 <p>手修timing</p>
-<pre><code>size_cell U324 INVD8
+<pre class=" language-markdown"><code class="language-markdown">size_cell U324 INVD8
 </code></pre>
 <ul>
 <li><p>setup </p>
@@ -341,14 +354,14 @@ Netlist正确，spef错误
 <p>尽可能使用size_cell来修违例，而不用insert_buffer，因为RC是准确的，保证net delay是对的。</p>
 <p>如果想运行dmsa，那么在启动pt的时候，必须加上-mul选项启动多线程，不然是无法进行dmsa优化的。</p>
 <p>在icc中，摆放eco 的cell</p>
-<pre><code>source iccpt.tcl
-legalize_placement -eco -incremental 
-route_zrt_eco -utilize_dangling_wires true -reuse_existing_global_route true -open_net_driven true 
-save_mv_cel -as eco_routed 
+<pre class=" language-tcl"><code class="language-tcl"><span class="token keyword">source</span> iccpt.tcl
+legalize_placement <span class="token operator">-</span>eco <span class="token operator">-</span>incremental 
+route_zrt_eco <span class="token operator">-</span>utilize_dangling_wires true <span class="token operator">-</span>reuse_existing_global_route true <span class="token operator">-</span>open_net_driven true 
+save_mv_cel <span class="token operator">-</span>as eco_routed 
 </code></pre>
 <p>在ICC中打开mw_lib中的cell</p>
-<pre><code>source xxx.setup
-open_mw_lib ../../XXX.lib
+<pre class=" language-tcl"><code class="language-tcl"><span class="token keyword">source</span> xxx.setup
+open_mw_lib ..<span class="token operator">/</span>..<span class="token operator">/</span>XXX.lib
 open_mw_cell FMCW_DCORE_TOP
 </code></pre>
 <ul>
@@ -400,19 +413,19 @@ open_mw_cell FMCW_DCORE_TOP
 <p>pt吐出的sdf文件</p>
 <p><img src="/2024/011821871/image-20240127193134312.png" alt="image-20240127193134312"></p>
 <p>​	措施：在使用annotated函数时，指定max&#x2F;min延迟类型，其中max用于setup检查，min用于hold检查。</p>
-<pre><code>$sdf_annotate (
-“sdf_file”[, 
-“module_instance”] [,// 实例化
-“sdf_configfile”][,  // 一般缺省
-“sdf_logfile”][,	 // 指定vcs保存errors和warnings的log文件,(modelsim没有这个选项)
-“mtm_spec”] [,		// 指定延迟类型，MINIMUM(min), TYPICAL(typ),MAXIMUM(max)
-“scale_factors”][,  // 缩放因子，默认1:1:1
-“scale_type” 		// 指定缩放之前延迟值得来源,“FROM_TYPICAL”,“FROM_MIMINUM”, 			
-                    // “FROM_MAXIMUM&quot;和&quot;FROM_MTM” (default).
-// FROM_MINIMUX 选择SDF文件中mininum timing，组合逻辑的延时最小，侧重于hold time 的检查
-// FROM_TYPICAL 选择SDF文件中typical timing
-// FROM_MAXIMUM 选择SDF文件中maximum timing，组合逻辑的延时最大，侧重于setup time的检查
-]);
+<pre class=" language-tcl"><code class="language-tcl">$<span class="token variable">sdf_annotate</span> <span class="token punctuation">(</span>
+“sdf_file”<span class="token punctuation">[</span>, 
+“module_instance”<span class="token punctuation">]</span> <span class="token punctuation">[</span>,<span class="token operator">/</span><span class="token operator">/</span> 实例化
+“sdf_configfile”<span class="token punctuation">]</span><span class="token punctuation">[</span>,  <span class="token operator">/</span><span class="token operator">/</span> 一般缺省
+“sdf_logfile”<span class="token punctuation">]</span><span class="token punctuation">[</span>,	 <span class="token operator">/</span><span class="token operator">/</span> 指定vcs保存errors和warnings的log文件,<span class="token punctuation">(</span>modelsim没有这个选项<span class="token punctuation">)</span>
+“mtm_spec”<span class="token punctuation">]</span> <span class="token punctuation">[</span>,		<span class="token operator">/</span><span class="token operator">/</span> 指定延迟类型，MINIMUM<span class="token punctuation">(</span>min<span class="token punctuation">)</span>, TYPICAL<span class="token punctuation">(</span>typ<span class="token punctuation">)</span>,MAXIMUM<span class="token punctuation">(</span>max<span class="token punctuation">)</span>
+“scale_factors”<span class="token punctuation">]</span><span class="token punctuation">[</span>,  <span class="token operator">/</span><span class="token operator">/</span> 缩放因子，默认1:1:1
+“scale_type” 		<span class="token operator">/</span><span class="token operator">/</span> 指定缩放之前延迟值得来源,“FROM_TYPICAL”,“FROM_MIMINUM”, 			
+                    <span class="token operator">/</span><span class="token operator">/</span> “FROM_MAXIMUM<span class="token string">"和"</span>FROM_MTM” <span class="token punctuation">(</span>default<span class="token punctuation">)</span>.
+<span class="token operator">/</span><span class="token operator">/</span> FROM_MINIMUX 选择SDF文件中mininum timing，组合逻辑的延时最小，侧重于hold time 的检查
+<span class="token operator">/</span><span class="token operator">/</span> FROM_TYPICAL 选择SDF文件中typical timing
+<span class="token operator">/</span><span class="token operator">/</span> FROM_MAXIMUM 选择SDF文件中maximum timing，组合逻辑的延时最大，侧重于setup time的检查
+<span class="token punctuation">]</span><span class="token punctuation">)</span>;
 </code></pre>
 <ul>
 <li>在后仿过程中，需要care的点<ol>
@@ -492,7 +505,11 @@ open_mw_cell FMCW_DCORE_TOP
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/PT/">
+                                    <span class="chip bg-color">PT</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -561,11 +578,23 @@ open_mw_cell FMCW_DCORE_TOP
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            RayBiiao
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Linux%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-category">
+                                    Linux基础知识
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Tcl/">
+                        <span class="chip bg-color">Tcl</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -598,11 +627,23 @@ open_mw_cell FMCW_DCORE_TOP
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            RayBiiao
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                    数字前端
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+                        <span class="chip bg-color">基础知识</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -778,7 +819,7 @@ open_mw_cell FMCW_DCORE_TOP
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">18.4k</span>
+                        class="white-color">18.3k</span>
             
             
             
