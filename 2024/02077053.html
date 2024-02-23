@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="AXI协议, Hexo">
+    <meta name="keywords" content="AXI协议, 不积跬步无以至千里">
     <meta name="description" content="AXI协议AXI3和AXI4的区别1. BurstAXI4对burst length进行了扩展AXI4支持最大256 beats，AxLEN位宽为8；AXI3最大支持burst 16 beats，AxLEN位宽为4；
 只有INCR burs">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,7 +18,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>AXI协议 | Hexo</title>
+    <title>AXI协议 | 不积跬步无以至千里</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -65,7 +65,7 @@
                     
                     <img src="/medias/logo.png" class="logo-img" alt="LOGO">
                     
-                    <span class="logo-span">Hexo</span>
+                    <span class="logo-span">不积跬步无以至千里</span>
                 </a>
             </div>
             
@@ -147,7 +147,7 @@
         
         <img src="/medias/logo.png" class="logo-img circle responsive-img">
         
-        <div class="logo-name">Hexo</div>
+        <div class="logo-name">不积跬步无以至千里</div>
         <div class="logo-desc">
             
             Never really desperate, only the lost of the soul.
@@ -341,7 +341,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    561
+                    697
                 </div>
                 
 
@@ -382,6 +382,8 @@
 
 <p>​	Locked access作用的对象是总线，一旦发生Locked access，那么其他的master都不能使用总线了，在一个复杂的SOC系统中，Locked access对系统的影响就太大了，万一发生Locked access的master出点啥问题，整个系统就挂死了</p>
 <p>​	Exclusive access 作用的对象是对应的Slave，支持Exclusive access的Slave会在slave中实现一个Exclusive access monitor，如果monitor记录了能够访问的master，那么对应的master就能通过Exclusive access来访问，其他的未记录的Exclusive access就都不能访问。Exclusive access对总线系统是没有要求的，只是对slave做了特殊要求，即使出错也不会影响系统其他部分，最多访问失败而已。</p>
+<h4 id="窄传输"><a href="#窄传输" class="headerlink" title="窄传输"></a>窄传输</h4><p>当数据传输的位宽小于数据总线的位宽时，称为窄位宽传输。通常通过wstrb来控制哪些字节有效。<br>当从机自身限制或者其他客观条件时，比如从机每次只能接收1个字节数据，且不能缓冲多字节数据，<strong>主机就要进行窄传输。</strong>可以将传输数据都放在数据总线上，每次传输只需要改变wstrb即可。</p>
+<p>32位数据总线，wstrb为4bit；64位数据总线，wstrb是8bit。</p>
 
                 
             </div>
@@ -398,7 +400,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="/about" rel="external nofollow noreferrer">John Doe</a>
+                    <a href="/about" rel="external nofollow noreferrer">RayBiiao</a>
                 </span>
             </div>
             <div class="reprint__type">
@@ -421,7 +423,7 @@
                     本博客所有文章除特別声明外，均采用
                     <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
                     许可协议。转载请注明来源
-                    <a href="/about" target="_blank">John Doe</a>
+                    <a href="/about" target="_blank">RayBiiao</a>
                     !
                 </span>
             </div>
@@ -548,7 +550,7 @@
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
-                            John Doe
+                            RayBiiao
                             
                         </span>
                     </div>
@@ -585,7 +587,7 @@
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
-                            John Doe
+                            RayBiiao
                             
                         </span>
                     </div>
@@ -774,14 +776,14 @@
             
                 <span id="year">2023-2024</span>
             
-            <a href="/about" target="_blank">John Doe</a>
+            <a href="/about" target="_blank">RayBiiao</a>
             |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
             |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
             
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">17.1k</span>
+                        class="white-color">18.4k</span>
             
             
             

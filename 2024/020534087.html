@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="低功耗设计, Hexo">
+    <meta name="keywords" content="低功耗设计, 不积跬步无以至千里">
     <meta name="description" content="低功耗设计时钟频率的增加导致功耗的增加，温度升高带来大规模集成电路的散热问题，导致性能下降。
 功耗和能量是两个不同的概念。能量是一段时间内的消耗，而功率是瞬时的能量。
 
@@ -22,7 +22,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>低功耗设计 | Hexo</title>
+    <title>低功耗设计 | 不积跬步无以至千里</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -69,7 +69,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
                     
                     <img src="/medias/logo.png" class="logo-img" alt="LOGO">
                     
-                    <span class="logo-span">Hexo</span>
+                    <span class="logo-span">不积跬步无以至千里</span>
                 </a>
             </div>
             
@@ -151,7 +151,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
         
         <img src="/medias/logo.png" class="logo-img circle responsive-img">
         
-        <div class="logo-name">Hexo</div>
+        <div class="logo-name">不积跬步无以至千里</div>
         <div class="logo-desc">
             
             Never really desperate, only the lost of the soul.
@@ -345,7 +345,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.3k
+                    2k
                 </div>
                 
 
@@ -446,6 +446,57 @@ SOC芯片的功耗分为：动态功耗和静态功耗
 <li>Retention Cells</li>
 </ol>
 <p>​	Retention cell: 保留单元，一种能够在电源关闭的情况下，能保持内部状态的特殊单元。</p>
+<h4 id="在各设计抽象层次降低功耗"><a href="#在各设计抽象层次降低功耗" class="headerlink" title="在各设计抽象层次降低功耗"></a>在各设计抽象层次降低功耗</h4><p>层次越高对功耗降低越有效。</p>
+<img src="/2024/020534087/image-20240223093647968.png" alt="image-20240223093647968" style="zoom:50%;">
+
+<ul>
+<li><p>系统级</p>
+<p>通过合理划分软硬件的功能，可以有效降低功耗。<br>编写C程序时，可以考虑优化指令条数来编写C程序。<br>处理器的选择会对整体功耗产生明显的影响。对于特定的应用，可以使用协处理器或者专门的DSP处理数据。</p>
+</li>
+<li><p>体系结构级</p>
+<ol>
+<li><p>门控时钟技术</p>
+<p>常用的门控时钟单元 <strong>锁存器+与门</strong> （时序门控时钟）</p>
+<p>组合门控时钟如下所示</p>
+<img src="/2024/020534087/image-20240223111132118.png" alt="image-20240223111132118" style="zoom: 50%;">
+
+<p>对于输入的时钟信号是组合逻辑产生的，所以称为组合门控时钟，缺点是容易产生毛刺。</p>
+<p>时序门控时钟如下所示</p>
+<img src="/2024/020534087/image-20240223111242133.png" alt="image-20240223111242133" style="zoom:50%;">
+
+<p>时钟使能信号经过寄存器或者锁存器，再与时钟信号做 <strong>与</strong>，称为时序门控时钟，没有毛刺产生。</p>
+</li>
+<li><p>动态电压频率调节 DVFS</p>
+<p>本质：牺牲性能，降低功耗。<br>P&#x3D;V^2 * CL*f，电压与功耗成平方关系，根据特定情况选择电压和频率，可以大大降低功耗。</p>
+</li>
+<li><p>基于缓存的系统体系架构</p>
+<p>缓存的意义：某些场景需要频繁访问存储器，可以设置缓存，提高访问速度。同时，也大大降低了功耗。（牺牲了硬件成本和面积）</p>
+</li>
+<li><p>多阈值电压</p>
+<p>需要工艺库提供相同电压，不同阈值的cell。在满足时序要求下，提高Vt，降低功耗，但是面积也会相应增加。</p>
+</li>
+<li><p>多电压域</p>
+<p>不同模块根据不同需求，采用不同电压。需要工艺库中提供特殊的电压转化cell。</p>
+</li>
+</ol>
+</li>
+<li><p>寄存器传输级 （RTL实现）</p>
+<ol>
+<li><p>状态机编码和解码</p>
+<p>格雷码最合适低功耗设计，相邻状态跳变，只有1bit信号发生翻转，并且降低了产生毛刺的概率。降低功耗。</p>
+</li>
+<li><p>多路选择器采用独热码</p>
+<p>如果mux的输入是多位总线，会产生明显的开关过程，产生功耗。如果按照独热码方式，在初始的时候就可以mask一些未选中的总线，起到了降低功耗作用。</p>
+</li>
+<li><p>资源共享</p>
+<p>优化组合逻辑，共用相同的逻辑，减小不必要的计算，降低功耗。</p>
+</li>
+</ol>
+</li>
+<li><p>寄存器级</p>
+<p>通过优化物理版图、MOS管结构降低功耗。</p>
+</li>
+</ul>
 
                 
             </div>
@@ -462,7 +513,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="/about" rel="external nofollow noreferrer">John Doe</a>
+                    <a href="/about" rel="external nofollow noreferrer">RayBiiao</a>
                 </span>
             </div>
             <div class="reprint__type">
@@ -485,7 +536,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
                     本博客所有文章除特別声明外，均采用
                     <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
                     许可协议。转载请注明来源
-                    <a href="/about" target="_blank">John Doe</a>
+                    <a href="/about" target="_blank">RayBiiao</a>
                     !
                 </span>
             </div>
@@ -612,7 +663,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
-                            John Doe
+                            RayBiiao
                             
                         </span>
                     </div>
@@ -649,7 +700,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
-                            John Doe
+                            RayBiiao
                             
                         </span>
                     </div>
@@ -838,14 +889,14 @@ SOC芯片的功耗分为：动态功耗和静态功耗
             
                 <span id="year">2023-2024</span>
             
-            <a href="/about" target="_blank">John Doe</a>
+            <a href="/about" target="_blank">RayBiiao</a>
             |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
             |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
             
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">17.1k</span>
+                        class="white-color">18.4k</span>
             
             
             
