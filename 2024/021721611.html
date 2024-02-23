@@ -296,7 +296,7 @@ EN">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    470
+                    464
                 </div>
                 
 
@@ -319,7 +319,7 @@ EN">
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <h3 id="Awk处理文本数据"><a href="#Awk处理文本数据" class="headerlink" title="Awk处理文本数据"></a><strong>Awk处理文本数据</strong></h3><p>格式：</p>
-<pre><code>awk [选项] ‘匹配规则和处理规则’  [处理文本路径]
+<pre class=" language-bash"><code class="language-bash"><span class="token function">awk</span> <span class="token punctuation">[</span>选项<span class="token punctuation">]</span> ‘匹配规则和处理规则’  <span class="token punctuation">[</span>处理文本路径<span class="token punctuation">]</span>
 </code></pre>
 <ul>
 <li><p>处理规则：</p>
@@ -346,42 +346,42 @@ NF: 总字段数
 FS：输入字段分隔符，默认空格
 OFS：输出字段分隔符
 </code></pre>
-<pre><code>awk -F: &#39;&#123;if(NR &gt; 7)&#123;print NR,$0&#125;&#125;&#39; /etc/passwd
-== awk -F: &#39;NR &gt; 7 &#123;print NR,$0&#125;&#39; /etc/passwd
+<pre class=" language-bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'&amp;#123;if(NR > 7)&amp;#123;print NR,<span class="token variable">$0</span>&amp;#125;&amp;#125;'</span> /etc/passwd
+<span class="token operator">==</span> <span class="token function">awk</span> -F: <span class="token string">'NR > 7 &amp;#123;print NR,<span class="token variable">$0</span>&amp;#125;'</span> /etc/passwd
 // 输出第7行之后的内容
 
-指定&#39;,&#39;作为分隔符，-F&#39;,&#39;
--F:  ：表示以&#39;:&#39;作为分隔符
-awk -F&#39;:&#39; &#39;BEGIN&#123;FS=&quot;,&quot;&#125;&#123;print $1,$2&#125;&#39; 
+指定<span class="token string">','</span>作为分隔符，-F<span class="token string">','</span>
+-F:  ：表示以<span class="token string">':'</span>作为分隔符
+<span class="token function">awk</span> -F<span class="token string">':'</span> <span class="token string">'BEGIN&amp;#123;FS=","&amp;#125;&amp;#123;print <span class="token variable">$1</span>,<span class="token variable">$2</span>&amp;#125;'</span> 
 FS的优先级大于-F指定的
 
 输出指定分隔符
-awk -F&#39;:&#39; &#39;BEGIN&#123;OFS=&quot; &gt;&gt;&gt; &quot;&#125;&#123;print $1,$2&#125;&#39;
+<span class="token function">awk</span> -F<span class="token string">':'</span> <span class="token string">'BEGIN&amp;#123;OFS=" >>> "&amp;#125;&amp;#123;print <span class="token variable">$1</span>,<span class="token variable">$2</span>&amp;#125;'</span>
 </code></pre>
 <ul>
 <li><strong>正则表达式</strong></li>
 </ul>
-<pre><code>awk -F: &#39;/^xxx/&#39; /etc/passwd
+<pre class=" language-bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'/^xxx/'</span> /etc/passwd
 </code></pre>
 <ul>
 <li>条件模式</li>
 </ul>
-<pre><code>awk -F: &#39;NR &gt; 7&#39; /etc/passwd
+<pre class=" language-bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'NR > 7'</span> /etc/passwd
 </code></pre>
 <ul>
 <li>算数运算</li>
 </ul>
-<pre><code>awk -F: &#39;&#123;print $1,$2+1&#125;&#39;
+<pre class=" language-bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'&amp;#123;print <span class="token variable">$1</span>,<span class="token variable">$2</span>+1&amp;#125;'</span>
 </code></pre>
 <ul>
 <li>if判断</li>
 </ul>
-<pre><code>单分支：
-    if()&#123;&#125;
+<pre class=" language-bash"><code class="language-bash">单分支：
+    if<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;&amp;#125;</span>
 双分支：
-    if()&#123;&#125; else &#123;&#125;
+    if<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;&amp;#125; else &amp;#123;&amp;#125;</span>
 多分支：
-    if()&#123;&#125; else if()&#123;&#125; else &#123;&#125;
+    if<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;&amp;#125; else if()&amp;#123;&amp;#125; else &amp;#123;&amp;#125;</span>
 </code></pre>
 
                 

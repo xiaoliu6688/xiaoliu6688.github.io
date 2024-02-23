@@ -313,20 +313,20 @@
             <div id="articleContent">
                 <h3 id="AXI协议"><a href="#AXI协议" class="headerlink" title="AXI协议"></a>AXI协议</h3><h4 id="AXI3和AXI4的区别"><a href="#AXI3和AXI4的区别" class="headerlink" title="AXI3和AXI4的区别"></a>AXI3和AXI4的区别</h4><h5 id="1-Burst"><a href="#1-Burst" class="headerlink" title="1. Burst"></a>1. Burst</h5><p>AXI4对burst length进行了扩展<br>AXI4支持最大256 beats，AxLEN位宽为8；AXI3最大支持burst 16 beats，AxLEN位宽为4；</p>
 <p>只有INCR burst类型，才支持burst 超过16 beats</p>
-<p><img src="/2024/02077053/image-20240207000854573.png" alt="image-20240207000854573"></p>
+<p><img src="/2024/02077053/image-20240207000854573.png"></p>
 <p>实际使用中，很少使用burst超过16 beats的操作，因为长时间占用总线会影响系统性能。而且burst 一旦开始，无法停止。</p>
 <p>axi4协议规定 一次burst，最多传输256笔数据。</p>
 <h5 id="2-Write-interleaving"><a href="#2-Write-interleaving" class="headerlink" title="2. Write interleaving"></a>2. Write interleaving</h5><p>AXI4去掉了WID，不再支持写交织（write interleaving）。<br>这就限制了写入的数据必须和写入的地址顺序相同且连续。不同write burst的beat不可以相互交织。</p>
 <p>原因：发送端必须要缓存多个ID的wdata，不管是maser还是总线interconnection都必须要增加大量的缓存，所以增加了面积；另外，Write interleaving增加了系统总线设计的复杂度，而且很容易造成死锁，</p>
 <h5 id="3-Write-response-dependencies"><a href="#3-Write-response-dependencies" class="headerlink" title="3. Write response dependencies"></a>3. Write response dependencies</h5><p>修改了BVALID拉高的要求</p>
 <p>AXI3握手依赖</p>
-<p><img src="/2024/02077053/v2-0160a446a10236e56609b0bc7fcc541e_1440w.png" alt="img"></p>
+<p><img src="/2024/02077053/v2-0160a446a10236e56609b0bc7fcc541e_1440w.png"></p>
 <p>AXI3必须等到了WVALID和WREADY后才能把BVALID置高来响应，也就是说只要收到了所有数据，SLAVE就可以发写响应。</p>
 <p>AXI4握手依赖</p>
-<p><img src="/2024/02077053/v2-12a2457485825157ceaaa25f358b7ae7_1440w.png" alt="img"></p>
+<p><img src="/2024/02077053/v2-12a2457485825157ceaaa25f358b7ae7_1440w.png"></p>
 <p>​	AXI4规定，必须等到AWVALID,AWREADY,WVALID, WREADY, and WLAST 都为高(不是同一时刻都为高)后，SLAVE才能发BVALID进行写响应。也就是不仅仅要等数据通路，而且要等地址通路，并且明确了要等WLAST。这样能保证响应的时候Transaction是真正完成的</p>
 <h5 id="4-Locked-transactions"><a href="#4-Locked-transactions" class="headerlink" title="4. Locked transactions"></a>4. Locked transactions</h5><p>​	AXI4去掉了locked 传输。AxLOCK缩为2bit</p>
-<img src="/2024/02077053/v2-52896f5fa4a0dfe4c2c6a4a4645664a9_1440w.png" alt="img" style="zoom:67%;">
+<img src="/2024/02077053/v2-52896f5fa4a0dfe4c2c6a4a4645664a9_1440w.png" alt style="zoom:67%;">
 
 <p>​	Locked access作用的对象是总线，一旦发生Locked access，那么其他的master都不能使用总线了，在一个复杂的SOC系统中，Locked access对系统的影响就太大了，万一发生Locked access的master出点啥问题，整个系统就挂死了</p>
 <p>​	Exclusive access 作用的对象是对应的Slave，支持Exclusive access的Slave会在slave中实现一个Exclusive access monitor，如果monitor记录了能够访问的master，那么对应的master就能通过Exclusive access来访问，其他的未记录的Exclusive access就都不能访问。Exclusive access对总线系统是没有要求的，只是对slave做了特殊要求，即使出错也不会影响系统其他部分，最多访问失败而已。</p>

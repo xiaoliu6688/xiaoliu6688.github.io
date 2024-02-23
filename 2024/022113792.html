@@ -317,7 +317,7 @@
 <li>对dcache中cachemem的所有dirty置1的cacheline写到内存中，保证内存中代码区和数据区的一致性。</li>
 </ol>
 <h5 id="icache"><a href="#icache" class="headerlink" title="icache"></a>icache</h5><p>fence模块发出flash，stall和nop使能信号，将取指令的pc地址保持不变，将进入if阶段的fence指令通过nop冲刷掉，也就是说icache的cachemem一个周期就要完成冲刷。</p>
-<img src="/2024/022113792/image-20240222105149731.png" alt="image-20240222105149731" style="zoom:50%;">
+<img src="/2024/022113792/image-20240222105149731.png" alt style="zoom:50%;">
 
 <pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
   <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
@@ -332,7 +332,7 @@
 </code></pre>
 <h5 id="dcache"><a href="#dcache" class="headerlink" title="dcache"></a>dcache</h5><p>设置FLASH和FLASH_DONE状态，等待到fence.i指令流水到访存阶段，进入FLASH状态，遍历所有cacheline，将所有脏（dirty）块写到内存中；cachesize为2k，cacheline为8byte，设置axi_wlen为255，突发传输256 beats，通过wstrb决定是否将wdata写入内存。</p>
 <p>遍历结束后，wlast拉高，进入FLASH_DONE状态，拉高flash_done，pc重新从内存中取指令，流水线继续执行，完成了icache和dcache的一致性。</p>
-<img src="/2024/022113792/image-20240222112053777.png" alt="image-20240222112053777" style="zoom: 50%;">
+<img src="/2024/022113792/image-20240222112053777.png" alt style="zoom: 50%;">
 
 <pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token keyword">case</span> <span class="token punctuation">(</span>state<span class="token punctuation">)</span>

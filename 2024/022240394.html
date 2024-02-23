@@ -411,18 +411,18 @@
 </ul>
 <p>基本思想：将3个加数和减少为2个加数的和，将进位C和结果S分别计算保存，每个比特可以独立计算C和S，速度极快，一位的全加器相当于进位保留加法器 &#x3D;&gt; 3:2 压缩器。</p>
 <p>比如一个算式如：Sum &#x3D; A + B + C + D，可以设计N bit的CAS结构，将多个数合并，经过两级CSA，最后将进位C[N-1:0]和Sum[N-1:0]通过一个加法器相加（<strong>注意将进位传给下面的CAS计算时，需要将C左移一位</strong>），得到最终结果。</p>
-<img src="/2024/022240394/2.8_walloc_tree.4b50192e.png" alt="image" style="zoom: 67%;">
+<img src="/2024/022240394/2.8_walloc_tree.4b50192e.png" alt style="zoom: 67%;">
 
 <p>上图是17bit的华莱士树，因为进位和输出结果都是同一个方向的，所以可以在每层之间插入寄存器打拍，提高主频。</p>
 <p>相同bit的华莱士树有多种实现方式，如下图所示</p>
 <img src="/2024/022240394/WORONG_exaxple of walllace tree.png" alt="两种错误的8个数相加的一位华莱士树" style="zoom: 33%;">
 
 <p>完成的功能相同，但是两者之间存在区别。<strong>关键点在于延迟</strong>，假设每个CSA部件的延迟为1，左面结构的结果延迟为5，右面为4。左面结构插入寄存器时，就会导致结果错误。</p>
-<img src="/2024/022240394/image-20230811215003860.png" alt="image-20230811215003860" style="zoom: 33%;">
+<img src="/2024/022240394/image-20230811215003860.png" alt style="zoom: 33%;">
 
 <p>在设计华莱士树时，<strong>保证华莱士树的数据流是单向的，不会在该层之前进行操作，比如左图的进位C3，导致整个数据流发生了交叠</strong>。</p>
 <h3 id="Booth算法×华莱士树算法"><a href="#Booth算法×华莱士树算法" class="headerlink" title="Booth算法×华莱士树算法"></a>Booth算法×华莱士树算法</h3><p>32位的乘法器结构如下，其中Switch模块完成将booth模块输出的结果打一拍，避免组合逻辑的延迟较长。</p>
-<img src="/2024/022240394/image-20240222231842246.png" alt="image-20240222231842246" style="zoom: 33%;">
+<img src="/2024/022240394/image-20240222231842246.png" alt style="zoom: 33%;">
 
 <p>其中，booth输出的部分积，需要进行移位加才能进入到CSA模块中。代码如下</p>
 <pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// phase 1</span>
@@ -467,7 +467,7 @@ CSA #<span class="token punctuation">(</span><span class="token punctuation">.</
 <p>简单的迭代除法是 <strong>试商法</strong>，迭代过程中，如果不够减，商0，根据是否恢复余数，分为恢复余数法（循环减法）、不恢复余数法（加减交替）。</p>
 <p><strong>区别</strong>：逐位计算商的时候，不够减商0；如果是恢复余数算法，需要将余数加上除数；如果是不恢复余数算法，不需要加上余数，在下个周期时加上除数。</p>
 <h3 id="恢复余数法"><a href="#恢复余数法" class="headerlink" title="恢复余数法"></a>恢复余数法</h3><p>64bit 绝对值 恢复余数除法运算结构如下</p>
-<img src="/2024/022240394/image-20240223154401784.png" alt="image-20240223154401784" style="zoom:50%;">
+<img src="/2024/022240394/image-20240223154401784.png" alt style="zoom:50%;">
 
 <p>优点：面积小，节省资源。缺点：速度慢</p>
 <p>计算过程：被除数前面补64个0，记为A，除数为B，每个周期执行减法运算，判断ALU输出的符号，如果为负，寄存器A左移1bit且右面补0，不需要将ALU结果写入寄存器A；如果为正，寄存器A左移1bit，右面补1，将ALU计算结果写入寄存器A的高64位；以此类推，经过64个周期，从寄存器A中得到商和余数。最终，根据是否是 有符号计算，对输出结果进行处理。</p>
@@ -526,7 +526,7 @@ CSA #<span class="token punctuation">(</span><span class="token punctuation">.</
                         <span class="token punctuation">:</span> remainder_t<span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//最后一次余数作为最终的余数</span>
 </code></pre>
 <h2 id="乘除法器-接入流水线CPU"><a href="#乘除法器-接入流水线CPU" class="headerlink" title="乘除法器 接入流水线CPU"></a>乘除法器 接入流水线CPU</h2><p>乘除法器都是多个周期才出结果，因此，需要握手信号。当乘除法指令到执行阶段时，Div&#x2F;Mul模块发出stall信号，等待valid和ready信号握手，输出计算结果，撤销stall信号，继续执行后续指令。</p>
-<img src="/2024/022240394/image-20240222232209980.png" alt="image-20240222232209980" style="zoom:50%;">
+<img src="/2024/022240394/image-20240222232209980.png" alt style="zoom:50%;">
 
                 
             </div>

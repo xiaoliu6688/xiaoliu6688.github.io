@@ -328,9 +328,9 @@
 </ul>
 </li>
 </ul>
-<img src="/2024/012448005/640.png" alt="img" style="zoom:50%;">
+<img src="/2024/012448005/640.png" alt style="zoom:50%;">
 
-<img src="/2024/012448005/640-1706455914012-3.png" alt="img" style="zoom:50%;">
+<img src="/2024/012448005/640-1706455914012-3.png" alt style="zoom:50%;">
 
 <ul>
 <li><p>面积优化策略</p>
@@ -338,7 +338,7 @@
 </li>
 <li><p>表达式位宽</p>
 <p>利用中间值，使得结果没有歧义，比如乘法的结果是a+b的位宽之和，$unsigned(a*b)的位宽是a&#x2F;b中最大的一个，与z的定义不同。</p>
-<p><img src="/2024/012448005/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzIxODQyMDk3,size_16,color_FFFFFF,t_70.png" alt="img"></p>
+<p><img src="/2024/012448005/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzIxODQyMDk3,size_16,color_FFFFFF,t_70.png"></p>
 </li>
 <li><p>有符号数的部分选择</p>
 </li>
@@ -348,14 +348,14 @@
 <ul>
 <li><p>有符号数运算</p>
 <p>如果是有符号数的运算，在定义时使用signed声明比较好，而不是用无符号数模拟有符号数，这样综合得到的电路更好。但是如果运算中既有无符号数，又有有符号数，结果就是无符号数的计算。</p>
-<p><img src="/2024/012448005/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzIxODQyMDk3,size_16,color_FFFFFF,t_70-1706971897728-3.png" alt="img"></p>
+<p><img src="/2024/012448005/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzIxODQyMDk3,size_16,color_FFFFFF,t_70-1706971897728-3.png"></p>
 </li>
 <li><p>条件完备的case是没有优先级的，条件不完备是有优先级的。</p>
 </li>
 </ul>
 <h3 id="大小端对齐"><a href="#大小端对齐" class="headerlink" title="大小端对齐"></a>大小端对齐</h3><p>大端对齐：MSB最高有效字节在内存中对应低地址；（高地址对应高位数据）<br>小端对齐：MSB最高有效字节在内存中对应高地址；地址偏移量和字节数是一一对应的关系；（低地址对应低位数据）</p>
 <p>eg. 对于16进制数据0x12345678在内存中的保存方式</p>
-<p><img src="/2024/012448005/image-20240221225921219.png" alt="image-20240221225921219"></p>
+<p><img src="/2024/012448005/image-20240221225921219.png"></p>
 <p>优点：大端模式，很容易通过访问最低位地址，判断数值的正负。</p>
 <h3 id="亚稳态问题"><a href="#亚稳态问题" class="headerlink" title="亚稳态问题"></a>亚稳态问题</h3><p>当数据不满足建立setup和保持hold时间时，会出现亚稳态问题。<br>解决办法（单bit）：1. 多级同步器 2. 时钟倍频电路的多级同步器<br>方法1需要较长时间去响应异步输入，解决办法：使用倍频时钟作为两个同步器的时钟输入。（Altera的FPGA中具有这项称为时钟倍频的技术，减小异步信号输入的延迟）</p>
 <img src="/2024/012448005/image-20240219205135401.png" alt="时钟倍频电路的多级同步器" style="zoom:50%;">
@@ -381,10 +381,10 @@
 </code></pre>
 </li>
 </ul>
-<img src="/2024/012448005/image-20240219225204769.png" alt="image-20240219225204769" style="zoom:50%;">
+<img src="/2024/012448005/image-20240219225204769.png" alt style="zoom:50%;">
 
 <p>​	某些FPGA架构不支持锁存器，在综合时会将锁存器综合成 带有反馈的组合逻辑实现。</p>
-<img src="/2024/012448005/image-20240219225414951.png" alt="image-20240219225414951" style="zoom: 50%;">
+<img src="/2024/012448005/image-20240219225414951.png" alt style="zoom: 50%;">
 
 <p>​	<strong>虽然该结构有锁存数据的能力，但是可能会违背建立时间和保持时间的要求，跟带电平触发的锁存器是不一样的。在设计中不应包含任何组合逻辑环路</strong>。<br>​	锁存器并不是不能存在的，可以用来挪用周期或借用时间来满足关键路径的要求。（time borrowing)</p>
 <ul>
@@ -394,22 +394,22 @@
 <ul>
 <li><p>门控时钟和时钟使能技术</p>
 <p>门控时钟：当门控关闭后，时钟网络和内部的组合逻辑停止翻转，减小功耗。</p>
-<img src="/2024/012448005/image-20240220103515514.png" alt="image-20240220103515514" style="zoom:67%;"></li>
+<img src="/2024/012448005/image-20240220103515514.png" alt style="zoom:67%;"></li>
 </ul>
 <p>​	同步时钟使能：以同步的方式，将输出拉死，并没有关闭时钟，而是将寄存器的输出保持不变，无法降低功耗。</p>
-<img src="/2024/012448005/image-20240220103631732.png" alt="image-20240220103631732" style="zoom:67%;">
+<img src="/2024/012448005/image-20240220103631732.png" alt style="zoom:67%;">
 
 <ul>
 <li><p>门控时钟电路</p>
 <p><strong>不带锁存器的门控时钟</strong>，使用“与”门 或者 “或”门实现。</p>
-<img src="/2024/012448005/image-20240220104808503.png" alt="image-20240220104808503" style="zoom:50%;"></li>
+<img src="/2024/012448005/image-20240220104808503.png" alt style="zoom:50%;"></li>
 </ul>
 <p>​	存在问题：en和clk是完全异步的，使得时钟输出畸形；</p>
-<img src="/2024/012448005/image-20240220104905125.png" alt="image-20240220104905125" style="zoom:50%;">
+<img src="/2024/012448005/image-20240220104905125.png" alt style="zoom:50%;">
 
 <p>​	<strong>带锁存器的门控时钟</strong></p>
 <p>​	为了防止高电平被意外截断，需要使用锁存器保证 在CLK为1时，即使EN拉低，GATED_CLK输出保持不变。所以需要负锁存器，在CLK拉低时，对EN进行采样，CLK拉高时锁存器的输出不变。这样可以得到完整的时钟波形</p>
-<img src="/2024/012448005/image-20240220105432984.png" alt="image-20240220105432984" style="zoom: 50%;">
+<img src="/2024/012448005/image-20240220105432984.png" alt style="zoom: 50%;">
 
 <p><strong>使用锁存器而不使用寄存器的原因：节省面积，一个DFF需要两个锁存器，而且还能降低功耗</strong></p>
 

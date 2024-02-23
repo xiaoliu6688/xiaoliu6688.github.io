@@ -324,7 +324,7 @@
 <pre class=" language-tcl"><code class="language-tcl">spef正确，但netlist错误
 Netlist正确，spef错误
 </code></pre>
-<img src="/2024/011821871/image-20240118192337980.png" alt="image-20240118192337980" style="zoom: 50%;">
+<img src="/2024/011821871/image-20240118192337980.png" alt style="zoom: 50%;">
 
 <p>手修timing</p>
 <pre class=" language-markdown"><code class="language-markdown">size_cell U324 INVD8
@@ -392,13 +392,13 @@ open_mw_cell FMCW_DCORE_TOP
 <p>3.5 用PT进行ECO修复</p>
 <p>​	当然这些也是可以不用手工ECO的方法，而将整个设计的网表、spef导入PT，让PT自己修复，然后导出ECO的脚本，然后将脚本导入ICC进行修复，不过感觉这个过程挺麻烦的，还不如手工来的方便，具体方法可以参见ICCECO流程那一部分。</p>
 <h5 id="记录修复timing-removal的错误"><a href="#记录修复timing-removal的错误" class="headerlink" title="记录修复timing-removal的错误"></a>记录修复timing-removal的错误</h5><p>2024&#x2F;1&#x2F;23<br>尝试使用pt的dmsa模式修复hold time时，发现有removal的违例，很是震惊。从来没遇到过</p>
-<img src="/2024/011821871/image-20240123205008592.png" alt="image-20240123205008592" style="zoom: 67%;">
+<img src="/2024/011821871/image-20240123205008592.png" alt style="zoom: 67%;">
 
 <p>之前clock_uncertainty的值不太对，只是修改了这个地方。就出现了recovery的违例。以为是这里的问题，修改后，发现还是有removal的违例，然后一阵搜资料。最后查看了pt 违例的timing path，发现是pt的sdc里面的input&#x2F;output delay设置的太小。导致有大量的removal违例。（类比于hold）。相当于数据保持的时间太多，不满足removal检查。</p>
 <p>将input output delay设置好后（之前是0.35，修改为3.5。在ICC中也是3.5），removal没有违例。</p>
-<img src="/2024/011821871/image-20240123211117779.png" alt="image-20240123211117779" style="zoom:67%;">
+<img src="/2024/011821871/image-20240123211117779.png" alt style="zoom:67%;">
 
-<img src="/2024/011821871/eb5a2b0dce25b2ed55c869128fdd6f0.jpg" alt="eb5a2b0dce25b2ed55c869128fdd6f0" style="zoom: 33%;">
+<img src="/2024/011821871/eb5a2b0dce25b2ed55c869128fdd6f0.jpg" alt style="zoom: 33%;">
 
 <ul>
 <li><p>recovery</p>
@@ -409,9 +409,9 @@ open_mw_cell FMCW_DCORE_TOP
 </ul>
 <p>​	在后仿真时，需要吃sdf文件。sdf文件既可以是ICC产生的，也可以是PT生成的。在进行带有延迟反标的仿真时，需要注意两个延迟文件之间的区别。<br>​	在仿真激励tb中，使用系统函数$annotated来完成延迟反标。		<br>​	延迟反标的参数，有三种类型：最大、最小和典型。在ICC和PT导出的sdf文件中，每一个gate同样有三个参数。<strong>注意的是，如果不设置延迟反标的类型，会中间的默认典型值，ICC导出的sdf里面典型值不为0，PT导出sdf文件典型值为0，因此如果在使用annotated时，不指定最大最小延迟，默认典型延迟，在波形图中就不会有组合逻辑造成的多次信号跳变，导致延迟参数反标不上去</strong></p>
 <p>icc的sdf文件</p>
-<p><img src="/2024/011821871/image-20240127193058698.png" alt="image-20240127193058698"></p>
+<p><img src="/2024/011821871/image-20240127193058698.png"></p>
 <p>pt吐出的sdf文件</p>
-<p><img src="/2024/011821871/image-20240127193134312.png" alt="image-20240127193134312"></p>
+<p><img src="/2024/011821871/image-20240127193134312.png"></p>
 <p>​	措施：在使用annotated函数时，指定max&#x2F;min延迟类型，其中max用于setup检查，min用于hold检查。</p>
 <pre class=" language-tcl"><code class="language-tcl">$<span class="token variable">sdf_annotate</span> <span class="token punctuation">(</span>
 “sdf_file”<span class="token punctuation">[</span>, 

@@ -317,7 +317,7 @@ decap cell的插入
 <p>解决IR drop的，为逻辑单元提供稳定的电压。去耦电容，提供稳定的电源和地，降低电源噪声和提高电噪声免疫性的特殊电路元件。<br>Decap cell是小电容器，位于整个布局的VDD和GND之间。当逻辑电路汲取大量电流时，该电容器为该电路提供额外的电荷当逻辑电路不吸收任何电流时，decap cell被充电至最大电容利用decap cell来降低动态IR drop。<br>decap cell是带金属层的，建议routing结束后再加，否则影响route走线。</p>
 </li>
 </ul>
-<img src="/2024/012139355/image-20240121233331816.png" alt="image-20240121233331816" style="zoom:50%;">
+<img src="/2024/012139355/image-20240121233331816.png" alt style="zoom:50%;">
 
 <ul>
 <li><p>filler cell</p>
@@ -348,9 +348,9 @@ decap cell的插入
 </li>
 <li><p>获取整个design的instance个数和面积</p>
 <p>report_qor</p>
-<img src="/2024/012139355/image-20240123212321424.png" alt="image-20240123212321424" style="zoom:67%;">
+<img src="/2024/012139355/image-20240123212321424.png" alt style="zoom:67%;">
 
-<img src="/2024/012139355/abc207bf21bdcaa65b8339f664292df.jpg" alt="abc207bf21bdcaa65b8339f664292df" style="zoom: 33%;"></li>
+<img src="/2024/012139355/abc207bf21bdcaa65b8339f664292df.jpg" alt style="zoom: 33%;"></li>
 </ul>
 <p>​	gate count计算：等效的门数，只是一个粗略的计算，不是精确值。将两输入与非门的面积作为等效参考，即一个gate的面积。用所有std cell的面积除以2输入与非门的面积，得到是数值为用到的总门数。总门数*4得到的是晶体管数目。</p>
 <blockquote>
@@ -377,7 +377,7 @@ decap cell的插入
 <p>也成为critical area analysis关键区域分析的地方</p>
 <p>bg：制造过程中可能会出现随机的颗粒缺陷导致短路或者开路<br>最小间距的连线最容易造成短路，最小宽度的连线最容易造成开路。</p>
 <p>解决办法：容易短路的地方，增加间距。容易断路的地方，增加线宽。</p>
-<img src="/2024/012139355/20200729093453667.png" alt="img" style="zoom: 67%;">
+<img src="/2024/012139355/20200729093453667.png" alt style="zoom: 67%;">
 icc_tcl:  spread_zrt_wires / widen_zrt_wires
 </li>
 <li><p>检查placement是否合法</p>
@@ -387,11 +387,13 @@ icc_tcl:  spread_zrt_wires / widen_zrt_wires
 <ul>
 <li>ICC 在导入网表后，没有tie cell是正常的，因为是在placement才加入tie cell；High Fanout Net也是正常的，还没有插入buffer进行优化。</li>
 </ul>
-<p><img src="/2024/012139355/image-20231224214002120.png" alt="image-20231224214002120"></p>
+<img src="/2024/012139355/image-20231224214002120.png" style="zoom: 67%;">
+
 <ul>
 <li>后端流程</li>
 </ul>
-<p><img src="/2024/012139355/image-20231224215828226.png" alt="image-20231224215828226"></p>
+<img src="/2024/012139355/image-20231224215828226.png" alt style="zoom:67%;">
+
 <ul>
 <li>时序库 （*.lib， *db）表征的2个模型</li>
 </ul>
@@ -402,18 +404,18 @@ icc_tcl:  spread_zrt_wires / widen_zrt_wires
 </ul>
 <p>​	一般来说，sdc中关于max_transition的值参考lib库中给定的transition值，尽量取中间范围。transition设置的过小也不好，会导致工具插入很多cell，增大了芯片的面积。</p>
 <p>​	解决措施：在DC和ICC时设置max_transition为0.4，在PT时设置0.6</p>
-<p><img src="/2024/012139355/3158545f6cb70988f94b0214218380a.jpg" alt="3158545f6cb70988f94b0214218380a"></p>
+<p><img src="/2024/012139355/3158545f6cb70988f94b0214218380a.jpg"></p>
 <p>出现上述问题的原因是因为在做lvs时，网表与版图不匹配，可以将icc生成的网表导入到calibre里面做lvs。在icc pr后的网表中，在module里面并没有上述的Q端口，而是使用的Qn，接一个反相器输出的，这个是和版图对应的。</p>
 <p>CCS的lib中有 crosstalk的信息；</p>
 <p>物理信息库<br>     1. LEF(library exchange format): cadence 的物理信息库，只有布局布线要用到信息，pins…<br>     2. milkway：synopsys的物理库<br>     3. GDS：流片用的信息，所有的层次都有<br>     4. CDL：器件级spice网表，lvs和仿真</p>
-<p><img src="/2024/012139355/wps2.jpg" alt="img">（LEF GDS)</p>
+<p><img src="/2024/012139355/wps2.jpg">（LEF GDS)</p>
 <p>DC在做综合的时候，把DRC的约束优先级设置为最高，依次是：max_capacitance,max_transition, max_fanout</p>
 <p>DC中报告的漏电功耗是准的，动态功耗不准。</p>
 <ul>
 <li><h4 id="Formality"><a href="#Formality" class="headerlink" title="Formality"></a><strong>Formality</strong></h4><p>只验证逻辑，不验证功能。比较的原理：formality将设计分为多个logic cone和compare point</p>
-<img src="/2024/012139355/image-20240102224954497.png" alt="image-20240102224954497" style="zoom: 80%;"></li>
+<img src="/2024/012139355/image-20240102224954497.png" alt style="zoom: 80%;"></li>
 </ul>
-<p><img src="/2024/012139355/image-20240102225055027.png" alt="image-20240102225055027"></p>
+<p><img src="/2024/012139355/image-20240102225055027.png"></p>
 <ul>
 <li><p>DC和PT分析时序路径的不同</p>
 <p>DC</p>
@@ -449,10 +451,10 @@ icc_tcl:  spread_zrt_wires / widen_zrt_wires
 </ul>
 <p>SDF：标准延迟格式的文件，描述了设计中的时序信息，包括net delay和cell delay，sdf文件可以直接用于后仿</p>
 <p>SPEF：标准寄生格式交换文件，提供具体的R和C参数，延时计算相对准确。</p>
-<p><img src="/2024/012139355/image-20240103100523201.png" alt="image-20240103100523201"></p>
+<p><img src="/2024/012139355/image-20240103100523201.png"></p>
 <p>在PT中设置clock约束时和DC的区别</p>
-<p><img src="/2024/012139355/image-20240103100716030.png" alt="image-20240103100716030"></p>
-<p><img src="/2024/012139355/image-20240103101023594.png" alt="image-20240103101023594"></p>
+<p><img src="/2024/012139355/image-20240103100716030.png"></p>
+<p><img src="/2024/012139355/image-20240103101023594.png"></p>
 <p>ECO是在post layout上进行的。</p>
 <p>PT自动进行ECO，PT工具主要通过resizing cells和插入buffer来完成ECO</p>
 <ul>

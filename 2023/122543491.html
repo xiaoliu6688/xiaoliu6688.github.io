@@ -332,7 +332,7 @@ always @(posedge clk) begin
 <span class="token keyword">end</span>
 <span class="token comment" spellcheck="true">// 错误的复位方式    q2没有被正确的复位，并且综合生成的电路也非常奇怪。</span>
 </code></pre>
-<img src="/2023/122543491/image-20231225203911890.png" alt="image-20231225203911890" style="zoom: 33%;"></li>
+<img src="/2023/122543491/image-20231225203911890.png" alt style="zoom: 33%;"></li>
 </ul>
 <p>​	因为在rst_n有效时，q2没有动作，所以rst_n作为第二级寄存器的ld_en信号，将q1的结果输出在q2上。</p>
 <p><strong>正确的code style</strong></p>
@@ -343,14 +343,14 @@ end
 always @(posedge clk)
     q2 &lt;= q1;
 </code></pre>
-<img src="/2023/122543491/image-20231225204528665.png" alt="image-20231225204528665" style="zoom: 33%;">
+<img src="/2023/122543491/image-20231225204528665.png" alt style="zoom: 33%;">
 
 <p><strong>同步复位</strong>：复位信号，只在clk的有效边沿才会发挥作用，参与输入信号d的组合逻辑，相当于做“与”逻辑。这种情况下，if-else的优先级就很重要。reset需要在if中发挥作用。</p>
 <p>使用同步复位出现的问题：综合工具DC无法分辨复位信号和其他数据信号。<br>带同步复位的可加载触发器如下</p>
-<img src="/2023/122543491/image-20240220164819082.png" alt="image-20240220164819082" style="zoom:50%;">
+<img src="/2023/122543491/image-20240220164819082.png" alt style="zoom:50%;">
 
 <p>​	综合工具也可能会综合成下面的结构，两者实现的功能相同。</p>
-<img src="/2023/122543491/image-20240220164859844.png" alt="image-20240220164859844" style="zoom:50%;">
+<img src="/2023/122543491/image-20240220164859844.png" alt style="zoom:50%;">
 
 <p>​	第二种方式在门级仿真时，如果rst_n信号为低，mux的输入都是0，如果load是x态，导致触发器会输出x态，而不会复位。<strong>本质区别是 rst_n的优先级，第一种方式rst_n的优先级要高于第二种，第一种可以保证在仿真时复位的有效性</strong>，这两种方式在实际硬件中，都是可以正常复位的。因此，在仿真过程中，使用编译指令，告知综合工具，让复位信号rst_n尽可能靠近触发器，提高复位信号的优先级。</p>
 <p><strong>优点：</strong></p>
@@ -368,10 +368,10 @@ always @(posedge clk)
 </ul>
 <p>为了防止芯片上电时，内部三态总线上的总线竞争，就迫切需要时钟产生复位；</p>
 <p>因此，芯片需要具有异步复位的功能。</p>
-<img src="/2023/122543491/image-20231225235555437.png" alt="image-20231225235555437" style="zoom: 33%;">
+<img src="/2023/122543491/image-20231225235555437.png" alt style="zoom: 33%;">
 
 <p>也可以使用同步复位的方式实现，但是也必须使用复位信号直接撤销三态门的使能，寄存器的输出必须与rst_n做与；</p>
-<img src="/2023/122543491/image-20231225235658088.png" alt="image-20231225235658088" style="zoom: 33%;">
+<img src="/2023/122543491/image-20231225235658088.png" alt style="zoom: 33%;">
 
 <h4 id="异步复位"><a href="#异步复位" class="headerlink" title="异步复位"></a>异步复位</h4><p>​	异步复位可以保证 数据路径上没有复位信号的参与，在复位时，数据路径是干净的。		</p>
 <p>​	异步复位最大的问题是 复位信号的释放。</p>
@@ -412,12 +412,12 @@ always @(posedge clk)
 <span class="token keyword">end</span>
 第二级的nrst2是为了消除，第一级异步复位信号释放带来的任何亚稳态。
 </code></pre>
-<img src="/2023/122543491/image-20231226100118399.png" alt="image-20231226100118399" style="zoom:50%;">
+<img src="/2023/122543491/image-20231226100118399.png" alt style="zoom:50%;">
 
 <ul>
 <li><p><strong>异步复位毛刺过滤器</strong></p>
 <p>通过延迟电路，将延迟前后的信号做”与”，即可得到真正的复位信号。</p>
-<img src="/2023/122543491/image-20240220172053034.png" alt="image-20240220172053034" style="zoom: 50%;"></li>
+<img src="/2023/122543491/image-20240220172053034.png" alt style="zoom: 50%;"></li>
 </ul>
 
                 
