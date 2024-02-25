@@ -425,6 +425,22 @@ int main()&#123;
 <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
 </code></pre>
 <p>program break 是用户程序的数据段data segment结束的位置，链接的时候ld会默认添加一个名为_end的符号，指示程序的数据段结束位置。用户程序开始运行的时候, program break会位于_end所指示的位置, 意味着此时堆区的大小为0<br>通过访问end的地址即可得到program break，用户程序申请内存时，需要将递增后的program break作为地址传给系统调用，然后返回原来的program地址，供程序使用。</p>
+<h3 id="C语言语法"><a href="#C语言语法" class="headerlink" title="C语言语法"></a>C语言语法</h3><h4 id="define"><a href="#define" class="headerlink" title="#define"></a>#define</h4><p><code>##(预处理器粘合剂)</code>：表示连接作用，比如，#define CON(x,y) x##y，表示 x和y接在一起<br><code>变参宏</code> ：比如 #define PR(…)  printf(_<em>VA_ARGS</em>_)</p>
+<h4 id="位结构体"><a href="#位结构体" class="headerlink" title="位结构体"></a>位结构体</h4><p>​	实现C中变量长度截断+符号位扩展，code如下</p>
+<pre class=" language-C"><code class="language-C">#define SEXT(x, len) (&#123; struct &#123; int64_t n : len; &#125; __x = &#123; .n = x &#125;; (uint64_t)__x.n; &#125;)
+#define SEXT(x, len) (&#123; 
+  struct &#123; 
+    int64_t n : len; 
+  &#125; __x = &#123; 
+    .n = x 
+  &#125;; 
+  (uint64_t)__x.n; 
+&#125;)
+</code></pre>
+<p>可以整理成下面的形式进行分析，首先采用宏定义的形式，#define 关键一句在于‘int64_t n : len 表示只取n的后len位，对应于verilog变量的[len-1:0]位.<br>通过‘(uint64_t)__x.n; ，将len位的数据进行符号位扩展，符号位为n[len-1]的数据。</p>
+<blockquote>
+<p> 如果不采用这种方式进行符号位扩展的话，就会按照最高位为1的进行扩展，得到所有高位都是1，这种并不是我们想要的，比如一个10为的二进制数据：0010010101，扩展成16位，就会得到1111111110010101。这种不是我们要的结果。<br>如果按照上文提供的位结构体实现，就会得到0000000010010101，这才是我们想要的结果。</p>
+</blockquote>
 
                 
             </div>
