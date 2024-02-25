@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="一生一芯-Cache设计（二）, RayBiiao">
-    <meta name="description" content="fence.i原因：store指令可能会对内存中的程序区进行修改，而icache可能看不到程序的修改，而读取错误的指令，导致程序运行错误。目的：为了解决数据与指令的一致性问题，即icache和dcache的一致性。当执行fence.i指令时">
+    <meta name="keywords" content="一生一芯-Cache设计（三）, RayBiiao">
+    <meta name="description" content="缓存一致性Fence指令在前续集合predecessor执行到FENCE指令前的任何操作前，处于FENCE指令后的后续集合（successor）中的任何操作，都不能被其他任何RISC-V线程或者外部设备看到。即FENCE就像一个栅栏，FEN">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>一生一芯-Cache设计（二） | RayBiiao</title>
+    <title>一生一芯-Cache设计（三） | RayBiiao</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -225,12 +225,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/9.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/14.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">一生一芯-Cache设计（二）</h1>
+                    <h1 class="description center-align post-title">一生一芯-Cache设计（三）</h1>
                 </div>
             </div>
         </div>
@@ -288,7 +288,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    495
+                    600
                 </div>
                 
 
@@ -310,13 +310,14 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="fence-i"><a href="#fence-i" class="headerlink" title="fence.i"></a>fence.i</h3><p>原因：store指令可能会对内存中的程序区进行修改，而icache可能看不到程序的修改，而读取错误的指令，导致程序运行错误。<br>目的：为了解决数据与指令的一致性问题，即icache和dcache的一致性。当执行fence.i指令时，fence之前的所有存储操作，io操作必须完成后，fence指令后面的指令才能访问内存。</p>
+                <h2 id="缓存一致性"><a href="#缓存一致性" class="headerlink" title="缓存一致性"></a>缓存一致性</h2><h4 id="Fence指令"><a href="#Fence指令" class="headerlink" title="Fence指令"></a>Fence指令</h4><p>在前续集合predecessor执行到FENCE指令前的任何操作前，处于FENCE指令后的后续集合（successor）中的任何操作，都不能被其他任何RISC-V线程或者外部设备看到。即FENCE就像一个栅栏，FENCE之前所有的存储器操作、IO操作必须完成后，在FENCE指令之后的指令才能看到结果。 </p>
+<h4 id="fence-i"><a href="#fence-i" class="headerlink" title="fence.i"></a>fence.i</h4><p>原因：store指令可能会对内存中的程序区进行修改，而icache可能看不到程序的修改，而读取错误的指令，导致程序运行错误。<br>目的：为了解决数据与指令的一致性问题，即icache和dcache的一致性。当执行fence.i指令时，fence之前的所有存储操作，io操作必须完成后，fence指令后面的指令才能访问内存。</p>
 <h4 id="实现方式："><a href="#实现方式：" class="headerlink" title="实现方式："></a>实现方式：</h4><p>译码阶段遇到fence.i指令，icache和dcache的具体操作：</p>
 <ol>
 <li>对icache中的cachemem进行刷新，完成初始化，保证后面的所有取指令操作都是从内存中获取。</li>
 <li>对dcache中cachemem的所有dirty置1的cacheline写到内存中，保证内存中代码区和数据区的一致性。</li>
 </ol>
-<h5 id="icache"><a href="#icache" class="headerlink" title="icache"></a>icache</h5><p>fence模块发出flash，stall和nop使能信号，将取指令的pc地址保持不变，将进入if阶段的fence指令通过nop冲刷掉，也就是说icache的cachemem一个周期就要完成冲刷。</p>
+<h3 id="icache"><a href="#icache" class="headerlink" title="icache"></a>icache</h3><p>fence模块发出flash，stall和nop使能信号，将取指令的pc地址保持不变，将进入if阶段的fence指令通过nop冲刷掉，也就是说icache的cachemem一个周期就要完成冲刷。</p>
 <img src="/2024/022113792/image-20240222105149731.png" alt style="zoom:50%;">
 
 <pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
@@ -330,7 +331,7 @@
 <span class="token keyword">assign</span> stall <span class="token operator">=</span> flash <span class="token operator">|</span> fence_i<span class="token punctuation">;</span>
 <span class="token keyword">assign</span> nop <span class="token operator">=</span> stall<span class="token punctuation">;</span>
 </code></pre>
-<h5 id="dcache"><a href="#dcache" class="headerlink" title="dcache"></a>dcache</h5><p>设置FLASH和FLASH_DONE状态，等待到fence.i指令流水到访存阶段，进入FLASH状态，遍历所有cacheline，将所有脏（dirty）块写到内存中；cachesize为2k，cacheline为8byte，设置axi_wlen为255，突发传输256 beats，通过wstrb决定是否将wdata写入内存。</p>
+<h3 id="dcache"><a href="#dcache" class="headerlink" title="dcache"></a>dcache</h3><p>设置FLASH和FLASH_DONE状态，等待到fence.i指令流水到访存阶段，进入FLASH状态，遍历所有cacheline，将所有脏（dirty）块写到内存中；cachesize为2k，cacheline为8byte，设置axi_wlen为255，突发传输256 beats，通过wstrb决定是否将wdata写入内存。</p>
 <p>遍历结束后，wlast拉高，进入FLASH_DONE状态，拉高flash_done，pc重新从内存中取指令，流水线继续执行，完成了icache和dcache的一致性。</p>
 <img src="/2024/022113792/image-20240222112053777.png" alt style="zoom: 50%;">
 
@@ -728,7 +729,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">18.3k</span>
+                        class="white-color">22.6k</span>
             
             
             
