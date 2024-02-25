@@ -4,17 +4,14 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="vim/vscode配置和操作, RayBiiao">
-    <meta name="description" content="Vim
-实现一列序号递增
-ctrl-v 选中列，然后 g + ctrl-a
+    <meta name="keywords" content="时钟切换设计, RayBiiao">
+    <meta name="description" content="时钟切换
+某些时钟切换的场景下，需要选择信号来选择某一个时钟信号
+
+组合逻辑选通电路对时钟信号非常敏感，如果采用组合逻辑选通时钟，很有可能在时钟上产生毛刺，导致功能错误，或者不满足时序要求，造成亚稳态。
 
 
-my_array[0] = 0;   
-my_array[1] = 0;
-my_array[2] = 0; 
-my_array[3] = 0;
-my_array">
+assign clk1_t = ">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -26,7 +23,7 @@ my_array">
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>vim/vscode配置和操作 | RayBiiao</title>
+    <title>时钟切换设计 | RayBiiao</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -234,12 +231,12 @@ my_array">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/19.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">vim/vscode配置和操作</h1>
+                    <h1 class="description center-align post-title">时钟切换设计</h1>
                 </div>
             </div>
         </div>
@@ -263,8 +260,8 @@ my_array">
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Vim-Vscode/">
-                                <span class="chip bg-color">Vim Vscode</span>
+                            <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+                                <span class="chip bg-color">基础知识</span>
                             </a>
                         
                     </div>
@@ -275,8 +272,8 @@ my_array">
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/Linux%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-category">
-                                Linux基础知识
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                数字前端
                             </a>
                         
                     </div>
@@ -288,7 +285,7 @@ my_array">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-11-25
+                    2024-02-25
                 </div>
                 
 
@@ -297,7 +294,7 @@ my_array">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    58
+                    369
                 </div>
                 
 
@@ -319,26 +316,84 @@ my_array">
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="Vim"><a href="#Vim" class="headerlink" title="Vim"></a>Vim</h2><ul>
-<li><p>实现一列序号递增</p>
-<p>ctrl-v 选中列，然后 g + ctrl-a</p>
-</li>
-</ul>
-<pre class=" language-vim"><code class="language-vim">my_array<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>   
-my_array<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-my_array<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> 
-my_array<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-my_array<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-my_array<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-my_array<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+                <h2 id="时钟切换"><a href="#时钟切换" class="headerlink" title="时钟切换"></a>时钟切换</h2><blockquote>
+<p>某些时钟切换的场景下，需要选择信号来选择某一个时钟信号</p>
+</blockquote>
+<h3 id="组合逻辑选通"><a href="#组合逻辑选通" class="headerlink" title="组合逻辑选通"></a>组合逻辑选通</h3><p>电路对时钟信号非常敏感，如果采用组合逻辑选通时钟，很有可能在时钟上产生毛刺，导致功能错误，或者不满足时序要求，造成亚稳态。</p>
+<img src="/2024/022513924/image-20240225231635368.png" alt="image-20240225231635368" style="zoom: 25%;">
 
-my_array<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-my_array<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">;</span>
-my_array<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">;</span>
-my_array<span class="token punctuation">[</span><span class="token number">8</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span>
-my_array<span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">5</span><span class="token punctuation">;</span>
-my_array<span class="token punctuation">[</span><span class="token number">12</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">6</span><span class="token punctuation">;</span>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">assign</span> clk1_t <span class="token operator">=</span> clk1 <span class="token operator">&amp;</span> sel_clk1<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> clk2_t <span class="token operator">=</span> clk2 <span class="token operator">&amp;</span> <span class="token operator">!</span>sle_clk1<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> clk_out <span class="token operator">=</span> clk1_t <span class="token operator">|</span> clk2_t<span class="token punctuation">;</span>
 </code></pre>
+<img src="/2024/022513924/8f134e7b11982eb43608e728782d78da.png" alt style="zoom: 33%;">
+
+<h3 id="时序逻辑选通"><a href="#时序逻辑选通" class="headerlink" title="时序逻辑选通"></a>时序逻辑选通</h3><p><strong>产生毛刺的本质原因是sel信号是异步的，无法保证输出的时钟在低电平时切换。</strong></p>
+<p><strong>通过添加一级寄存器</strong>，使得sel选通信号在时钟切换在下降沿才发生变化，这样不会产生毛刺，因为是“相与”的关系。<br><strong>增加了反馈的好处</strong>：即使select信号改变了，时钟的切换需要等待切换前时钟为低电平时才可以 发生切换，保证了之前时钟信号的完整性（不会斩波）。<br>通过以上两种优化，就可以输出没有毛刺的时钟信号。这是一种非常安全的时钟切换方案。</p>
+<img src="/2024/022513924/1bee2a8c32b64dd050b86e103ad3462d.jpeg" style="zoom:50%;">
+
+<p>此外，由于sel信号是异步输入，为了降低亚稳态，可以打两拍，再进行时钟切换。</p>
+<img src="/2024/022513924/12ba42985f38e4091d39bc8bae8d191e.jpeg" style="zoom:50%;">
+
+<pre class=" language-Verilog"><code class="language-Verilog">/*********************************************************************
+ * Author           : liu
+ * Last modified    : 2023-05-30 15:25
+ * Filename         : switch_clock.v
+ * Description      : 
+ * ******************************************************************/
+module switch_clock(
+  input clk1,
+  input rstn1,
+  input clk2,
+  input rstn2,
+  input select,
+  output clkout
+);
+  wire clk1_select;
+  wire clk2_select;
+  reg clk1_reg_r, clk1_reg_rr;
+  reg clk2_reg_r, clk2_reg_rr;
+  reg clk1_reg_rrr;
+  reg clk2_reg_rrr;
+  
+  always @(posedge clk1 or negedge rstn1)begin
+    if(!rstn1) begin
+      clk1_reg_r <= 0;
+      clk1_reg_rr <= 0;
+    end
+    else begin
+      clk1_reg_r <= clk1_select;
+      clk1_reg_rr <= clk1_reg_r;
+    end
+  end
+  always @(posedge clk2 or negedge rstn2)begin
+    if(!rstn2) begin
+      clk2_reg_r <= 0;
+      clk2_reg_rr <= 0;
+    end
+    else begin
+      clk2_reg_r <= clk2_select;
+      clk2_reg_rr <= clk2_reg_r;
+    end
+  end
+  assign clk1_select = select & (~clk2_reg_rrr);
+  assign clk2_select = ~select & (~clk1_reg_rrr);
+  always @(negedge clk1 or negedge rstn1) begin
+    if(!rstn1)
+      clk1_reg_rrr <= 0;
+    else
+      clk1_reg_rrr <= clk1_reg_rr;
+  end
+  always @(negedge clk2 or negedge rstn2) begin
+    if(!rstn2)
+      clk2_reg_rrr <= 0;
+    else
+      clk2_reg_rrr <= clk2_reg_rr;
+  end
+  assign clkout = (clk1 & clk1_reg_rrr ) || (clk2 & clk2_reg_rrr);
+endmodule
+</code></pre>
+<p><img src="/2024/022513924/48bccb9764f34ae5948dd826d5dcb0f5.png" alt="测试结果"></p>
 
                 
             </div>
@@ -365,7 +420,7 @@ my_array<span class="token punctuation">[</span><span class="token number">12</s
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://xiaoliu6688.github.io/2023/112521332.html">https://xiaoliu6688.github.io/2023/112521332.html</a>
+                    <a href="https://xiaoliu6688.github.io/2024/022513924.html">https://xiaoliu6688.github.io/2024/022513924.html</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -403,8 +458,8 @@ my_array<span class="token punctuation">[</span><span class="token number">12</s
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/Vim-Vscode/">
-                                    <span class="chip bg-color">Vim Vscode</span>
+                                <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+                                    <span class="chip bg-color">基础知识</span>
                                 </a>
                             
                         </div>
@@ -451,13 +506,13 @@ my_array<span class="token punctuation">[</span><span class="token number">12</s
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/11277120.html">
+                <a href="/2024/022546524.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="makefile">
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="一生一芯-AXI总线及仲裁设计">
                         
-                        <span class="card-title">makefile</span>
+                        <span class="card-title">一生一芯-AXI总线及仲裁设计</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -468,8 +523,45 @@ my_array<span class="token punctuation">[</span><span class="token number">12</s
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-11-27
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-25
                         </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            刘瑞彪
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/022548230.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="Linux常用命令">
+                        
+                        <span class="card-title">Linux常用命令</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-25
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -485,57 +577,8 @@ my_array<span class="token punctuation">[</span><span class="token number">12</s
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Makefile/">
-                        <span class="chip bg-color">Makefile</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2023/112431792.html">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="SpyGalss">
-                        
-                        <span class="card-title">SpyGalss</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-11-24
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                    数字前端
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/SpyGalss/">
-                        <span class="chip bg-color">SpyGalss</span>
+                    <a href="/tags/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+                        <span class="chip bg-color">linux常用命令</span>
                     </a>
                     
                 </div>
