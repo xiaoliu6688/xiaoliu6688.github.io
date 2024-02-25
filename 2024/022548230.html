@@ -4,9 +4,14 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="计算机体系结构, RayBiiao">
-    <meta name="description" content="超流水线：    通过增加流水线级数来缩短指令执行速度。细化流水，提高主频。用时间换空间。超流水线技术对芯片的工作速度要求比较高，同时硬件系统比较复杂，需要占用较大的芯片的面积，因此超流水线结构在嵌入式RISC处理器中很少采用。
-超标量： ">
+    <meta name="keywords" content="Linux常用命令, RayBiiao">
+    <meta name="description" content="
+文件操作
+
+压缩成.tar文件： tar -cvf file.tar files
+解压.tar文件： tar -xvf file.tar
+压缩成.tar.gz文件： tar -czvf file.tar.gz files
+解压.tar.g">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +23,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>计算机体系结构 | RayBiiao</title>
+    <title>Linux常用命令 | RayBiiao</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -226,12 +231,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/13.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/19.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">计算机体系结构</h1>
+                    <h1 class="description center-align post-title">Linux常用命令</h1>
                 </div>
             </div>
         </div>
@@ -255,8 +260,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-                                <span class="chip bg-color">基础知识</span>
+                            <a href="/tags/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+                                <span class="chip bg-color">linux常用命令</span>
                             </a>
                         
                     </div>
@@ -267,8 +272,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                数字前端
+                            <a href="/categories/Linux%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-category">
+                                Linux基础知识
                             </a>
                         
                     </div>
@@ -280,7 +285,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2024-01-27
+                    2024-02-25
                 </div>
                 
 
@@ -289,7 +294,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    148
+                    396
                 </div>
                 
 
@@ -311,8 +316,35 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>超流水线：<br>    通过增加流水线级数来缩短指令执行速度。细化流水，提高主频。用时间换空间。超流水线技术对芯片的工作速度要求比较高，同时硬件系统比较复杂，需要占用较大的芯片的面积，因此超流水线结构在嵌入式RISC处理器中很少采用。</p>
-<p>超标量：<br>    一个时钟周期可以发射多条指令，CPU中有一条以上的流水线，每个周期可以完成一条以上的指令。用硬件来换速度。</p>
+                <ul>
+<li>文件操作</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash">压缩成.tar文件： <span class="token function">tar</span> -cvf file.tar files
+解压.tar文件： <span class="token function">tar</span> -xvf file.tar
+压缩成.tar.gz文件： <span class="token function">tar</span> -czvf file.tar.gz files
+解压.tar.gz文件： <span class="token function">tar</span> -xzvf file.tar.gz
+压缩.tar.bz2文件： <span class="token function">tar</span> -cjvf file.tar.bz2 files
+解压.tar.bz2文件： <span class="token function">tar</span> -xjvf file.tar.bz2
+压缩成.gz 文件 <span class="token function">gzip</span> <span class="token function">file</span>
+解压 <span class="token function">gzip</span> -d file.gz
+</code></pre>
+<ul>
+<li>系统配置</li>
+</ul>
+<p>​	&#x2F; ——根目录<br>​	&#x2F;bin ——存放必要的命令<br>​	&#x2F;boot ——存放内核以及启动所需的文件<br>​	&#x2F;dev ——存放设备文件<br>​	&#x2F;etc ——存放系统配置文件<br>​	&#x2F;home ——普通用户的宿主目录，用户数据存放在其主目录中<br>​	&#x2F;lib ——存放必要的运行库<br>​	&#x2F;mnt ——存放临时的映射文件系统，通常用来挂载使用。<br>​	&#x2F;proc ——存放存储进程和系统信息<br>​	&#x2F;root ——超级用户的主目录<br>​	&#x2F;sbin ——存放系统管理程序<br>​	&#x2F;tmp ——存放临时文件<br>​	&#x2F;usr ——存放应用程序，命令程序文件、程序库、手册和其它文档。<br>​	&#x2F;var ——-系统默认日志存放目录</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">hostname</span> <span class="token keyword">:</span> 显示系统的hostname
+<span class="token function">ifconfig</span> -a <span class="token keyword">:</span> 显示网络的配置信息
+</code></pre>
+<p>查看文件内容情况：</p>
+<pre class=" language-bash"><code class="language-bash"><span class="token function">wc</span> <span class="token function">file</span> <span class="token keyword">:</span> 计算文件的行数和字节数
+<span class="token function">wc</span> -w <span class="token function">file</span> <span class="token keyword">:</span> 计算文件的字数
+<span class="token function">wc</span> -l <span class="token function">file</span> <span class="token keyword">:</span> 计算文件的行数
+<span class="token function">find</span> 查找文件或目录
+命令格式为: 
+    <span class="token function">find</span> 后接查找的目录，-name指定需要查找的文件名称，名称可以使用“* ”表示所有。
+    <span class="token function">find</span> /home -name “test.txt”,
+    <span class="token function">find</span> /home -name “*.txt” :查找/home目录下，所有以.txt结尾的文件或者目录。
+</code></pre>
 
                 
             </div>
@@ -339,7 +371,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://xiaoliu6688.github.io/2024/012760393.html">https://xiaoliu6688.github.io/2024/012760393.html</a>
+                    <a href="https://xiaoliu6688.github.io/2024/022548230.html">https://xiaoliu6688.github.io/2024/022548230.html</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -377,8 +409,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-                                    <span class="chip bg-color">基础知识</span>
+                                <a href="/tags/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+                                    <span class="chip bg-color">linux常用命令</span>
                                 </a>
                             
                         </div>
@@ -421,17 +453,18 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2024/020534087.html">
+                <a href="/2024/022548230.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="低功耗设计">
+                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="Linux常用命令">
                         
-                        <span class="card-title">低功耗设计</span>
+                        <span class="card-title">Linux常用命令</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -441,26 +474,27 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-05
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-25
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                    数字前端
+                            <a href="/categories/Linux%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-category">
+                                    Linux基础知识
                                 </a>
                             
                             
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-                        <span class="chip bg-color">基础知识</span>
+                    <a href="/tags/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
+                        <span class="chip bg-color">linux常用命令</span>
                     </a>
                     
                 </div>
@@ -474,13 +508,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/012448005.html">
+                <a href="/2024/022536323.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="电路设计（RTL）">
+                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="一生一芯-Cache设计(二)">
                         
-                        <span class="card-title">电路设计（RTL）</span>
+                        <span class="card-title">一生一芯-Cache设计(二)</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -491,7 +525,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-01-24
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-25
                             </span>
                         <span class="publish-author">
                             
@@ -508,8 +542,8 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-                        <span class="chip bg-color">基础知识</span>
+                    <a href="/tags/%E4%B8%80%E7%94%9F%E4%B8%80%E8%8A%AF/">
+                        <span class="chip bg-color">一生一芯</span>
                     </a>
                     
                 </div>

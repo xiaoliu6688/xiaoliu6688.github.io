@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Linux常用命令</title>
+      <link href="/2024/022548230.html"/>
+      <url>/2024/022548230.html</url>
+      
+        <content type="html"><![CDATA[<ul><li>文件操作</li></ul><pre class=" language-bash"><code class="language-bash">压缩成.tar文件： <span class="token function">tar</span> -cvf file.tar files解压.tar文件： <span class="token function">tar</span> -xvf file.tar压缩成.tar.gz文件： <span class="token function">tar</span> -czvf file.tar.gz files解压.tar.gz文件： <span class="token function">tar</span> -xzvf file.tar.gz压缩.tar.bz2文件： <span class="token function">tar</span> -cjvf file.tar.bz2 files解压.tar.bz2文件： <span class="token function">tar</span> -xjvf file.tar.bz2压缩成.gz 文件 <span class="token function">gzip</span> <span class="token function">file</span>解压 <span class="token function">gzip</span> -d file.gz</code></pre><ul><li>系统配置</li></ul><p>​&#x2F; ——根目录<br>​&#x2F;bin ——存放必要的命令<br>​&#x2F;boot ——存放内核以及启动所需的文件<br>​&#x2F;dev ——存放设备文件<br>​&#x2F;etc ——存放系统配置文件<br>​&#x2F;home ——普通用户的宿主目录，用户数据存放在其主目录中<br>​&#x2F;lib ——存放必要的运行库<br>​&#x2F;mnt ——存放临时的映射文件系统，通常用来挂载使用。<br>​&#x2F;proc ——存放存储进程和系统信息<br>​&#x2F;root ——超级用户的主目录<br>​&#x2F;sbin ——存放系统管理程序<br>​&#x2F;tmp ——存放临时文件<br>​&#x2F;usr ——存放应用程序，命令程序文件、程序库、手册和其它文档。<br>​&#x2F;var ——-系统默认日志存放目录</p><pre class=" language-bash"><code class="language-bash"><span class="token function">hostname</span> <span class="token keyword">:</span> 显示系统的hostname<span class="token function">ifconfig</span> -a <span class="token keyword">:</span> 显示网络的配置信息</code></pre><p>查看文件内容情况：</p><pre class=" language-bash"><code class="language-bash"><span class="token function">wc</span> <span class="token function">file</span> <span class="token keyword">:</span> 计算文件的行数和字节数<span class="token function">wc</span> -w <span class="token function">file</span> <span class="token keyword">:</span> 计算文件的字数<span class="token function">wc</span> -l <span class="token function">file</span> <span class="token keyword">:</span> 计算文件的行数<span class="token function">find</span> 查找文件或目录命令格式为:     <span class="token function">find</span> 后接查找的目录，-name指定需要查找的文件名称，名称可以使用“* ”表示所有。    <span class="token function">find</span> /home -name “test.txt”,    <span class="token function">find</span> /home -name “*.txt” :查找/home目录下，所有以.txt结尾的文件或者目录。</code></pre>]]></content>
+      
+      
+      <categories>
+          
+          <category> Linux基础知识 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> linux常用命令 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>一生一芯-Cache设计(二)</title>
       <link href="/2024/022536323.html"/>
       <url>/2024/022536323.html</url>
@@ -504,7 +529,7 @@
     
     
     <entry>
-      <title>vim、vscode</title>
+      <title>vim/vscode配置和操作</title>
       <link href="/2023/112521332.html"/>
       <url>/2023/112521332.html</url>
       
