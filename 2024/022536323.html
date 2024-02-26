@@ -392,7 +392,7 @@
         RADDR <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_arvalid <span class="token operator">&amp;&amp;</span> axi_arready<span class="token punctuation">)</span> next_state <span class="token operator">=</span> RDATA<span class="token punctuation">;</span>
         RDATA <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_rvalid  <span class="token operator">&amp;&amp;</span> axi_rready <span class="token punctuation">)</span> next_state <span class="token operator">=</span> ALLOCATE<span class="token punctuation">;</span>
         WADDR <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_awvalid <span class="token operator">&amp;&amp;</span> axi_awready<span class="token punctuation">)</span> next_state <span class="token operator">=</span> WDATA<span class="token punctuation">;</span>
-        WDATA <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_wvalid  <span class="token operator">&amp;&amp;</span> axi_wready <span class="token operator">&amp;&amp;</span> axi_wlast <span class="token punctuation">)</span> next_state <span class="token operator">=</span> WRESP<span class="token punctuation">;</span>
+        WDATA <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_wvalid  <span class="token operator">&amp;&amp;</span> axi_wready <span class="token punctuation">)</span> next_state <span class="token operator">=</span> WRESP<span class="token punctuation">;</span>
         WRESP <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_bvalid  <span class="token operator">&amp;&amp;</span> axi_bready <span class="token punctuation">)</span> next_state <span class="token operator">=</span> RADDR<span class="token punctuation">;</span>
         <span class="token keyword">default</span> <span class="token punctuation">:</span> next_state <span class="token operator">=</span> IDLE<span class="token punctuation">;</span>
     <span class="token keyword">endcase</span>
@@ -867,7 +867,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">25.2k</span>
+                        class="white-color">26.1k</span>
             
             
             

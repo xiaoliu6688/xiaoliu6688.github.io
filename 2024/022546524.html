@@ -5,7 +5,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="一生一芯-AXI总线及仲裁设计, RayBiiao">
-    <meta name="description" content="">
+    <meta name="description" content="AXI-Lite总线设计采用AXI-Lite协议，只支持单次传输，不支持突发传输，接口信号简单。由于dcache既需要读操作，也需要写操作，以dcache为例进行说明；
+读操作读操作的依赖关系：先完成读地址通道的握手，再进行读数据的握手，得">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -252,12 +253,25 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/%E4%B8%80%E7%94%9F%E4%B8%80%E8%8A%AF/">
+                                <span class="chip bg-color">一生一芯</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                数字前端
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -275,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    0
+                    782
                 </div>
                 
 
@@ -297,7 +311,177 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <h2 id="AXI-Lite总线设计"><a href="#AXI-Lite总线设计" class="headerlink" title="AXI-Lite总线设计"></a>AXI-Lite总线设计</h2><p>采用AXI-Lite协议，只支持单次传输，不支持突发传输，接口信号简单。由于dcache既需要读操作，也需要写操作，以dcache为例进行说明；</p>
+<h3 id="读操作"><a href="#读操作" class="headerlink" title="读操作"></a>读操作</h3><p>读操作的依赖关系：先完成读地址通道的握手，再进行读数据的握手，得到读数据。</p>
+<img src="/2024/022546524/image-20240226100402535.png" alt="image-20240226100402535" style="zoom:50%;">
+
+<ul>
+<li><strong>master</strong></li>
+</ul>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// AR</span>
+<span class="token keyword">assign</span> axi_araddr <span class="token operator">=</span> <span class="token punctuation">(</span>state <span class="token operator">==</span> RADDR<span class="token punctuation">)</span><span class="token operator">?</span> <span class="token operator">&amp;</span><span class="token number">#123</span><span class="token punctuation">;</span>addr<span class="token punctuation">[</span><span class="token number">63</span><span class="token punctuation">:</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">,</span><span class="token number">3'b000</span><span class="token operator">&amp;</span><span class="token number">#125</span><span class="token punctuation">;</span> <span class="token punctuation">:</span> <span class="token number">64'h0</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> axi_arvalid <span class="token operator">=</span> <span class="token punctuation">(</span>state <span class="token operator">==</span> RADDR<span class="token punctuation">)</span><span class="token operator">?</span> <span class="token number">1</span> <span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">// R</span>
+<span class="token keyword">assign</span> axi_rready <span class="token operator">=</span> <span class="token punctuation">(</span>state <span class="token operator">==</span> RDATA<span class="token punctuation">)</span><span class="token operator">?</span> <span class="token number">1</span> <span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">;</span>
+</code></pre>
+<ul>
+<li>slave</li>
+</ul>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// read operation</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span> 
+    rvalid <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>rvalid <span class="token operator">&amp;</span> rready<span class="token punctuation">)</span>
+    rvalid <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>arvalid <span class="token operator">&amp;</span> arready<span class="token punctuation">)</span>
+    rvalid <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">reg</span> flag<span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
+    flag <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>arvalid<span class="token punctuation">)</span>
+    flag <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span>
+    flag <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> counter<span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
+    counter <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>flag<span class="token punctuation">)</span>
+    counter <span class="token operator">&lt;=</span> counter <span class="token operator">+</span> <span class="token number">'h1</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span>
+    counter <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span> 
+    arready <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> 
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>arvalid <span class="token operator">&amp;</span> arready<span class="token punctuation">)</span>
+    arready <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>counter <span class="token operator">==</span> <span class="token number">4</span><span class="token punctuation">)</span>
+    arready <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
+    data <span class="token operator">=</span> <span class="token number">64'h0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>arvalid<span class="token punctuation">)</span>
+    data <span class="token operator">=</span> <span class="token function">paddr_read</span><span class="token punctuation">(</span>araddr<span class="token punctuation">,</span> <span class="token number">8</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> 
+    data <span class="token operator">=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">assign</span> rdata <span class="token operator">=</span> rvalid <span class="token operator">?</span> data <span class="token punctuation">:</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">// counter 用来模拟salve提供数据所需要的周期数，延迟握手。</span>
+</code></pre>
+<h3 id="写操作"><a href="#写操作" class="headerlink" title="写操作"></a><strong>写操作</strong></h3><p>写操作中，写地址和写数据通道没有明确的握手依赖关系，但是写响应通道需要写地址和写数据握手后才可以握手，由于AXI-Lite只支持单次数据传输，所以没有wlast参与。本设计中，先进行写地址握手，再进行写数据握手，最后写响应通道握手，完成写操作。</p>
+<ul>
+<li>master</li>
+</ul>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// AW</span>
+<span class="token keyword">assign</span> axi_awaddr  <span class="token operator">=</span> <span class="token punctuation">(</span>state <span class="token operator">==</span> WADDR<span class="token punctuation">)</span> <span class="token operator">?</span> addr <span class="token punctuation">:</span> <span class="token number">64'h0</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> axi_awvalid <span class="token operator">=</span> <span class="token punctuation">(</span>state <span class="token operator">==</span> WADDR<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">1</span> <span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">// W</span>
+<span class="token keyword">assign</span> axi_wdata  <span class="token operator">=</span> <span class="token punctuation">(</span>state <span class="token operator">==</span> WDATA<span class="token punctuation">)</span> <span class="token operator">?</span> wdata <span class="token punctuation">:</span> <span class="token number">64'h0</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> axi_wstrb  <span class="token operator">=</span> <span class="token punctuation">(</span>flash_flag<span class="token operator">&amp;</span>dirty<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">8'b11111111</span> <span class="token punctuation">:</span> <span class="token punctuation">(</span>flash_flag<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">8'b0000_0000</span> <span class="token punctuation">:</span> byte_enable<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> axi_wvalid <span class="token operator">=</span> <span class="token punctuation">(</span>state <span class="token operator">==</span> WDATA<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">1</span> <span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token comment" spellcheck="true">// B</span>
+<span class="token keyword">assign</span> axi_bready <span class="token operator">=</span> <span class="token punctuation">(</span>state <span class="token operator">==</span> WRESP<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">1</span> <span class="token punctuation">:</span> <span class="token number">0</span><span class="token punctuation">;</span>
+</code></pre>
+<ul>
+<li>slave</li>
+</ul>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// write operation</span>
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">63</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> waddr<span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span> 
+    waddr <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>awvalid<span class="token punctuation">)</span>
+    waddr <span class="token operator">&lt;=</span> awaddr<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">63</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> wdata_r<span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span> 
+    wdata_r <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>wvalid<span class="token punctuation">)</span>
+    wdata_r <span class="token operator">&lt;=</span> wdata<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
+    awready <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>awvalid <span class="token operator">&amp;&amp;</span> awready<span class="token punctuation">)</span>
+    awready <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>awvalid<span class="token punctuation">)</span>
+    awready <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
+    wready <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>wvalid <span class="token operator">&amp;&amp;</span> wready<span class="token punctuation">)</span>
+    wready <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>wvalid<span class="token punctuation">)</span>
+    wready <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span>wvalid <span class="token operator">&amp;&amp;</span> wready<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token property">$display</span><span class="token punctuation">(</span><span class="token string">"write addr:%x, data:%x"</span><span class="token punctuation">,</span> waddr<span class="token punctuation">,</span> wdata_r<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">case</span><span class="token punctuation">(</span>wstrb<span class="token punctuation">)</span> 
+      <span class="token number">8'b00000001</span><span class="token punctuation">:</span> <span class="token function">paddr_write</span><span class="token punctuation">(</span>waddr<span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> wdata_r<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token number">8'b00000011</span><span class="token punctuation">:</span> <span class="token function">paddr_write</span><span class="token punctuation">(</span>waddr<span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> wdata_r<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token number">8'b00001111</span><span class="token punctuation">:</span> <span class="token function">paddr_write</span><span class="token punctuation">(</span>waddr<span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">,</span> wdata_r<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token number">8'b11111111</span><span class="token punctuation">:</span> <span class="token function">paddr_write</span><span class="token punctuation">(</span>waddr<span class="token punctuation">,</span> <span class="token number">8</span><span class="token punctuation">,</span> wdata_r<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">endcase</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
+    bvalid <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>bvalid <span class="token operator">&amp;&amp;</span> bready<span class="token punctuation">)</span>
+    bvalid <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>wready <span class="token operator">&amp;</span> wvalid<span class="token punctuation">)</span>
+    bvalid <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">assign</span> bresp <span class="token operator">=</span> bvalid <span class="token operator">?</span> <span class="token number">2'b00</span> <span class="token punctuation">:</span> <span class="token number">2'b00</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="AXI仲裁器"><a href="#AXI仲裁器" class="headerlink" title="AXI仲裁器"></a>AXI仲裁器</h3><p>SRAM一般只有一个，Icache和Dcache可能出现同时访问SRAM的情况，产生了冲突，需要设计Arbiter来决定哪个master的优先级更高。当发生仲裁时，本设计中设计Dcache优先级更高。</p>
+<img src="/2024/022546524/image-20240226102945089.png" alt="image-20240226102945089" style="zoom: 50%;">
+
+<p>Icache没有写操作的需要，不需要仲裁。只有Icache和Dcache同时发生读操作时才进行仲裁。</p>
+<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span>lsu_arvalid<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    arvalid <span class="token operator">=</span> lsu_arvalid<span class="token punctuation">;</span>
+    araddr  <span class="token operator">=</span> lsu_araddr<span class="token punctuation">;</span>
+  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+    arvalid <span class="token operator">=</span> if_arvalid<span class="token punctuation">;</span>
+    araddr  <span class="token operator">=</span> if_araddr<span class="token punctuation">;</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span>lsu_arvalid<span class="token punctuation">)</span>
+    if_arready <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> 
+    if_arready <span class="token operator">=</span> arready<span class="token punctuation">;</span>
+<span class="token keyword">end</span>  
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span>lsu_arvalid<span class="token punctuation">)</span>
+    if_rvalid <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> 
+    if_rvalid <span class="token operator">=</span> rvalid<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token comment" spellcheck="true">// 当lsu_arvalid为1时，反压if_arready和if_rvalid，延迟Icache读地址通道和读数据通道的握手</span>
+</code></pre>
+
                 
             </div>
             <hr/>
@@ -360,7 +544,11 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/%E4%B8%80%E7%94%9F%E4%B8%80%E8%8A%AF/">
+                                    <span class="chip bg-color">一生一芯</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -427,13 +615,25 @@
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            刘瑞彪
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                    数字前端
+                                </a>
+                            
                             
                         </span>
                     </div>
                 </div>
 
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E4%B8%80%E7%94%9F%E4%B8%80%E8%8A%AF/">
+                        <span class="chip bg-color">一生一芯</span>
+                    </a>
+                    
+                </div>
                 
             </div>
         </div>
@@ -657,7 +857,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">25.2k</span>
+                        class="white-color">26.1k</span>
             
             
             
