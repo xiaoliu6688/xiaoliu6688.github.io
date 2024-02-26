@@ -5,16 +5,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="vim/vscode配置和操作, RayBiiao">
-    <meta name="description" content="Vim
-实现一列序号递增
-ctrl-v 选中列，然后 g + ctrl-a
-
-
+    <meta name="description" content="Vim实现一列序号递增ctrl-v 选中列，然后 g + ctrl-a
 my_array[0] = 0;   
 my_array[1] = 0;
 my_array[2] = 0; 
 my_array[3] = 0;
-my_array">
+my_array[4] ">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -297,7 +293,7 @@ my_array">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    58
+                    110
                 </div>
                 
 
@@ -319,11 +315,7 @@ my_array">
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="Vim"><a href="#Vim" class="headerlink" title="Vim"></a>Vim</h2><ul>
-<li><p>实现一列序号递增</p>
-<p>ctrl-v 选中列，然后 g + ctrl-a</p>
-</li>
-</ul>
+                <h2 id="Vim"><a href="#Vim" class="headerlink" title="Vim"></a>Vim</h2><h3 id="实现一列序号递增"><a href="#实现一列序号递增" class="headerlink" title="实现一列序号递增"></a>实现一列序号递增</h3><p>ctrl-v 选中列，然后 g + ctrl-a</p>
 <pre class=" language-vim"><code class="language-vim">my_array<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>   
 my_array<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
 my_array<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> 
@@ -338,6 +330,22 @@ my_array<span class="token punctuation">[</span><span class="token number">6</sp
 my_array<span class="token punctuation">[</span><span class="token number">8</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span>
 my_array<span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">5</span><span class="token punctuation">;</span>
 my_array<span class="token punctuation">[</span><span class="token number">12</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">6</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="比较文件"><a href="#比较文件" class="headerlink" title="比较文件"></a>比较文件</h3><ul>
+<li>bash下使用vim</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash">vim -d file1 file2
+vimdiff file1 file2
+</code></pre>
+<ul>
+<li>已经打开一个文件，打开另外一个文件对比</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash">vert diffsplit file2
+</code></pre>
+<ul>
+<li>打开两个文件</li>
+</ul>
+<pre class=" language-bash"><code class="language-bash">在两个文件中分别执行  diffthis
 </code></pre>
 
                 
@@ -713,7 +721,7 @@ my_array<span class="token punctuation">[</span><span class="token number">12</s
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">26.6k</span>
+                        class="white-color">26.8k</span>
             
             
             

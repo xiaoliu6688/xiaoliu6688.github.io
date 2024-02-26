@@ -288,7 +288,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2k
+                    2.1k
                 </div>
                 
 
@@ -458,12 +458,26 @@ Makefile中定义的变量都是全局变量，<span class="token variable">$@</
 当前脚本的绝对路径：
     readlink -m <span class="token variable">$0</span>
 </code></pre>
+<h4 id="abspath"><a href="#abspath" class="headerlink" title="abspath"></a>abspath</h4><pre class=" language-makefile"><code class="language-makefile"><span class="token variable">$</span><span class="token punctuation">(</span><span class="token keyword">abspath</span> ./src<span class="token punctuation">)</span> <span class="token comment" spellcheck="true"># 返回目录或者文件的绝对路径</span>
+</code></pre>
 <h4 id="用法"><a href="#用法" class="headerlink" title="$$ 用法"></a>$$ 用法</h4><pre class=" language-makefile"><code class="language-makefile">SRC <span class="token operator">:=</span> A.c B.c
 <span class="token symbol">process</span><span class="token punctuation">:</span>
     for i in <span class="token variable">$</span><span class="token punctuation">(</span>SRC<span class="token punctuation">)</span><span class="token punctuation">;</span> do \
         readlink -f <span class="token variable">$$i</span> >> <span class="token variable">$file</span> \
     done
 使用两个<span class="token variable">$$，是因为i在shell的for循环中展开，属于shell的变量，相当于两层变量的嵌套。make读到$$i时候，会进行转义，展开成$i，然后交给shell解释程序。施加了$$的变量，需要两次展开，才能得到变量的值。</span>
+</code></pre>
+<h3 id="Makefile中C编译、链接选项"><a href="#Makefile中C编译、链接选项" class="headerlink" title="Makefile中C编译、链接选项"></a>Makefile中C编译、链接选项</h3><pre class=" language-makefile"><code class="language-makefile">CFLAGS参数		<span class="token operator">|</span><span class="token operator">|</span>编译<span class="token operator">|</span><span class="token operator">|</span>
+-c		<span class="token comment" spellcheck="true"># 将C编译成.o目标文件，不链接</span>
+-o		<span class="token comment" spellcheck="true"># 重命名</span>
+-Idir	<span class="token comment" spellcheck="true"># 将新路径添加到include路径中，-I. -I/opt/usr...</span>
+-Wall   <span class="token comment" spellcheck="true"># 生成所有warning，并停止编译</span>
+-w		<span class="token comment" spellcheck="true"># 关闭所有warning</span>
+-O		<span class="token comment" spellcheck="true"># 优化编译选项</span>
+
+LDFLAGS参数		<span class="token operator">|</span><span class="token operator">|</span>链接<span class="token operator">|</span><span class="token operator">|</span>
+-lxxx	<span class="token comment" spellcheck="true"># 添加动态链接库，在搜索目录中找xxx.a，xxx.so的库文件</span>
+-static	<span class="token comment" spellcheck="true"># 使用静态链接库生成目标文件，避免使用共享库</span>
 </code></pre>
 
                 
@@ -839,7 +853,7 @@ Makefile中定义的变量都是全局变量，<span class="token variable">$@</
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">26.6k</span>
+                        class="white-color">26.8k</span>
             
             
             
