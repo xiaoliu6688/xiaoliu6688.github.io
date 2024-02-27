@@ -5,7 +5,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="一生一芯-异常处理设计, RayBiiao">
-    <meta name="description" content="">
+    <meta name="description" content="异常处理ecall自陷指令发生异常ecall时，处理器需要完成的操作：
+PC &gt;= csr[mepc]
+causeid =&gt; mcause
+csr[mtvec] =&gt; PC
+// 在WB阶段，硬件自动完成
+// 将当前PC写入mepc
+//">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -275,7 +281,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    0
+                    456
                 </div>
                 
 
@@ -297,7 +303,69 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><h3 id="ecall自陷指令"><a href="#ecall自陷指令" class="headerlink" title="ecall自陷指令"></a>ecall自陷指令</h3><p>发生异常ecall时，处理器需要完成的操作：</p>
+<pre class=" language-verilog"><code class="language-verilog">PC <span class="token operator">>=</span> csr<span class="token punctuation">[</span>mepc<span class="token punctuation">]</span>
+causeid <span class="token operator">=></span> mcause
+csr<span class="token punctuation">[</span>mtvec<span class="token punctuation">]</span> <span class="token operator">=></span> PC
+<span class="token comment" spellcheck="true">// 在WB阶段，硬件自动完成</span>
+<span class="token comment" spellcheck="true">// 将当前PC写入mepc</span>
+<span class="token comment" spellcheck="true">// 跳转到mtvec继续执行指令</span>
+<span class="token comment" spellcheck="true">// 将id号保存在mcause</span>
+</code></pre>
+<h3 id="mret指令"><a href="#mret指令" class="headerlink" title="mret指令"></a>mret指令</h3><p>将mepc给PC，跳转到发生异常处，改变程序执行顺序。在WB阶段执行；</p>
+<p><strong>在WB阶段执行mret和ecall指令时，都更改了pc的值，需要对流水线前四级的寄存器进行冲刷reflush</strong></p>
+<p><img src="/2024/022651980/image-20240227164253113.png" alt="image-20240227164253113"></p>
+<h3 id="csr相关指令"><a href="#csr相关指令" class="headerlink" title="csr相关指令"></a>csr相关指令</h3><p><strong>csrrw，csrrwi，csrrs，csrrsi，csrrc，csrrci；</strong></p>
+<img src="/2024/022651980/image-20240227152225346.png" alt="image-20240227152225346" style="zoom:50%;">
+
+<img src="/2024/022651980/image-20240227152627604.png" alt="image-20240227152627604" style="zoom:50%;">
+
+<img src="/2024/022651980/image-20240227152651142.png" alt="image-20240227152651142" style="zoom:50%;">
+
+<img src="/2024/022651980/image-20240227152745330.png" alt="image-20240227152745330" style="zoom:50%;">
+
+<ul>
+<li><p><strong>csrrw rd csr, rs1</strong>，<strong>csrrwi rd, csr, uimm[4:0]</strong><br>ID译码阶段，读取寄存器堆CSR[csr]，regfiles[rs1];<br>WB写回阶段，将读取的结果保存在寄存器堆中，CSR[csr] &#x3D;&gt; X[rd]，X[rs1] &#x3D;&gt; CSR[csr];<br><strong>如果rd&#x3D;0，不会向regfiles写入数据</strong></p>
+</li>
+<li><p><strong>csrrs rd, csr, rs1   csrrsi rd, csr, zimm[4:0]</strong><br>ID译码阶段，读取寄存器堆CSR[csr]，regfiles[rs1];<br>​EXE执行阶段， X[rs1] &#x2F; zimm | CSR[csr] &#x3D;&gt; exe_o;<br>​WB写回阶段，CSR[csr] &#x3D;&gt; X[rd]，exe_o  &#x3D;&gt; CSR[csr];</p>
+</li>
+<li><p><strong>csrrc rd, csr, rs1   csrrci rd, csr, zimm[4:0]</strong><br>  ID译码阶段，读取寄存器堆CSR[csr]，regfiles[rs1];<br>  EXE执行阶段， ~(X[rs1] &#x2F; zimm) &amp; CSR[csr] &#x3D;&gt; exe_o;<br>  WB写回阶段，CSR[csr] &#x3D;&gt; X[rd]，exe_o  &#x3D;&gt; CSR[csr];</p>
+</li>
+</ul>
+<h3 id="数据通路和控制信号设计"><a href="#数据通路和控制信号设计" class="headerlink" title="数据通路和控制信号设计"></a>数据通路和控制信号设计</h3><p>​	根据上文描述，设计数据通路。ID阶段csr1_o和csr2_o的选择如下所示</p>
+<img src="/2024/022651980/image-20240227163318097.png" alt="image-20240227163318097" style="zoom: 50%;">
+
+<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    csr1_sel <span class="token operator">=</span> <span class="token number">2'b00</span><span class="token punctuation">;</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>i_type <span class="token operator">&amp;</span> <span class="token punctuation">(</span>opcode <span class="token operator">==</span> <span class="token number">7'b1110011</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        <span class="token function">case</span><span class="token punctuation">(</span>fun3<span class="token punctuation">)</span>
+            <span class="token number">3'b010</span><span class="token punctuation">:</span>	csr1_sel <span class="token operator">=</span> <span class="token number">2'b00</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrs</span>
+            <span class="token number">3'b110</span><span class="token punctuation">:</span> csr1_sel <span class="token operator">=</span> <span class="token number">2'b01</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrsi</span>
+            <span class="token number">3'b011</span><span class="token punctuation">:</span> csr1_sel <span class="token operator">=</span> <span class="token number">2'b11</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrc</span>
+            <span class="token number">3'b111</span><span class="token punctuation">:</span> csr1_sel <span class="token operator">=</span> <span class="token number">2'b10</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrci</span>
+            <span class="token number">3'b001</span><span class="token punctuation">:</span> csr1_sel <span class="token operator">=</span> <span class="token number">2'b00</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrw</span>
+            <span class="token number">3'b101</span><span class="token punctuation">:</span> csr1_sel <span class="token operator">=</span> <span class="token number">2'b00</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrwi</span>
+            <span class="token keyword">default</span> <span class="token punctuation">:</span> csr1_sel <span class="token operator">=</span> <span class="token number">2'b00</span><span class="token punctuation">;</span>
+        <span class="token keyword">endcase</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    csr2_sel <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>i_type <span class="token operator">&amp;</span> <span class="token punctuation">(</span>opcode <span class="token operator">==</span> <span class="token number">7'b1110011</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        <span class="token function">case</span><span class="token punctuation">(</span>fun3<span class="token punctuation">)</span>
+            <span class="token number">3'b010</span><span class="token punctuation">:</span>	csr2_sel <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrs</span>
+            <span class="token number">3'b110</span><span class="token punctuation">:</span> csr2_sel <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrsi</span>
+            <span class="token number">3'b011</span><span class="token punctuation">:</span> csr2_sel <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrc</span>
+            <span class="token number">3'b111</span><span class="token punctuation">:</span> csr2_sel <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrci</span>
+            <span class="token number">3'b001</span><span class="token punctuation">:</span> csr2_sel <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrw</span>
+            <span class="token number">3'b101</span><span class="token punctuation">:</span> csr2_sel <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// csrrwi</span>
+            <span class="token keyword">default</span> <span class="token punctuation">:</span> csr2_sel <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+        <span class="token keyword">endcase</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+</code></pre>
+
                 
             </div>
             <hr/>
@@ -655,7 +723,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">28.4k</span>
+                        class="white-color">28.8k</span>
             
             
             

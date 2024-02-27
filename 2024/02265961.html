@@ -377,6 +377,8 @@
 </ul>
 <p>eg. 下面加法问题，要求不使用存储器FIFO，完成握手设计；</p>
 <p>思路：没有FIFO缓冲，相当于每级流水线的FIFO深度为1；逐级反压；</p>
+<img src="/2024/02265961/image-20240227135234852.png" style="zoom: 67%;">
+
 <pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">module</span> handshake_pb <span class="token punctuation">(</span>
     <span class="token keyword">input</span>  <span class="token keyword">wire</span>         clk<span class="token punctuation">,</span>
     <span class="token keyword">input</span>  <span class="token keyword">wire</span>         rst<span class="token punctuation">,</span>
@@ -970,7 +972,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">28.4k</span>
+                        class="white-color">28.8k</span>
             
             
             

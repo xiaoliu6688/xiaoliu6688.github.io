@@ -453,7 +453,13 @@
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
-                                    
+                                    异常处理ecall自陷指令发生异常ecall时，处理器需要完成的操作：
+PC >= csr[mepc]
+causeid => mcause
+csr[mtvec] => PC
+// 在WB阶段，硬件自动完成
+// 将当前PC写入mepc
+//
                                 
                             </div>
                             <div class="publish-info">
@@ -1029,7 +1035,7 @@ eg. 存在函数返回值为指针时，由于返回的是地址，当stack内�
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">28.4k</span>
+                        class="white-color">28.8k</span>
             
             
             
