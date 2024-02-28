@@ -51,7 +51,7 @@
 
     <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
 
-<meta name="generator" content="Hexo 6.3.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<meta name="generator" content="Hexo 6.3.0"></head>
 
 
 <body>
@@ -289,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    709
+                    813
                 </div>
                 
 
@@ -305,6 +305,9 @@
         </div>
         <hr class="clearfix">
 
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
         
 
         
@@ -323,40 +326,42 @@
 <img src="/2024/021950375/image-20240220111048796.png" alt style="zoom: 33%;">
 
 <p>​	判断条件:  </p>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token function">if</span><span class="token punctuation">(</span> <span class="token punctuation">(</span>rs1_id <span class="token operator">==</span> xx_rdid<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>xx_rdwen<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>rs1_id <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-    发生数据旁路
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token function">if</span><span class="token punctuation">(</span> <span class="token punctuation">(</span>rs1_id <span class="token operator">==</span> xx_rdid<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>xx_rdwen<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>rs1_id <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+	发生数据旁路
 <span class="token keyword">else</span> 
     不发生数据旁路
-<span class="token comment" spellcheck="true">// 如果源寄存器的id为0时，不能进行数据旁路，因为默认寄存器堆的0号寄存器值常0</span>
-</code></pre>
+<span class="token comment">// 如果源寄存器的id为0时，不能进行数据旁路，因为默认寄存器堆的0号寄存器值常0</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p><strong>特别：如果在exe阶段的指令是load指令，且发生了数据冒险，需要将流水线停顿一拍，等待进入访问阶段才能得到真正的数据</strong>。 这种情况称为” load use”型指令，需要发出stall和nop使能。</p>
 <p><img src="/2024/021950375/image-20240220134957838.png"></p>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">assign</span> stall <span class="token operator">=</span> <span class="token punctuation">(</span>rs1id <span class="token operator">==</span> ex_rdid<span class="token punctuation">)</span><span class="token operator">||</span><span class="token punctuation">(</span>rs2id <span class="token operator">==</span> ex_rdid<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> ex_rdwen <span class="token operator">&amp;&amp;</span> ex_lden
-<span class="token keyword">assign</span> nop <span class="token operator">=</span> stall<span class="token punctuation">;</span>
-</code></pre>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">assign</span> stall <span class="token operator">=</span> <span class="token punctuation">(</span>rs1id <span class="token operator">==</span> ex_rdid<span class="token punctuation">)</span><span class="token operator">||</span><span class="token punctuation">(</span>rs2id <span class="token operator">==</span> ex_rdid<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> ex_rdwen <span class="token operator">&amp;&amp;</span> ex_lden
+<span class="token keyword">assign</span> nop <span class="token operator">=</span> stall<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
 <h2 id="控制冒险"><a href="#控制冒险" class="headerlink" title="控制冒险"></a>控制冒险</h2><p>控制冒险的处理放在译码阶段，而不是执行阶段，这样做可以提前决定指令执行顺序；</p>
 <p>采用静态分支预测方式，当预测失败时，PC地址发生跳转，跳转地址在bru中计算得到；否则，执行PC+4。</p>
 <img src="/2024/021950375/image-20240220144307189.png" alt style="zoom: 50%;">
 
-<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">assign</span> nop <span class="token operator">=</span> jalr <span class="token operator">||</span> jal <span class="token operator">||</span> brch<span class="token punctuation">;</span>
-<span class="token keyword">assign</span> jump_en <span class="token operator">=</span> nop<span class="token punctuation">;</span>
-</code></pre>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">assign</span> nop <span class="token operator">=</span> jalr <span class="token operator">||</span> jal <span class="token operator">||</span> brch<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> jump_en <span class="token operator">=</span> nop<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
 <img src="/2024/021950375/image-20240220150606788.png" alt style="zoom: 50%;">
 
 <h2 id="数据冒险-控制冒险-冲突"><a href="#数据冒险-控制冒险-冲突" class="headerlink" title="数据冒险+控制冒险 冲突"></a>数据冒险+控制冒险 冲突</h2><p>当译码阶段的指令是jalr时，rs1发生了数据冒险，且是load-use类型，bypass模块发出stall和nop信号；bru模块发出jump和nop信号。对于IF_ID寄存器，同时收到了bypass的stall和bru的nop信号。<strong>此时，产生了冒险冲突</strong></p>
 <p>解决办法：<strong>先stall处理完数据冒险，再nop处理控制冒险保证处理控制冒险时，跳转地址的计算是正确的。</strong></p>
-<pre class=" language-systemverilog"><code class="language-systemverilog">// ex
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">&#x2F;&#x2F; ex
 auipc a5 0x0
 ld 	  a5 595(a5)
-jalr  a5 
-</code></pre>
+jalr  a5 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p><img src="/2024/021950375/image-20240220152550379.png"></p>
+<h2 id="流水线-思考"><a href="#流水线-思考" class="headerlink" title="流水线-思考"></a>流水线-思考</h2><p>发出反压信号stall时，会让整个流水线停顿下来；<br>原因是每级流水的上下游没有握手和反压，当需要反压时，只能跨级反压，并且让所有的寄存器保持不变；</p>
+<p><strong>如果每级流水都有响应的握手信号，就可以进行逐级反压，上面流水线不一定全部停顿下来，可以进一步提高效率</strong></p>
 <h4 id="debug"><a href="#debug" class="headerlink" title="debug"></a>debug</h4><p>实现srlw指令出现的问题：</p>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">63</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> srlw<span class="token punctuation">;</span> 
-<span class="token important">always </span>srlw <span class="token operator">=</span> <span class="token operator">&amp;</span><span class="token number">#123</span><span class="token punctuation">;</span><span class="token operator">&amp;</span><span class="token number">#123</span><span class="token punctuation">;</span><span class="token number">32</span><span class="token operator">&amp;</span><span class="token number">#123</span><span class="token punctuation">;</span>data_A<span class="token punctuation">[</span><span class="token number">31</span><span class="token punctuation">]</span><span class="token operator">&amp;</span><span class="token number">#125</span><span class="token punctuation">;</span><span class="token operator">&amp;</span><span class="token number">#125</span><span class="token punctuation">;</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span><span class="token number">#123</span><span class="token punctuation">;</span>data_A<span class="token punctuation">[</span><span class="token number">31</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">>></span> data_B<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token operator">&amp;</span><span class="token number">#125</span><span class="token punctuation">;</span><span class="token operator">&amp;</span><span class="token number">#125</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// right</span>
-<span class="token important">always </span>srlw <span class="token operator">=</span> <span class="token operator">&amp;</span><span class="token number">#123</span><span class="token punctuation">;</span><span class="token number">32'b0</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span><span class="token number">#123</span><span class="token punctuation">;</span>data_A<span class="token punctuation">[</span><span class="token number">31</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">>></span> data_B<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token operator">&amp;</span><span class="token number">#125</span><span class="token punctuation">;</span><span class="token operator">&amp;</span><span class="token number">#125</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">// wrong</span>
-<span class="token comment" spellcheck="true">// 存在特殊情况，如果data_A[31]为1，且data_B为0，srlw的高32位应该全为1.</span>
-</code></pre>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">63</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> srlw<span class="token punctuation">;</span> 
+<span class="token important">always</span> srlw <span class="token operator">=</span> <span class="token operator">&#123;&#123;</span><span class="token number">32</span><span class="token operator">&#123;</span>data_A<span class="token punctuation">[</span><span class="token number">31</span><span class="token punctuation">]</span><span class="token operator">&#125;&#125;</span><span class="token punctuation">,</span> <span class="token operator">&#123;</span>data_A<span class="token punctuation">[</span><span class="token number">31</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">>></span> data_B<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token operator">&#125;&#125;</span> <span class="token comment">// right</span>
+<span class="token important">always</span> srlw <span class="token operator">=</span> <span class="token operator">&#123;</span><span class="token number">32'b0</span><span class="token punctuation">,</span> <span class="token operator">&#123;</span>data_A<span class="token punctuation">[</span><span class="token number">31</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">>></span> data_B<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token operator">&#125;&#125;</span>  <span class="token comment">// wrong</span>
+<span class="token comment">// 存在特殊情况，如果data_A[31]为1，且data_B为0，srlw的高32位应该全为1.</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p>如果srlw指令中的data_B &gt;&#x3D; 1，srlw结果高32bit都为0，两种方式的结果一致；<br>如果srlw指令中的data_B &#x3D; 0，data_A的第32bit为0，两种方式结果一致；<br>如果srlw指令中的data_B &#x3D; 0，data_A的第32bit为1，两种方式结果不一致；第一种是正确的。</p>
 
                 
@@ -610,6 +615,9 @@ jalr  a5
 <script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
 
 
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
 
 <!-- 代码语言 -->
 
@@ -732,7 +740,7 @@ jalr  a5
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">28.8k</span>
+                        class="white-color">30.2k</span>
             
             
             

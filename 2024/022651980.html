@@ -56,7 +56,7 @@ csr[mtvec] =&gt; PC
 
     <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
 
-<meta name="generator" content="Hexo 6.3.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<meta name="generator" content="Hexo 6.3.0"></head>
 
 
 <body>
@@ -298,6 +298,9 @@ csr[mtvec] =&gt; PC
         <hr class="clearfix">
 
         
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
+        
 
         
 
@@ -314,15 +317,15 @@ csr<span class="token punctuation">[</span>mtvec<span class="token punctuation">
 </code></pre>
 <h3 id="mret指令"><a href="#mret指令" class="headerlink" title="mret指令"></a>mret指令</h3><p>将mepc给PC，跳转到发生异常处，改变程序执行顺序。在WB阶段执行；</p>
 <p><strong>在WB阶段执行mret和ecall指令时，都更改了pc的值，需要对流水线前四级的寄存器进行冲刷reflush</strong></p>
-<p><img src="/2024/022651980/image-20240227164253113.png" alt="image-20240227164253113"></p>
+<p><img src="/2024/022651980/image-20240227164253113.png"></p>
 <h3 id="csr相关指令"><a href="#csr相关指令" class="headerlink" title="csr相关指令"></a>csr相关指令</h3><p><strong>csrrw，csrrwi，csrrs，csrrsi，csrrc，csrrci；</strong></p>
-<img src="/2024/022651980/image-20240227152225346.png" alt="image-20240227152225346" style="zoom:50%;">
+<img src="/2024/022651980/image-20240227152225346.png" alt style="zoom:50%;">
 
-<img src="/2024/022651980/image-20240227152627604.png" alt="image-20240227152627604" style="zoom:50%;">
+<img src="/2024/022651980/image-20240227152627604.png" alt style="zoom:50%;">
 
-<img src="/2024/022651980/image-20240227152651142.png" alt="image-20240227152651142" style="zoom:50%;">
+<img src="/2024/022651980/image-20240227152651142.png" alt style="zoom:50%;">
 
-<img src="/2024/022651980/image-20240227152745330.png" alt="image-20240227152745330" style="zoom:50%;">
+<img src="/2024/022651980/image-20240227152745330.png" alt style="zoom:50%;">
 
 <ul>
 <li><p><strong>csrrw rd csr, rs1</strong>，<strong>csrrwi rd, csr, uimm[4:0]</strong><br>ID译码阶段，读取寄存器堆CSR[csr]，regfiles[rs1];<br>WB写回阶段，将读取的结果保存在寄存器堆中，CSR[csr] &#x3D;&gt; X[rd]，X[rs1] &#x3D;&gt; CSR[csr];<br><strong>如果rd&#x3D;0，不会向regfiles写入数据</strong></p>
@@ -333,7 +336,7 @@ csr<span class="token punctuation">[</span>mtvec<span class="token punctuation">
 </li>
 </ul>
 <h3 id="数据通路和控制信号设计"><a href="#数据通路和控制信号设计" class="headerlink" title="数据通路和控制信号设计"></a>数据通路和控制信号设计</h3><p>​	根据上文描述，设计数据通路。ID阶段csr1_o和csr2_o的选择如下所示</p>
-<img src="/2024/022651980/image-20240227163318097.png" alt="image-20240227163318097" style="zoom: 50%;">
+<img src="/2024/022651980/image-20240227163318097.png" alt style="zoom: 50%;">
 
 <pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
     csr1_sel <span class="token operator">=</span> <span class="token number">2'b00</span><span class="token punctuation">;</span>
@@ -601,6 +604,9 @@ csr<span class="token punctuation">[</span>mtvec<span class="token punctuation">
 <script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
 
 
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
 
 <!-- 代码语言 -->
 
@@ -723,7 +729,7 @@ csr<span class="token punctuation">[</span>mtvec<span class="token punctuation">
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">28.8k</span>
+                        class="white-color">30.2k</span>
             
             
             

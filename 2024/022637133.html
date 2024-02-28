@@ -54,7 +54,7 @@
 
     <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
 
-<meta name="generator" content="Hexo 6.3.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<meta name="generator" content="Hexo 6.3.0"></head>
 
 
 <body>
@@ -292,7 +292,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    438
+                    1.7k
                 </div>
                 
 
@@ -309,6 +309,9 @@
         <hr class="clearfix">
 
         
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
+        
 
         
 
@@ -319,7 +322,7 @@
 <p>输出信号：Dout</p>
 <p><img src="/2024/022637133/v2-92bfd62c33dd99594745ac2becfc5206_720w.webp" alt="img"></p>
 <p>思路：如果两个周期输入信号保持不变，则输出。否则，保持不变；</p>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">filter</span><span class="token punctuation">(</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">filter</span><span class="token punctuation">(</span>
     <span class="token keyword">input</span>       <span class="token number">17</span>clk<span class="token punctuation">,</span>
     <span class="token keyword">input</span>       nrst<span class="token punctuation">,</span>
     <span class="token keyword">input</span>       din<span class="token punctuation">,</span>
@@ -339,8 +342,8 @@
     <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>din <span class="token operator">==</span> din_r<span class="token punctuation">)</span>
         dout <span class="token operator">&lt;=</span> din<span class="token punctuation">;</span>
 <span class="token keyword">end</span>
-<span class="token keyword">endmodule</span>
-</code></pre>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <h3 id="仅过滤单向毛刺"><a href="#仅过滤单向毛刺" class="headerlink" title="仅过滤单向毛刺"></a>仅过滤单向毛刺</h3><ul>
 <li><p>过滤负毛刺</p>
 <p>过滤一个周期的负毛刺，当负电平持续两个周期，才可以输出低电平；</p>
@@ -352,7 +355,7 @@
 <p>采用两拍的寄存器，两级输出做 “<strong>与</strong>”操作；</p>
 <img src="/2024/022637133/image-20240226150436436.png" alt="image-20240226150436436" style="zoom:67%;">
 
-<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">filter_pos</span><span class="token punctuation">(</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">filter_pos</span><span class="token punctuation">(</span>
     <span class="token keyword">input</span>       clk<span class="token punctuation">,</span>
     <span class="token keyword">input</span>       nrst<span class="token punctuation">,</span>
     <span class="token keyword">input</span>       din<span class="token punctuation">,</span>
@@ -365,14 +368,12 @@
     <span class="token keyword">else</span>
         din_r <span class="token operator">&lt;=</span> din<span class="token punctuation">;</span>
 <span class="token keyword">end</span>
-<span class="token keyword">assign</span> dout <span class="token operator">=</span> din <span class="token operator">&amp;</span> din_r<span class="token punctuation">;</span>
-</code></pre>
-</li>
+<span class="token keyword">assign</span> dout <span class="token operator">=</span> din <span class="token operator">&amp;</span> din_r<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
 </ul>
 <hr>
 <h2 id="消抖动电路"><a href="#消抖动电路" class="headerlink" title="消抖动电路"></a>消抖动电路</h2><p>题目：用verilog实现按键抖动消除电路，抖动小于15ms，输入时钟12MHz。</p>
 <p>思路：添加计数器，如果15ms数据没有变化，将输入放在输出。</p>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">module</span> de_jitter <span class="token punctuation">(</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> de_jitter <span class="token punctuation">(</span>
     <span class="token keyword">input</span>       clk<span class="token punctuation">,</span>
     <span class="token keyword">input</span>       nrst<span class="token punctuation">,</span>
     <span class="token keyword">input</span>       din<span class="token punctuation">,</span>
@@ -415,8 +416,317 @@
     <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>cnt <span class="token operator">==</span> jitter_factor <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span>
         dout <span class="token operator">&lt;=</span> din<span class="token punctuation">;</span>
 <span class="token keyword">end</span>
-<span class="token keyword">endmodule</span>
-</code></pre>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="串并、并串转换"><a href="#串并、并串转换" class="headerlink" title="串并、并串转换"></a>串并、并串转换</h2><h3 id="串转并"><a href="#串转并" class="headerlink" title="串转并"></a>串转并</h3><p>​    用一个计数器count，每输入8个数，就输出一次，每周期dout_temp左移一位，然后再将输入的1bit串行据存入dout_temp的最低位。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">Serial_Parallel</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>            clk<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>            nrst<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>            data_in<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>            data_valid<span class="token punctuation">,</span>
+
+    <span class="token keyword">output</span> <span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_out<span class="token punctuation">,</span>
+    <span class="token keyword">output</span>           data_out_valid
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> cnt<span class="token punctuation">;</span> 
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_reg<span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+        cnt <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_valid<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        <span class="token function">if</span><span class="token punctuation">(</span>cnt <span class="token operator">==</span> <span class="token number">7</span><span class="token punctuation">)</span>
+            cnt <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+        <span class="token keyword">else</span>
+            cnt <span class="token operator">&lt;=</span> cnt <span class="token operator">+</span> <span class="token number">'h1</span><span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+        data_reg <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_valid<span class="token punctuation">)</span>
+        data_reg <span class="token operator">&lt;=</span> <span class="token operator">&#123;</span>data_reg<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> data_in<span class="token operator">&#125;</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>cnt <span class="token operator">==</span> <span class="token number">7</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        data_valid <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+        data_out <span class="token operator">&lt;=</span> data_reg<span class="token punctuation">;</span>
+    <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+        data_valid <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+        data_out <span class="token operator">&lt;=</span> data_reg<span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="并转串"><a href="#并转串" class="headerlink" title="并转串"></a>并转串</h3><pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">Parallel_Serial</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>           clk<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>           nrst<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>     data_in<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>           data_in_valid<span class="token punctuation">,</span>
+
+    <span class="token keyword">output</span>          data_out_valid<span class="token punctuation">,</span> 
+    <span class="token keyword">output</span>          data_out
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> cnt<span class="token punctuation">;</span>
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_in_reg<span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> 
+        data_in_reg <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_in_valid<span class="token punctuation">)</span> 
+        data_in_reg <span class="token operator">&lt;=</span> data_in<span class="token punctuation">;</span>
+    <span class="token keyword">else</span> 
+        data_in_reg <span class="token operator">&lt;=</span> data_in_reg <span class="token operator">&lt;&lt;</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+        cnt <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_in_valid<span class="token punctuation">)</span>
+        cnt <span class="token operator">&lt;=</span> <span class="token number">8</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>cnt <span class="token operator">>=</span> <span class="token number">1</span><span class="token punctuation">)</span>
+        cnt <span class="token operator">&lt;=</span> cnt <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token keyword">assign</span> data_out_valid <span class="token operator">=</span> <span class="token punctuation">(</span>cnt <span class="token operator">>=</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token operator">?</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> data_out <span class="token operator">=</span> data_in_reg<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="数据位宽转换"><a href="#数据位宽转换" class="headerlink" title="数据位宽转换"></a>数据位宽转换</h2><h3 id="宽到窄传输"><a href="#宽到窄传输" class="headerlink" title="宽到窄传输"></a>宽到窄传输</h3><p>​    假设数据从模块A传入到模块B，模块A的<strong>输出数据为32位</strong>，模块B的<strong>输入数据位宽为16位</strong>，那么如何能把数据从A传入B<strong>而不损失数据</strong>呢。</p>
+<p>思路：<strong>通过时钟分频和倍频</strong></p>
+<p>宽数据是慢时钟，窄数据是快时钟；</p>
+<p>Input：快时钟+宽数据</p>
+<p>Output：窄数据（快时钟输出）</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">Wide_Narror</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>           clk_2x<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>           nrst<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">63</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>    data_in<span class="token punctuation">,</span>
+    
+    <span class="token keyword">output</span> <span class="token punctuation">[</span><span class="token number">31</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   data_out
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">reg</span> clk_1x<span class="token punctuation">;</span>
+<span class="token keyword">reg</span> flag<span class="token punctuation">;</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk_2x <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+        clk_1x <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> 
+        clk_1x <span class="token operator">&lt;=</span> <span class="token operator">~</span>clk_1x<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk_1x <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+        data_in_reg <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> 
+        data_in_reg <span class="token operator">&lt;=</span> data_in<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">assign</span> data_out <span class="token operator">=</span> clk_1x <span class="token operator">?</span> data_in_reg<span class="token punctuation">[</span><span class="token number">63</span><span class="token punctuation">:</span><span class="token number">32</span><span class="token punctuation">]</span> <span class="token punctuation">:</span> data_in_reg<span class="token punctuation">[</span><span class="token number">31</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="窄到宽传输"><a href="#窄到宽传输" class="headerlink" title="窄到宽传输"></a>窄到宽传输</h3><p>宽数据是慢时钟，窄数据是快时钟；</p>
+<p>Input：快时钟 + 窄数据</p>
+<p>Output：宽数据（慢时钟输出）</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">Narror_Wide</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>           clk_2x<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>           nrst<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">31</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>    data_in<span class="token punctuation">,</span>
+    
+    <span class="token keyword">output</span> <span class="token punctuation">[</span><span class="token number">63</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   data_out
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">reg</span> clk_1x<span class="token punctuation">;</span>
+<span class="token keyword">reg</span> flag<span class="token punctuation">;</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk_2x <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+        clk_1x <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> 
+        clk_1x <span class="token operator">&lt;=</span> <span class="token operator">~</span>clk_1x<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk_1x <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+        data_in_reg <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> 
+        data_in_reg <span class="token operator">&lt;=</span> <span class="token operator">&#123;</span>data_in_reg<span class="token punctuation">[</span><span class="token number">31</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> data_in<span class="token operator">&#125;</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">assign</span> data_out <span class="token operator">=</span> clk_1x <span class="token operator">?</span> data_in_reg <span class="token punctuation">:</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="握手解决流水线断流、反压问题"><a href="#握手解决流水线断流、反压问题" class="headerlink" title="握手解决流水线断流、反压问题"></a>握手解决流水线断流、反压问题</h2><p>通过三级流水线实现以下组合逻辑的计算；包含握手和反压的处理。</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python">y <span class="token operator">=</span> <span class="token punctuation">(</span>c1<span class="token operator">+</span>c2<span class="token punctuation">)</span><span class="token operator">*</span><span class="token punctuation">(</span>c3<span class="token operator">+</span>c4<span class="token punctuation">)</span> <span class="token operator">+</span> a2<span class="token operator">*</span>b2 <span class="token operator">+</span> a3<span class="token operator">*</span>b3 <span class="token operator">+</span> a4<span class="token operator">*</span>b4<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>思路：第一级流水完成 (c1+c2)，(c3+c4)的计算<br>        第二级流水完成乘法运算<br>        第三级流水加法运算</p>
+<p>每一级的上下游都要有握手和反压信号的处理；</p>
+<p><img src="/2024/022637133/image-20240228153148536.png" alt="image-20240228153148536"></p>
+<ul>
+<li><p><strong>ready信号的处理</strong></p>
+<p><strong>以ready_r1为例，当r1寄存器为空（valid_r1&#x3D;&#x3D;0）或者ready_2为1时，r1都有能力接收数据；</strong></p>
+</li>
+<li><p><strong>valid信号的处理</strong></p>
+<p><strong>对于r1来说，valid_r1可以作为握手的结果信号；当valid_i和ready_r1握手成功后，r1输出valid_r1为1和有效的data_a。</strong></p>
+</li>
+</ul>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">handshake_pipline</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>       clk<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>       nrst<span class="token punctuation">,</span>
+
+    <span class="token keyword">input</span>       valid_i<span class="token punctuation">,</span>       
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> c1<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> c2<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> c3<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> c4<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> a2<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> b2<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> a3<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> b3<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> a4<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> b4
+
+    <span class="token keyword">output</span> <span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">15</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> result<span class="token punctuation">,</span>
+    <span class="token keyword">output</span>      valid_o<span class="token punctuation">,</span>
+
+    <span class="token keyword">input</span>       ready_i<span class="token punctuation">,</span>
+    <span class="token keyword">output</span>      ready_o
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> a1_r<span class="token punctuation">,</span> b1_r<span class="token punctuation">;</span>
+<span class="token keyword">wire</span> ready_r1<span class="token punctuation">,</span> ready_r2<span class="token punctuation">,</span> ready_r3<span class="token punctuation">;</span>
+
+<span class="token comment">// first stage</span>
+<span class="token keyword">assign</span> ready_r1 <span class="token operator">=</span> ready_r2 <span class="token operator">|</span> <span class="token punctuation">(</span><span class="token operator">!</span>valid_r1<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+        valid_r1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>valid_i <span class="token operator">&amp;</span> ready_r1<span class="token punctuation">)</span>
+        valid_r1 <span class="token operator">&lt;=</span> valid_i<span class="token punctuation">;</span>
+    <span class="token keyword">else</span> 
+        valid_r1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>valid_i <span class="token operator">&amp;</span> ready_r1<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        a1_r <span class="token operator">&lt;=</span> c1 <span class="token operator">+</span> c2<span class="token punctuation">;</span>
+        b1_r <span class="token operator">&lt;=</span> c3 <span class="token operator">+</span> c4<span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> a2_r<span class="token punctuation">,</span> b2_r<span class="token punctuation">,</span> a3_r<span class="token punctuation">,</span> b3_r<span class="token punctuation">,</span> a4_r<span class="token punctuation">,</span> b4_r<span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>valid_i <span class="token operator">&amp;</span> ready_r1<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        a2_r <span class="token operator">&lt;=</span> a2<span class="token punctuation">;</span>
+        b2_r <span class="token operator">&lt;=</span> b2<span class="token punctuation">;</span>
+        a3_r <span class="token operator">&lt;=</span> a3<span class="token punctuation">;</span>
+        b3_r <span class="token operator">&lt;=</span> b3<span class="token punctuation">;</span>
+        a4_r <span class="token operator">&lt;=</span> a4<span class="token punctuation">;</span>
+        b4_r <span class="token operator">&lt;=</span> b4<span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token comment">// second stage</span>
+<span class="token keyword">assign</span> ready_r2 <span class="token operator">=</span> ready_r3 <span class="token operator">|</span> <span class="token punctuation">(</span><span class="token operator">!</span>valid_r2<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+        valid_r2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>valid_r1 <span class="token operator">&amp;</span> ready_r2<span class="token punctuation">)</span>
+        valid_r2 <span class="token operator">&lt;=</span> valid_r1<span class="token punctuation">;</span>
+    <span class="token keyword">else</span> 
+        valid_r2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">15</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> mul_1<span class="token punctuation">,</span> mul_2<span class="token punctuation">,</span> mul_3<span class="token punctuation">,</span> mul_4<span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>valid_r1 <span class="token operator">&amp;</span> ready_r2<span class="token punctuation">)</span> <span class="token keyword">begin</span> 
+        mul_1 <span class="token operator">&lt;=</span> a1_r <span class="token operator">*</span> b1_r<span class="token punctuation">;</span>
+        mul_2 <span class="token operator">&lt;=</span> a2_r <span class="token operator">*</span> b2_r<span class="token punctuation">;</span>
+        mul_3 <span class="token operator">&lt;=</span> a3_r <span class="token operator">*</span> b3_r<span class="token punctuation">;</span> 
+        mul_4 <span class="token operator">&lt;=</span> a4_r <span class="token operator">*</span> b4_r<span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token comment">// third stage</span>
+<span class="token keyword">assign</span> ready_r3 <span class="token operator">=</span> ready_i <span class="token operator">|</span> <span class="token punctuation">(</span><span class="token operator">!</span>valid_r3<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+        valid_r3 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>valid_r2 <span class="token operator">&amp;</span> ready_r3<span class="token punctuation">)</span>
+        valid_r3 <span class="token operator">&lt;=</span> valid_r2<span class="token punctuation">;</span>
+    <span class="token keyword">else</span> 
+        valid_r3 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>valid_r2 <span class="token operator">&amp;</span> ready_r3<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        result <span class="token operator">&lt;=</span> mul_1 <span class="token operator">+</span> mul_2 <span class="token operator">+</span> mul_3 <span class="token operator">+</span>mul_4<span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">assign</span> valid_o <span class="token operator">=</span> valid_r3<span class="token punctuation">;</span>
+
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="快速计算one-hot码中“1”所对应的下标"><a href="#快速计算one-hot码中“1”所对应的下标" class="headerlink" title="快速计算one-hot码中“1”所对应的下标"></a>快速计算one-hot码中“1”所对应的下标</h2><p>题目：找一个多bit信号最高位的1或最低位的1所对应的下标</p>
+<p>思路：根据独热码和对应坐标的真值表，写出逻辑表达式；</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">One_Hot_position</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>       clk<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>       nrst<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_in<span class="token punctuation">,</span>
+    <span class="token keyword">output</span><span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> position
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> position<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_in<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> position<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_in<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> position<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_in<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token comment">//    one_hot	index</span>
+<span class="token comment">// 8'b0000_0001	3'b000</span>
+<span class="token comment">// 8'b0000_0010	3'b001</span>
+<span class="token comment">// 8'b0000_0100	3'b010</span>
+<span class="token comment">// 8'b0000_1000	3'b011</span>
+<span class="token comment">// 8'b0001_0000	3'b100</span>
+<span class="token comment">// 8'b0010_0000	3'b101</span>
+<span class="token comment">// 8'b0100_0000	3'b110</span>
+<span class="token comment">// 8'b1000_0000	3'b111</span>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="找到序列第一个1和最后一个1"><a href="#找到序列第一个1和最后一个1" class="headerlink" title="找到序列第一个1和最后一个1"></a>找到序列第一个1和最后一个1</h2><p>思路：找出多bit数据中第一个1和最后一个1的位置，将其转换成独热码，根据独热码得到位置；</p>
+<p>通过”按位”操作</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token comment">// MAX</span>
+pre<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+pre<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span> <span class="token operator">=</span> pre<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+pre<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span> <span class="token operator">=</span> pre<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token operator">~</span>pre <span class="token operator">&amp;</span> data_in <span class="token operator">=></span> One_Hot
+<span class="token comment">// MIN</span>
+data_in <span class="token operator">&amp;</span> <span class="token operator">~</span><span class="token punctuation">(</span>data_in <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">=></span> One_Hot<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">Find_Max_1</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>       clk<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>       nrst<span class="token punctuation">,</span>
+
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_in<span class="token punctuation">,</span>
+    <span class="token keyword">output</span><span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_out
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> pre<span class="token punctuation">;</span>
+
+<span class="token keyword">assign</span> pre<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> pre<span class="token punctuation">[</span><span class="token number">6</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> pre<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">|</span> data_in<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span> 
+
+<span class="token keyword">assign</span> data_out <span class="token operator">=</span> <span class="token operator">~</span>pre <span class="token operator">&amp;</span> data_in<span class="token punctuation">;</span>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">Find_Min_1</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>       clk<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>       nrst<span class="token punctuation">,</span>
+
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_in<span class="token punctuation">,</span>
+    <span class="token keyword">output</span><span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_out
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">assign</span> data_out <span class="token operator">=</span> data_in <span class="token operator">&amp;</span> <span class="token operator">~</span><span class="token punctuation">(</span>data_in <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
                 
             </div>
@@ -657,6 +967,9 @@
 <script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
 
 
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
 
 <!-- 代码语言 -->
 
@@ -779,7 +1092,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">28.8k</span>
+                        class="white-color">30.2k</span>
             
             
             
