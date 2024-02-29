@@ -374,15 +374,13 @@
 
 <ul>
 <li><p>锁存器生成对应的电路</p>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span>clk<span class="token punctuation">)</span> 
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span>clk<span class="token punctuation">)</span> 
   <span class="token function">if</span><span class="token punctuation">(</span>clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-      b <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-      a <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  	b <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  	a <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
   <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
-      b <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-  <span class="token keyword">end</span>
-</code></pre>
-</li>
+  	b <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
 </ul>
 <img src="/2024/012448005/image-20240219225204769.png" alt style="zoom:50%;">
 
@@ -415,7 +413,13 @@
 <img src="/2024/012448005/image-20240220105432984.png" alt style="zoom: 50%;">
 
 <p><strong>使用锁存器而不使用寄存器的原因：节省面积，一个DFF需要两个锁存器，而且还能降低功耗</strong></p>
-<p><strong>并不是所有的寄存器都要复位信号，一般情况下，控制和使能信号需要复位，数据信号不需要复位。这样可以节省面积和功耗</strong></p>
+<ul>
+<li><p><strong>并不是所有的寄存器都要复位信号，一般情况下，控制和使能信号需要复位，数据信号不需要复位。这样可以节省面积和功耗</strong></p>
+</li>
+<li><p>常值的乘除法都可以进行优化；</p>
+<p>除以一个数等于乘这个数的倒数；<br>一个数乘480，&#x3D;》 x*(512-32)</p>
+</li>
+</ul>
 
                 
             </div>
@@ -793,7 +797,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.2k</span>
+                        class="white-color">30.6k</span>
             
             
             

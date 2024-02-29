@@ -4,10 +4,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="icc_flow, RayBiiao">
+    <meta name="keywords" content="FMCW, RayBiiao">
     <meta name="description" content="
-decap cell的插入
-解决IR drop的，为逻辑单元提供稳定的电压。去耦电容，提供稳定的电源和地，降低电源噪声和提高电噪声免疫性的特殊电路元件。Decap cell是小电容器，位于整个布局的VDD和GND之间。当逻辑电路汲取大量电">
+  10d79030e8222445804370796b90fca106f15dd47c03b7cc3ac7fb0590359f37ccd6ce25dabd9e485ae27a888d7ca1365faa8a02c4def6f2b6807">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -19,7 +18,7 @@ decap cell的插入
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>icc_flow | RayBiiao</title>
+    <title>FMCW | RayBiiao</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -227,12 +226,12 @@ decap cell的插入
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/19.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">icc_flow</h1>
+                    <h1 class="description center-align post-title">FMCW</h1>
                 </div>
             </div>
         </div>
@@ -254,25 +253,12 @@ decap cell的插入
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                    <div class="article-tag">
-                        
-                            <a href="/tags/ICC/">
-                                <span class="chip bg-color">ICC</span>
-                            </a>
-                        
-                    </div>
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
                     
                 </div>
                 <div class="col s5 right-align">
-                    
-                    <div class="post-cate">
-                        <i class="fas fa-bookmark fa-fw icon-category"></i>
-                        
-                            <a href="/categories/ASIC%E6%95%B0%E5%AD%97%E5%90%8E%E7%AB%AF%E6%B5%81%E7%A8%8B/" class="post-category">
-                                ASIC数字后端流程
-                            </a>
-                        
-                    </div>
                     
                 </div>
             </div>
@@ -281,7 +267,7 @@ decap cell的插入
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2024-01-21
+                    2024-02-28
                 </div>
                 
 
@@ -290,7 +276,7 @@ decap cell的插入
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.9k
+                    6
                 </div>
                 
 
@@ -315,181 +301,18 @@ decap cell的插入
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <ul>
-<li><p>decap cell的插入</p>
-<p>解决IR drop的，为逻辑单元提供稳定的电压。去耦电容，提供稳定的电源和地，降低电源噪声和提高电噪声免疫性的特殊电路元件。<br>Decap cell是小电容器，位于整个布局的VDD和GND之间。当逻辑电路汲取大量电流时，该电容器为该电路提供额外的电荷当逻辑电路不吸收任何电流时，decap cell被充电至最大电容利用decap cell来降低动态IR drop。<br>decap cell是带金属层的，建议routing结束后再加，否则影响route走线。</p>
-</li>
-</ul>
-<img src="/2024/012139355/image-20240121233331816.png" alt style="zoom:50%;">
-
-<ul>
-<li><p>filler cell</p>
-<p>为确保所有VDD和VSS rail连接正常，我们需要使用filler cell填充标准单元row中的空白区域。filler cell没有逻辑连接，同时还包含衬底nwell连接以改善衬底偏置。</p>
-</li>
-</ul>
-<p>​	在routing后进行的，先插入decap cell，再插入filler cell</p>
-<p>​	插完decap cell和filler cell之后，我们可以发现整个设计都被cell给填充了，可以把芯片的表面做平，<strong>在stdcell区域是不允许有间隙的存在的</strong>，也可以用命令checkFiller来检查。</p>
-<p>​	<strong>作用：</strong></p>
-<ol>
-<li><p><strong>平整表面</strong>：在后续的工艺步骤中，便于后续工艺的抛光。</p>
-</li>
-<li><p><strong>获得连续的VDD和VSS</strong></p>
-</li>
-<li><p>保证版图连续性和均匀性，保证掺杂均匀性，减小工艺变异，增强结构稳健性。</p>
-</li>
-<li><p><strong>优化功耗和性能</strong>：通过在空白区域添加 Filler Cells，电流路径可能会更均匀，有助于减少电磁干扰和功耗。</p>
-</li>
-</ol>
-<ul>
-<li><p>dummy</p>
-<p>主要有以下几种用途：</p>
-<ol>
-<li>保证可制造性，DFM。tapeout时会检查芯片的密度，插入dummy mental，dummy poly，dummy diff</li>
-<li>在关键器件旁边加入dummy 器件，比如cap，res，mos等</li>
-<li>避免芯片中的noise对关键信号的影响，在关键信号的周围加上dummy routing layer或者dummy元器件，shielding。</li>
-</ol>
-</li>
-<li><p>获取整个design的instance个数和面积</p>
-<p>report_qor</p>
-<img src="/2024/012139355/image-20240123212321424.png" alt style="zoom:67%;">
-
-<img src="/2024/012139355/abc207bf21bdcaa65b8339f664292df.jpg" alt style="zoom: 33%;"></li>
-</ul>
-<p>​	gate count计算：等效的门数，只是一个粗略的计算，不是精确值。将两输入与非门的面积作为等效参考，即一个gate的面积。用所有std cell的面积除以2输入与非门的面积，得到是数值为用到的总门数。总门数*4得到的是晶体管数目。</p>
-<blockquote>
-<p>DC综合两输入与非门的面积为1.44，所有cell的总面积为41.2w平方微米。等效门数为41.2&#x2F;1.44 &#x3D; 28.61w逻辑门。</p>
-</blockquote>
-<ul>
-<li><p>查看clock skew的值</p>
-<ol>
-<li><p>通过report_timing</p>
-<p>得到的skew会偏大一些，因为skew经过derate。</p>
-</li>
-<li><p>通过report clcok tree</p>
-</li>
-</ol>
-</li>
-<li><p>clock skew的设置</p>
-<p>在长时钟树时，要设置targe skew，告诉工具clock skew期望值多少，一般设置为50-80ps，100ps以内都正常。</p>
-</li>
-</ul>
-<p>ICC cts的相关设置</p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/IClearner/p/6606360.html">https://www.cnblogs.com/IClearner/p/6606360.html</a></p>
-<ul>
-<li><p>wire spreading（连线扩展）</p>
-<p>也成为critical area analysis关键区域分析的地方</p>
-<p>bg：制造过程中可能会出现随机的颗粒缺陷导致短路或者开路<br>最小间距的连线最容易造成短路，最小宽度的连线最容易造成开路。</p>
-<p>解决办法：容易短路的地方，增加间距。容易断路的地方，增加线宽。</p>
-<img src="/2024/012139355/20200729093453667.png" alt style="zoom: 67%;">
-icc_tcl:  spread_zrt_wires / widen_zrt_wires
-</li>
-<li><p>检查placement是否合法</p>
-</li>
-</ul>
-<p>​	placement后，执行<code>check_legality</code></p>
-<ul>
-<li>ICC 在导入网表后，没有tie cell是正常的，因为是在placement才加入tie cell；High Fanout Net也是正常的，还没有插入buffer进行优化。</li>
-</ul>
-<img src="/2024/012139355/image-20231224214002120.png" style="zoom: 67%;">
-
-<ul>
-<li>后端流程</li>
-</ul>
-<img src="/2024/012139355/image-20231224215828226.png" alt style="zoom:67%;">
-
-<ul>
-<li>时序库 （*.lib， *db）表征的2个模型</li>
-</ul>
-<p>​	.NLDM (non linear delay model)，65nm 之前工艺 </p>
-<p>​	.CCS （composite current source）, 更精确，同时能描述crosstalk （信号干扰）的信息 </p>
-<ul>
-<li>max_transition &#x2F; input_transition</li>
-</ul>
-<p>​	一般来说，sdc中关于max_transition的值参考lib库中给定的transition值，尽量取中间范围。transition设置的过小也不好，会导致工具插入很多cell，增大了芯片的面积。</p>
-<p>​	解决措施：在DC和ICC时设置max_transition为0.4，在PT时设置0.6</p>
-<p><img src="/2024/012139355/3158545f6cb70988f94b0214218380a.jpg"></p>
-<p>出现上述问题的原因是因为在做lvs时，网表与版图不匹配，可以将icc生成的网表导入到calibre里面做lvs。在icc pr后的网表中，在module里面并没有上述的Q端口，而是使用的Qn，接一个反相器输出的，这个是和版图对应的。</p>
-<p>CCS的lib中有 crosstalk的信息；</p>
-<p>物理信息库<br>     1. LEF(library exchange format): cadence 的物理信息库，只有布局布线要用到信息，pins…<br>     2. milkway：synopsys的物理库<br>     3. GDS：流片用的信息，所有的层次都有<br>     4. CDL：器件级spice网表，lvs和仿真</p>
-<p><img src="/2024/012139355/wps2.jpg">（LEF GDS)</p>
-<p>DC在做综合的时候，把DRC的约束优先级设置为最高，依次是：max_capacitance,max_transition, max_fanout</p>
-<p>DC中报告的漏电功耗是准的，动态功耗不准。</p>
-<ul>
-<li><h4 id="Formality"><a href="#Formality" class="headerlink" title="Formality"></a><strong>Formality</strong></h4><p>只验证逻辑，不验证功能。比较的原理：formality将设计分为多个logic cone和compare point</p>
-<img src="/2024/012139355/image-20240102224954497.png" alt style="zoom: 80%;"></li>
-</ul>
-<p><img src="/2024/012139355/image-20240102225055027.png"></p>
-<ul>
-<li><p>DC和PT分析时序路径的不同</p>
-<p>DC</p>
-<ol>
-<li>过约束，留出一定的裕量给后续的步骤</li>
-<li>时钟网络的延迟的不准确的，一定设置为ideal clock network</li>
-<li>线延迟也是基于库中的wire load model估计出来的</li>
-<li>通常在单一PVT的corner进行的，比如wc</li>
-</ol>
-<p>ICC</p>
-<ol>
-<li>不需要过约束，根据实际的电路计算</li>
-<li>所有网络 clock，wire network均为实际的</li>
-<li>可以从版图中抽取RC寄生参数，计算net delay</li>
-<li>需要在多个PVT corner下验证</li>
-</ol>
-</li>
-<li><p>修复setup违例</p>
-<p>满足 Tskew + Tclk &gt; Tlogic + Tsetup + Tclk2q</p>
-<ol>
-<li>提高Tclk，降低频率</li>
-<li>减小Tlogic，优化组合逻辑，划分流水线</li>
-<li>减小Tclk2q，将HVT管换成LVT管子，速度变快</li>
-</ol>
-</li>
-<li><p>修复hold违例</p>
-<p>满足Tclk2q + Tlogic(min) &gt; Thold + Tskew</p>
-<ol>
-<li>增加组合逻辑延迟，插入buffer</li>
-<li>降低Tskew，甚至用负的skew</li>
-</ol>
-</li>
-</ul>
-<p>SDF：标准延迟格式的文件，描述了设计中的时序信息，包括net delay和cell delay，sdf文件可以直接用于后仿</p>
-<p>SPEF：标准寄生格式交换文件，提供具体的R和C参数，延时计算相对准确。</p>
-<p><img src="/2024/012139355/image-20240103100523201.png"></p>
-<p>在PT中设置clock约束时和DC的区别</p>
-<p><img src="/2024/012139355/image-20240103100716030.png"></p>
-<p><img src="/2024/012139355/image-20240103101023594.png"></p>
-<p>ECO是在post layout上进行的。</p>
-<p>PT自动进行ECO，PT工具主要通过resizing cells和插入buffer来完成ECO</p>
-<ul>
-<li><p>OCV</p>
-<p><strong>只在post layout进行分析。</strong></p>
-</li>
-<li><p>约束输入端口</p>
-<pre><code>set_drive_cell
-set_drive
-set_input_transition
-</code></pre>
-<p>这三条语句都是约束输入端口的，但是适用场景不同。</p>
-<ol>
-<li><p>set_drive_cell</p>
-<p>应用场景：Block level<br>从库中找一个cell来驱动这个模块的输入端口port，更贴近实际的情况。这种应用于模块级别的。</p>
-</li>
-<li><p>set_drive</p>
-<p>应用场景：Chip level<br>通过为输入端口指定电阻值的方法来为其定义外部驱动强度，典型的值是0.05，单位取工艺库中电阻的单位，一般为kΩ；该值越小表示驱动能力越大</p>
-</li>
-<li><p>set_input_transition</p>
-<p>应用场景：Chip level<br>为输入端口指定一个固定的transition时间，transition时间相对独立于当前设计中的电容。transition time越大，导致短路电流越大，功耗也越大。</p>
-</li>
-</ol>
-</li>
-<li><p><strong>课题组项目后端的细节处理</strong></p>
-<ol>
-<li>在版图布局中，由于SPI模块与数字芯片core的位置距离较远，需要对数字芯片CORE的输入端口进行约束，设置input_transition_time为0.5；并在SPI的输入端口添加模拟的buffer，提高驱动能力。</li>
-<li>在之前的芯片测试时，发现控制字的输入有问题，有时候需要SPI写入两次才能起作用。后来怀疑是SPI模块给到数字core的时钟信号走线太长，到core时候，clk的驱动就比较弱了。再后面的流片时，在数字core的clk输入端口加了buffer，解决了这个问题。</li>
-</ol>
-</li>
-</ul>
-
+                <div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="79184d915d8509f9a28dcc60a07632df6a5a5e7b8cdd78ea622973dfbd841f35">10d79030e8222445804370796b90fca106f15dd47c03b7cc3ac7fb0590359f37ccd6ce25dabd9e485ae27a888d7ca1365faa8a02c4def6f2b680714dbfda3152f3e1c340acfd9ff0ccfb8758f48d76fc9b1d64545e4a4abbbe4e54f9a5bc525eb3873879f528981e5cf4dc75af378932210948467a541081f9fe77ad477811a3f1bd4da116b2ebc0184d867743e2d6547a787c27042c570fc5383eb78929b1d4a7d00c7253cf993abc4ea298ad840ae58ecdc6e9b11ff1038c0442badd946644538ca9882ae6ae86523929deb5acc2fbfe4b27919a28501eaa7ac9a9eb86e7a093e710c4a4aa0a2d29d2ecdf38ece2e29b1f62f1f0be16b6777521431f0a86398e38112c884626a2d54841b54856c0cdf0a0b17a33e0368c8c01c5c655e778bb6750ba0d1021a519867fcee72dd3ab0cd37a5f4f7698655764508f14e4753e290e4b98b6435e84a4e221b9c2bc55e078586965c73d478583e60e1005f0f932d0520ab4fc97597faf900e45dd35eb9dad57b36b93b200baadf06e32e06fff981451c60bab187a114a9b69e0d3d9bdae2260fb22b76a4f7e449ec5d66e3de863a73e35b9373995ea3ab27f9ad1106c83409fdaca90bf984aff8d1dbce64c1abfa669ce682a5c5eb865101716ebc98a5f54dabacb2898b8e85cb05a37227a186cd46d6dc08ec9577edcc8b94a3f4f2ce411ac9fb1e74fcc6d3ead1a50b8d0fef91147ef92ec7a658fe7ce2cab39a1eb9847cc43dd76bbe5984c51de5e445b53398573196217409add999afb0f10602845ffcd9854f4ef57108f05a140d4906dfb3e1d41b9a678421951dc93f4f7e0de5f24aff55f31e65f967b71c26f432bb60058b61cf88f3cb315e877c036031a2511ed04e6c4a39b075918abf76742d820024f35ee5a7a6e27f8c9adb853da1faa2e27da2a703a23ae76b617625341c8a3898c5d7249036804bc8cc94994e9cee71d7496153c43e4bb4f57dd461e3fae30bea5c2d3fc7f15240a358f313ff1aca8ef151df3dc3487b28987157972c89b8b8023449028b26881321891d94cb0e5a506ac2a0e37fd986f099ded74b920c78a4f98691b6ea1c5913f4f5b8def831b699a6188601e4b138cf02cbe1f2016e5746c47fa6c73c4ea8530122aa5865eea1886098d5c880f04eb234bfc6518e810dd90ea92e303b1f7d98d1793405089bce16f9e761ba09c5d07dc6504cef4ddb14aed99365faaa61ce1b3c716759740c8e61551cd9597b5aaed29baeba25bed32f1e8be6406aa9f3df69f1118a55f44b51aa9ad9eb0279f58fa4e6fd7962133b37ff133f220ab4210d640b4473ae678c4c376cd3c28a7be4c2ce1f4a6b4943fb75a539f951dd9d23aa3b054b2315bf0cb5a8696ca4c7670bee4e17d315732b57e67863ec6b3a017bc82465d1f2c7972c06a0c2d27c8f808262f01cf9d6f318aab3ec13ce48b7be2fc44643f6c43b2d452c23880d427224d4bfc61722b1e13a2c6cdeca20678dcc3e01e3fb8eeacca2e37c70fa5db0f6c309ccbddfc727b42e5bf51bcdecf6086ffbd86775f9c583ab53d127274d8f05ab56df31b6d1976a98d394280c4b4740e460a295e491c851379e08f984c66f7c76ea38cfa72e3d563707383c4422f8dd044ba4fcef0b1f64f3df32710ce</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">Hey, password is required here.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">
                 
             </div>
             <hr/>
@@ -515,7 +338,7 @@ set_input_transition
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://xiaoliu6688.github.io/2024/012139355.html">https://xiaoliu6688.github.io/2024/012139355.html</a>
+                    <a href="https://xiaoliu6688.github.io/2024/022837365.html">https://xiaoliu6688.github.io/2024/022837365.html</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -552,11 +375,7 @@ set_input_transition
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            
-                                <a href="/tags/ICC/">
-                                    <span class="chip bg-color">ICC</span>
-                                </a>
-                            
+                            <span class="chip bg-color">无标签</span>
                         </div>
                     
                 </div>
@@ -601,44 +420,32 @@ set_input_transition
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/012448005.html">
+                <a href="/2024/022817065.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="电路设计（RTL）">
+                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="FMCW频率源系统建模">
                         
-                        <span class="card-title">电路设计（RTL）</span>
+                        <span class="card-title">FMCW频率源系统建模</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            Here's something encrypted, password is required to continue reading.
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-01-24
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-28
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                    数字前端
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            刘瑞彪
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-                        <span class="chip bg-color">基础知识</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -650,13 +457,13 @@ set_input_transition
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/012044084.html">
+                <a href="/2024/02265961.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="StarRC_flow">
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="握手协议与反压">
                         
-                        <span class="card-title">StarRC_flow</span>
+                        <span class="card-title">握手协议与反压</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -667,27 +474,15 @@ set_input_transition
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-01-20
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-26
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/ASIC%E6%95%B0%E5%AD%97%E5%90%8E%E7%AB%AF%E6%B5%81%E7%A8%8B/" class="post-category">
-                                    ASIC数字后端流程
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            刘瑞彪
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/StarRC/">
-                        <span class="chip bg-color">StarRC</span>
-                    </a>
-                    
                 </div>
                 
             </div>

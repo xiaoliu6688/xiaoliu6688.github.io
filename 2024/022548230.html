@@ -5,13 +5,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="Linux常用命令, RayBiiao">
-    <meta name="description" content="
-文件操作
-
-压缩成.tar文件： tar -cvf file.tar files
+    <meta name="description" content="文件操作压缩成.tar文件： tar -cvf file.tar files
 解压.tar文件： tar -xvf file.tar
 压缩成.tar.gz文件： tar -czvf file.tar.gz files
-解压.tar.g">
+解压.tar.gz文件">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -294,7 +291,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    396
+                    558
                 </div>
                 
 
@@ -319,35 +316,45 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <ul>
-<li>文件操作</li>
-</ul>
-<pre class=" language-bash"><code class="language-bash">压缩成.tar文件： <span class="token function">tar</span> -cvf file.tar files
-解压.tar文件： <span class="token function">tar</span> -xvf file.tar
-压缩成.tar.gz文件： <span class="token function">tar</span> -czvf file.tar.gz files
-解压.tar.gz文件： <span class="token function">tar</span> -xzvf file.tar.gz
-压缩.tar.bz2文件： <span class="token function">tar</span> -cjvf file.tar.bz2 files
-解压.tar.bz2文件： <span class="token function">tar</span> -xjvf file.tar.bz2
+                <h3 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">压缩成.tar文件： <span class="token function">tar</span> <span class="token parameter variable">-cvf</span> file.tar files
+解压.tar文件： <span class="token function">tar</span> <span class="token parameter variable">-xvf</span> file.tar
+压缩成.tar.gz文件： <span class="token function">tar</span> <span class="token parameter variable">-czvf</span> file.tar.gz files
+解压.tar.gz文件： <span class="token function">tar</span> <span class="token parameter variable">-xzvf</span> file.tar.gz
+压缩.tar.bz2文件： <span class="token function">tar</span> <span class="token parameter variable">-cjvf</span> file.tar.bz2 files
+解压.tar.bz2文件： <span class="token function">tar</span> <span class="token parameter variable">-xjvf</span> file.tar.bz2
 压缩成.gz 文件 <span class="token function">gzip</span> <span class="token function">file</span>
-解压 <span class="token function">gzip</span> -d file.gz
-</code></pre>
-<ul>
-<li>系统配置</li>
-</ul>
-<p>​	&#x2F; ——根目录<br>​	&#x2F;bin ——存放必要的命令<br>​	&#x2F;boot ——存放内核以及启动所需的文件<br>​	&#x2F;dev ——存放设备文件<br>​	&#x2F;etc ——存放系统配置文件<br>​	&#x2F;home ——普通用户的宿主目录，用户数据存放在其主目录中<br>​	&#x2F;lib ——存放必要的运行库<br>​	&#x2F;mnt ——存放临时的映射文件系统，通常用来挂载使用。<br>​	&#x2F;proc ——存放存储进程和系统信息<br>​	&#x2F;root ——超级用户的主目录<br>​	&#x2F;sbin ——存放系统管理程序<br>​	&#x2F;tmp ——存放临时文件<br>​	&#x2F;usr ——存放应用程序，命令程序文件、程序库、手册和其它文档。<br>​	&#x2F;var ——-系统默认日志存放目录</p>
-<pre class=" language-bash"><code class="language-bash"><span class="token function">hostname</span> <span class="token keyword">:</span> 显示系统的hostname
-<span class="token function">ifconfig</span> -a <span class="token keyword">:</span> 显示网络的配置信息
-</code></pre>
-<p>查看文件内容情况：</p>
-<pre class=" language-bash"><code class="language-bash"><span class="token function">wc</span> <span class="token function">file</span> <span class="token keyword">:</span> 计算文件的行数和字节数
-<span class="token function">wc</span> -w <span class="token function">file</span> <span class="token keyword">:</span> 计算文件的字数
-<span class="token function">wc</span> -l <span class="token function">file</span> <span class="token keyword">:</span> 计算文件的行数
+解压 <span class="token function">gzip</span> <span class="token parameter variable">-d</span> file.gz<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="系统配置"><a href="#系统配置" class="headerlink" title="系统配置"></a>系统配置</h3><p>​	&#x2F; ——根目录<br>​	&#x2F;bin ——存放必要的命令<br>​	&#x2F;boot ——存放内核以及启动所需的文件<br>​	&#x2F;dev ——存放设备文件<br>​	&#x2F;etc ——存放系统配置文件<br>​	&#x2F;home ——普通用户的宿主目录，用户数据存放在其主目录中<br>​	&#x2F;lib ——存放必要的运行库<br>​	&#x2F;mnt ——存放临时的映射文件系统，通常用来挂载使用。<br>​	&#x2F;proc ——存放存储进程和系统信息<br>​	&#x2F;root ——超级用户的主目录<br>​	&#x2F;sbin ——存放系统管理程序<br>​	&#x2F;tmp ——存放临时文件<br>​	&#x2F;usr ——存放应用程序，命令程序文件、程序库、手册和其它文档。<br>​	&#x2F;var ——-系统默认日志存放目录</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">hostname</span> <span class="token builtin class-name">:</span> 显示系统的hostname
+<span class="token function">ifconfig</span> <span class="token parameter variable">-a</span> <span class="token builtin class-name">:</span> 显示网络的配置信息<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="查看文件内容情况："><a href="#查看文件内容情况：" class="headerlink" title="查看文件内容情况："></a>查看文件内容情况：</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">wc</span> <span class="token function">file</span> <span class="token builtin class-name">:</span> 计算文件的行数和字节数
+<span class="token function">wc</span> <span class="token parameter variable">-w</span> <span class="token function">file</span> <span class="token builtin class-name">:</span> 计算文件的字数
+<span class="token function">wc</span> <span class="token parameter variable">-l</span> <span class="token function">file</span> <span class="token builtin class-name">:</span> 计算文件的行数
 <span class="token function">find</span> 查找文件或目录
 命令格式为: 
-    <span class="token function">find</span> 后接查找的目录，-name指定需要查找的文件名称，名称可以使用“* ”表示所有。
-    <span class="token function">find</span> /home -name “test.txt”,
-    <span class="token function">find</span> /home -name “*.txt” :查找/home目录下，所有以.txt结尾的文件或者目录。
-</code></pre>
+	<span class="token function">find</span> 后接查找的目录，-name指定需要查找的文件名称，名称可以使用“* ”表示所有。
+	<span class="token function">find</span> /home <span class="token parameter variable">-name</span> “test.txt”,
+	<span class="token function">find</span> /home <span class="token parameter variable">-name</span> “*.txt” :查找/home目录下，所有以.txt结尾的文件或者目录。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="grep命令"><a href="#grep命令" class="headerlink" title="grep命令"></a>grep命令</h3><p>在&#x2F;home&#x2F;usr目录中查找文件名中包括”<strong>Montage</strong>“或者<strong>montage</strong>的文件名，并打印出来；</p>
+<p>A：</p>
+<pre class="line-numbers language-none"><code class="language-none">grep -rli &quot;Montage\|montage&quot; &#x2F;home&#x2F;usr<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>​	<code>grep</code> 命令用于在文件中搜索指定的模式。 </p>
+<ul>
+<li><p><code>-r</code> 选项用于在指定的目录和其子目录中递归搜索。 </p>
+</li>
+<li><p><code>-l</code> <strong>选项用于只输出包含模式的文件名，而不是匹配的行。(字母L的小写，如果没有这个，则会输出所有含有字段的文件名及对应行)</strong></p>
+</li>
+<li><p><code>-i</code> 选项用于忽略大小写。 </p>
+</li>
+<li><p><code>&#39;montage&#39;</code> 是要搜索的模式。 </p>
+</li>
+<li><p><code>/home/user/</code> 是要搜索的目录。</p>
+</li>
+</ul>
 
                 
             </div>
@@ -725,7 +732,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.2k</span>
+                        class="white-color">30.6k</span>
             
             
             

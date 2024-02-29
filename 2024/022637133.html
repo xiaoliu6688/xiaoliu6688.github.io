@@ -292,7 +292,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.7k
+                    1.8k
                 </div>
                 
 
@@ -563,7 +563,7 @@
 <p><img src="/2024/022637133/image-20240228153148536.png" alt="image-20240228153148536"></p>
 <ul>
 <li><p><strong>ready信号的处理</strong></p>
-<p><strong>以ready_r1为例，当r1寄存器为空（valid_r1&#x3D;&#x3D;0）或者ready_2为1时，r1都有能力接收数据；</strong></p>
+<p><strong>以ready_r1为例，当r1寄存器为空（valid_r1&#x3D;&#x3D;0）或者ready_2为1时，r1都有能力接收数据；</strong><br>如果ready_r2为1，valid_r1也为1，则将该结果保存在r2寄存器中；下一个周期r1可以接收新数据；<br>如果ready_r2为0，valid_r1为1，下级无法握手成功传输，所以r1无法接收新数据；</p>
 </li>
 <li><p><strong>valid信号的处理</strong></p>
 <p><strong>对于r1来说，valid_r1可以作为握手的结果信号；当valid_i和ready_r1握手成功后，r1输出valid_r1为1和有效的data_a。</strong></p>
@@ -1092,7 +1092,7 @@ data_in <span class="token operator">&amp;</span> <span class="token operator">~
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.2k</span>
+                        class="white-color">30.6k</span>
             
             
             
