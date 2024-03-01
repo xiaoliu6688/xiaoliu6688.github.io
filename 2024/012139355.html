@@ -290,7 +290,7 @@ decap cell的插入
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.9k
+                    2k
                 </div>
                 
 
@@ -465,10 +465,10 @@ icc_tcl:  spread_zrt_wires / widen_zrt_wires
 <p><strong>只在post layout进行分析。</strong></p>
 </li>
 <li><p>约束输入端口</p>
-<pre><code>set_drive_cell
+<pre class="line-numbers language-none"><code class="language-none">set_drive_cell
 set_drive
-set_input_transition
-</code></pre>
+set_input_transition<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
 <p>这三条语句都是约束输入端口的，但是适用场景不同。</p>
 <ol>
 <li><p>set_drive_cell</p>
@@ -487,6 +487,9 @@ set_input_transition
 <li>在版图布局中，由于SPI模块与数字芯片core的位置距离较远，需要对数字芯片CORE的输入端口进行约束，设置input_transition_time为0.5；并在SPI的输入端口添加模拟的buffer，提高驱动能力。</li>
 <li>在之前的芯片测试时，发现控制字的输入有问题，有时候需要SPI写入两次才能起作用。后来怀疑是SPI模块给到数字core的时钟信号走线太长，到core时候，clk的驱动就比较弱了。再后面的流片时，在数字core的clk输入端口加了buffer，解决了这个问题。</li>
 </ol>
+</li>
+<li><p>IR drop</p>
+<p>电阻对电流有阻碍作用，而导致电压下降；<br>大电流或者长导线会带来IR drop，通常在芯片的电源和地中出现。</p>
 </li>
 </ul>
 
@@ -866,7 +869,7 @@ set_input_transition
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.6k</span>
+                        class="white-color">31.6k</span>
             
             
             

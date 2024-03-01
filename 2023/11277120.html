@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="makefile, RayBiiao">
+    <meta name="keywords" content="Makefile, RayBiiao">
     <meta name="description" content="MakefileMakefile的运行make -f 文件名，执行特定的Makefile文件Make 的默认行为是执行Makefile的第一个target，该目标一般会带起多个目标的执行。目标中有&amp;#x3D;，或者-打头的不能指定为终极目标">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -17,7 +17,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>makefile | RayBiiao</title>
+    <title>Makefile | RayBiiao</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -225,12 +225,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/18.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">makefile</h1>
+                    <h1 class="description center-align post-title">Makefile</h1>
                 </div>
             </div>
         </div>
@@ -314,22 +314,22 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <h2 id="Makefile"><a href="#Makefile" class="headerlink" title="Makefile"></a>Makefile</h2><h3 id="Makefile的运行"><a href="#Makefile的运行" class="headerlink" title="Makefile的运行"></a>Makefile的运行</h3><p>make -f 文件名，执行特定的Makefile文件<br>Make 的默认行为是执行Makefile的第一个target，该目标一般会带起多个目标的执行。目标中有&#x3D;，或者-打头的不能指定为终极目标，因为这些字符的目标会被解析成命令行参数或者变量。</p>
-<pre class=" language-makefile"><code class="language-makefile"><span class="token builtin">.PHONY</span><span class="token punctuation">:</span> all 
-<span class="token symbol">all</span><span class="token punctuation">:</span> prog1 prog2 prog3 prog4
-<span class="token comment" spellcheck="true"># 通过make all执行所有的target</span>
-</code></pre>
+<pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile"><span class="token builtin-target builtin">.PHONY</span><span class="token punctuation">:</span> all 
+<span class="token target symbol">all</span><span class="token punctuation">:</span> prog1 prog2 prog3 prog4
+<span class="token comment"># 通过make all执行所有的target</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
 <ul>
 <li>检查规则(常用)</li>
 </ul>
-<pre class=" language-bash"><code class="language-bash">-n 打印命令，不执行
--s ：全面禁止命令的显示
--q 寻找目标，找到什么都不输出，找不到打印错误error
--B 认为所有目标都需要重编译
--C <span class="token operator">&lt;</span>dir<span class="token operator">></span> 指定读取Makefile的目录，如果有多个“-C”参数，make 的解释是后面的路径以前面的作为相对路径，并以最后的目录作为被指定目录。
-比如“make -C ~hchen/test -C prog”等价于“make -C ~hchen/test/prog”。
--I <span class="token operator">&lt;</span>dir<span class="token operator">></span> 指定一个被包含Makefile的搜索目标。可以使用多个“-I”参数来指定多个目录
--t 更新target的时间，组织生成目标的命令运行
-</code></pre>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token parameter variable">-n</span> 打印命令，不执行
+<span class="token parameter variable">-s</span> ：全面禁止命令的显示
+<span class="token parameter variable">-q</span> 寻找目标，找到什么都不输出，找不到打印错误error
+<span class="token parameter variable">-B</span> 认为所有目标都需要重编译
+<span class="token parameter variable">-C</span> <span class="token operator">&lt;</span>dir<span class="token operator">></span> 指定读取Makefile的目录，如果有多个“-C”参数，make 的解释是后面的路径以前面的作为相对路径，并以最后的目录作为被指定目录。
+比如“make <span class="token parameter variable">-C</span> ~hchen/test <span class="token parameter variable">-C</span> prog”等价于“make <span class="token parameter variable">-C</span> ~hchen/test/prog”。
+<span class="token parameter variable">-I</span> <span class="token operator">&lt;</span>dir<span class="token operator">></span> 指定一个被包含Makefile的搜索目标。可以使用多个“-I”参数来指定多个目录
+<span class="token parameter variable">-t</span> 更新target的时间，组织生成目标的命令运行<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <ul>
 <li>命令执行顺序</li>
 </ul>
@@ -341,31 +341,31 @@
 <ul>
 <li>嵌套执行make</li>
 </ul>
-<pre class=" language-makefile"><code class="language-makefile"><span class="token symbol">subsystem</span><span class="token punctuation">:</span>
+<pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile"><span class="token target symbol">subsystem</span><span class="token punctuation">:</span>
 <span class="token variable">$</span><span class="token punctuation">(</span>MAKE<span class="token punctuation">)</span> -C subdir
 //进入子目录，执行make选项
 
 var <span class="token operator">=</span> 123
-<span class="token keyword">export</span> var <span class="token comment" spellcheck="true"># 声明该变量传递给子make文件</span>
-make -w 进入或者退出目录时会有提示
-</code></pre>
-<h3 id="Makefile中的变量"><a href="#Makefile中的变量" class="headerlink" title="Makefile中的变量"></a>Makefile中的变量</h3><pre class=" language-makefile"><code class="language-makefile">Var <span class="token operator">=</span> value
+<span class="token keyword">export</span> var <span class="token comment"># 声明该变量传递给子make文件</span>
+make -w 进入或者退出目录时会有提示<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="Makefile中的变量"><a href="#Makefile中的变量" class="headerlink" title="Makefile中的变量"></a>Makefile中的变量</h3><pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile">Var <span class="token operator">=</span> value
 类似C的<span class="token keyword">define</span>，强烈建议变量的引用使用括号，比如 <span class="token variable">$</span><span class="token punctuation">(</span>var<span class="token punctuation">)</span>
 等号右侧的变量可以是Makefile文件后面的内容，就有可能导致递归，所以要使用 <span class="token operator">:=</span>，表示只能使用前面的变量。
-Var <span class="token operator">:=</span> value
-</code></pre>
-<pre class=" language-makefile"><code class="language-makefile"><span class="token comment" spellcheck="true">#定义一个变量，值是一个空格</span>
+Var <span class="token operator">:=</span> value<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile"><span class="token comment">#定义一个变量，值是一个空格</span>
 Nullstring <span class="token operator">:=</span>
-space <span class="token operator">:=</span> <span class="token variable">$Nullstring</span> <span class="token comment" spellcheck="true">#end of the line</span>
-dir <span class="token operator">:=</span> /foo/bar    <span class="token comment" spellcheck="true">#end</span>
-加了<span class="token comment" spellcheck="true">#后，表示这个dir变量最后会有4个空格导致错误。</span>
+space <span class="token operator">:=</span> <span class="token variable">$Nullstring</span> <span class="token comment">#end of the line</span>
+dir <span class="token operator">:=</span> /foo/bar    <span class="token comment">#end</span>
+加了<span class="token comment">#后，表示这个dir变量最后会有4个空格导致错误。</span>
 Foo <span class="token operator">?=</span> value
-Foo如果没有定义过，就在此处定义
-</code></pre>
+Foo如果没有定义过，就在此处定义<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <ul>
 <li>高级用法</li>
 </ul>
-<pre class=" language-makefile"><code class="language-makefile">1. 变量值的替换
+<pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile">1. 变量值的替换
   Foo <span class="token operator">:=</span> a.o b.o c.o
   Bar <span class="token operator">:=</span> <span class="token variable">$</span><span class="token punctuation">(</span>Foo<span class="token punctuation">:</span>.o<span class="token operator">=</span>.c<span class="token punctuation">)</span>
 2. 变量的值当成变量
@@ -375,113 +375,109 @@ Foo如果没有定义过，就在此处定义
   Object <span class="token operator">+=</span> another.o
 如果前一次的是 <span class="token operator">:=</span> ，那么 <span class="token operator">+=</span> 会以 <span class="token operator">:=</span> 作为其赋值符
 4. 多行变量
-使用<span class="token keyword">define</span>   <span class="token keyword">endef</span>
-</code></pre>
+使用<span class="token keyword">define</span>   <span class="token keyword">endef</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <ul>
 <li>环境变量</li>
 </ul>
-<pre class=" language-makefile"><code class="language-makefile">如果在命令行参数中代入该变量，环境变量的值会被覆盖。如果make时指定了-e，环境变量会覆盖Makefile中定义的变量。
+<pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile">如果在命令行参数中代入该变量，环境变量的值会被覆盖。如果make时指定了-e，环境变量会覆盖Makefile中定义的变量。
 Makefile中定义的变量都是全局变量，<span class="token variable">$@</span> <span class="token variable">$^…</span> 都属于规则型变量
-也可以为某个目标target设置局部变量，该变量会作用到有这个目标所引发的所有规则区域。
-</code></pre>
-<pre class=" language-makefile"><code class="language-makefile"><span class="token symbol">prog </span><span class="token punctuation">:</span> CFLAGS <span class="token operator">=</span> -g
-<span class="token symbol">prog </span><span class="token punctuation">:</span> prog.o foo.o bar.o
+也可以为某个目标target设置局部变量，该变量会作用到有这个目标所引发的所有规则区域。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile"><span class="token target symbol">prog</span> <span class="token punctuation">:</span> CFLAGS <span class="token operator">=</span> -g
+<span class="token target symbol">prog</span> <span class="token punctuation">:</span> prog.o foo.o bar.o
 <span class="token variable">$</span><span class="token punctuation">(</span>GCC<span class="token punctuation">)</span> <span class="token variable">$</span><span class="token punctuation">(</span>CFLAGS<span class="token punctuation">)</span> prog.o foo.o bar.o
 
-<span class="token variable">$</span><span class="token punctuation">(</span>addprefix src/,foo bar<span class="token punctuation">)</span> 为每个文件名添加前缀src/
-</code></pre>
-<h3 id="Makefile中的函数"><a href="#Makefile中的函数" class="headerlink" title="Makefile中的函数"></a>Makefile中的函数</h3><h4 id="patsubst"><a href="#patsubst" class="headerlink" title="patsubst"></a>patsubst</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>patsubst <span class="token operator">&lt;</span>pattern<span class="token operator">></span>,<span class="token operator">&lt;</span>replacement<span class="token operator">></span>,<span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<span class="token variable">$</span><span class="token punctuation">(</span>addprefix src/,foo bar<span class="token punctuation">)</span> 为每个文件名添加前缀src/<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="Makefile中的函数"><a href="#Makefile中的函数" class="headerlink" title="Makefile中的函数"></a>Makefile中的函数</h3><h4 id="patsubst"><a href="#patsubst" class="headerlink" title="patsubst"></a>patsubst</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>patsubst <span class="token operator">&lt;</span>pattern<span class="token operator">></span>,<span class="token operator">&lt;</span>replacement<span class="token operator">></span>,<span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>查找&lt;text&gt; 中的单词（单词以“空格”、“Tab”或“回车”“换行”分隔）是否符合模式 &lt;pattern&gt;<br>返回被替换后的字符串</p>
 <p>pattern：可以包含通配符%，表示任意长度的字符串。也可以是subst的&lt;from&gt;</p>
-<pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>objects:.o<span class="token operator">=</span>.c<span class="token variable">)</span></span> 和 <span class="token variable"><span class="token variable">$(</span>patsubst %.o,%.c,<span class="token punctuation">$(</span>objects<span class="token variable">)</span></span><span class="token punctuation">)</span> 是一样的
-</code></pre>
-<h4 id="strip"><a href="#strip" class="headerlink" title="strip"></a>strip</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>strip <span class="token operator">&lt;</span>string<span class="token operator">></span><span class="token variable">)</span></span> 
-</code></pre>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>objects:.o<span class="token operator">=</span>.c<span class="token variable">)</span></span> 和 <span class="token variable"><span class="token variable">$(</span>patsubst %.o,%.c,<span class="token punctuation">$(</span>objects<span class="token punctuation">)</span><span class="token variable">)</span></span> 是一样的<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="strip"><a href="#strip" class="headerlink" title="strip"></a>strip</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>strip <span class="token operator">&lt;</span>string<span class="token operator">></span><span class="token variable">)</span></span> <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>去掉string开头和结尾的空字符</p>
-<h4 id="findstring"><a href="#findstring" class="headerlink" title="findstring"></a>findstring</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>findstring <span class="token operator">&lt;</span>find<span class="token operator">></span>,<span class="token operator">&lt;</span>in<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<h4 id="findstring"><a href="#findstring" class="headerlink" title="findstring"></a>findstring</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>findstring <span class="token operator">&lt;</span>find<span class="token operator">></span>,<span class="token operator">&lt;</span>in<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>如果找到，那么返回 &lt;find&gt; ，否则返回空字符串<br>在字串 &lt;in&gt; 中查找&lt;find&gt; 字串</p>
-<h4 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>filter <span class="token operator">&lt;</span>pattern<span class="token punctuation">..</span>.<span class="token operator">></span>,<span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<h4 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>filter <span class="token operator">&lt;</span>pattern<span class="token punctuation">..</span>.<span class="token operator">></span>,<span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>以 &lt;pattern&gt; 模式过滤 &lt;text&gt; 字符串中的单词，保留符合模式 &lt;pattern&gt; 的单词。可以 有多个模式。 返回符合模式 &lt;pattern&gt; 的字串。<br>filter-out 功能与filter相反</p>
-<h4 id="sort"><a href="#sort" class="headerlink" title="sort"></a>sort</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token function">sort</span> <span class="token operator">&lt;</span>list<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<h4 id="sort"><a href="#sort" class="headerlink" title="sort"></a>sort</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token function">sort</span> <span class="token operator">&lt;</span>list<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>给字符串 &lt;list&gt; 中的单词排序（升序）。<br>返回排序后的字符串，sort 函数会去掉 &lt;list&gt; 中相同的单词。</p>
-<h4 id="word"><a href="#word" class="headerlink" title="word"></a>word</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>word <span class="token operator">&lt;</span>n<span class="token operator">></span>,<span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<h4 id="word"><a href="#word" class="headerlink" title="word"></a>word</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>word <span class="token operator">&lt;</span>n<span class="token operator">></span>,<span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>取字符串 &lt;text&gt; 中第 &lt;n&gt; 个单词。（从一开始）<br>返回字符串 &lt;text&gt; 中第 &lt;n&gt; 个单词。如果 &lt;n&gt; 比 &lt;text&gt; 中的单词数要大，那么返回空字符串。</p>
 <h4 id="wordlist"><a href="#wordlist" class="headerlink" title="wordlist"></a>wordlist</h4><p>$(wordlist <ss>,<e>,<text>)<br>从字符串 &lt;text&gt; 中取从 &lt;ss&gt; 开始到 &lt;e&gt; 的单词串。&lt;ss&gt; 和 &lt;e&gt; 是一个数字</text></e></ss></p>
 <h4 id="words"><a href="#words" class="headerlink" title="words"></a>words</h4><p>$(words <text>)<br>统计 &lt;text&gt; 中字符串中的单词个数。 如果我们要取 &lt;text&gt; 中最后的一个单词，我们可以这样：</text></p>
-<pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>word <span class="token punctuation">$(</span>words <span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span>,<span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token punctuation">)</span> 。
-</code></pre>
-<h4 id="firstword"><a href="#firstword" class="headerlink" title="firstword"></a>firstword</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>firstword <span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>word <span class="token punctuation">$(</span>words <span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token punctuation">)</span>,<span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span> 。<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="firstword"><a href="#firstword" class="headerlink" title="firstword"></a>firstword</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>firstword <span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>取字符串 &lt;text&gt; 中的第一个单词。 </p>
-<h4 id="dir-文件名操作函数"><a href="#dir-文件名操作函数" class="headerlink" title="dir 文件名操作函数"></a>dir 文件名操作函数</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token function">dir</span> <span class="token operator">&lt;</span>names<span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<h4 id="dir-文件名操作函数"><a href="#dir-文件名操作函数" class="headerlink" title="dir 文件名操作函数"></a>dir 文件名操作函数</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token function">dir</span> <span class="token operator">&lt;</span>names<span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>从文件名序列 &lt;names&gt; 中取出目录部分。目录部分是指最后一个反斜杠（&#x2F; ）之前的部分。 如果没有反斜杠，那么返回 .&#x2F;</p>
-<h4 id="notdir"><a href="#notdir" class="headerlink" title="notdir"></a>notdir</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>notdir <span class="token operator">&lt;</span>names<span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<h4 id="notdir"><a href="#notdir" class="headerlink" title="notdir"></a>notdir</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>notdir <span class="token operator">&lt;</span>names<span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>从文件名序列 &lt;names&gt; 中取出非目录部分。非目录部分是指最后一个反斜杠（&#x2F; ）之后的部分。</p>
-<h4 id="Suffix"><a href="#Suffix" class="headerlink" title="Suffix"></a>Suffix</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>suffix <span class="token operator">&lt;</span>names<span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span> 
-</code></pre>
+<h4 id="Suffix"><a href="#Suffix" class="headerlink" title="Suffix"></a>Suffix</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>suffix <span class="token operator">&lt;</span>names<span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span> <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>从文件名序列 &lt;names&gt; 中取出各个文件名的后缀</p>
-<h4 id="basename"><a href="#basename" class="headerlink" title="basename"></a>basename</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token function">basename</span> <span class="token operator">&lt;</span>names<span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<h4 id="basename"><a href="#basename" class="headerlink" title="basename"></a>basename</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token function">basename</span> <span class="token operator">&lt;</span>names<span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>从文件名序列 &lt;names&gt; 中取出各个文件名的前缀部分。</p>
-<h4 id="addsuffix"><a href="#addsuffix" class="headerlink" title="addsuffix"></a>addsuffix</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>addsuffix <span class="token operator">&lt;</span>suffix<span class="token operator">></span>,<span class="token operator">&lt;</span>names<span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<h4 id="addsuffix"><a href="#addsuffix" class="headerlink" title="addsuffix"></a>addsuffix</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>addsuffix <span class="token operator">&lt;</span>suffix<span class="token operator">></span>,<span class="token operator">&lt;</span>names<span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>加后缀，把后缀 &lt;suffix&gt; 加到 <names> 中的每个单词后面。</names></p>
 <h4 id="addprefix"><a href="#addprefix" class="headerlink" title="addprefix"></a>addprefix</h4><p>$(addprefix <prefix>,&lt;names…&gt;)<br>把前缀 &lt;prefix&gt; 加到 &lt;names&gt; 中的每个单词前面。 </prefix></p>
-<h4 id="join"><a href="#join" class="headerlink" title="join"></a>join</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token function">join</span> <span class="token operator">&lt;</span>list1<span class="token operator">></span>,<span class="token operator">&lt;</span>list2<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<h4 id="join"><a href="#join" class="headerlink" title="join"></a>join</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token function">join</span> <span class="token operator">&lt;</span>list<span class="token operator"><span class="token file-descriptor important">1</span>></span>,<span class="token operator">&lt;</span>list<span class="token operator"><span class="token file-descriptor important">2</span>></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>连接list1 和list2</p>
-<pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token function">join</span> aaa bbb , 111 222 333<span class="token variable">)</span></span> 
-</code></pre>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token function">join</span> aaa bbb , <span class="token number">111</span> <span class="token number">222</span> <span class="token number">333</span><span class="token variable">)</span></span> <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>返回值是 aaa111 bbb222 333</p>
-<h4 id="foreach-函数"><a href="#foreach-函数" class="headerlink" title="foreach 函数"></a>foreach 函数</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>foreach <span class="token operator">&lt;</span>var<span class="token operator">></span>,<span class="token operator">&lt;</span>list<span class="token operator">></span>,<span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<h4 id="foreach-函数"><a href="#foreach-函数" class="headerlink" title="foreach 函数"></a>foreach 函数</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>foreach <span class="token operator">&lt;</span>var<span class="token operator">></span>,<span class="token operator">&lt;</span>list<span class="token operator">></span>,<span class="token operator">&lt;</span>text<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>把参数 &lt;list&gt; 中的单词逐一取出放到参数 &lt;var&gt; 所指定的变量中，然后再执行 &lt;text&gt; 所包含的表达式。每一次 &lt;text&gt; 会返回一个字符串，循环过程中，&lt;text&gt; 的所返回的每个字符串会以空格分隔，最后当整个循环结束时，&lt;text&gt; 所返回的每个字符串所组成的整个字符串（以空格分隔）将会是 foreach 函数的返回值.   var是一个临时变量，作用域只在 foreach 函数</p>
 <p>&lt;var&gt; 最好是一个变量名,&lt;list&gt; 可以是一个表达式，而 &lt;text&gt; 中一般会使用 &lt;var&gt; 这个 参数来依次枚举 &lt;list&gt; 中的单词</p>
-<h4 id="if-函数"><a href="#if-函数" class="headerlink" title="if 函数"></a>if 函数</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token keyword">if</span> <span class="token operator">&lt;</span>condition<span class="token operator">></span>,<span class="token operator">&lt;</span>then-part<span class="token operator">></span><span class="token variable">)</span></span>
-<span class="token variable"><span class="token variable">$(</span><span class="token keyword">if</span> <span class="token operator">&lt;</span>condition<span class="token operator">></span>,<span class="token operator">&lt;</span>then-part<span class="token operator">></span>,<span class="token operator">&lt;</span>else-part<span class="token operator">></span><span class="token variable">)</span></span>
-</code></pre>
+<h4 id="if-函数"><a href="#if-函数" class="headerlink" title="if 函数"></a>if 函数</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span><span class="token keyword">if</span> <span class="token operator">&lt;</span>condition<span class="token operator">></span>,<span class="token operator">&lt;</span>then-part<span class="token operator">></span><span class="token variable">)</span></span>
+<span class="token variable"><span class="token variable">$(</span><span class="token keyword">if</span> <span class="token operator">&lt;</span>condition<span class="token operator">></span>,<span class="token operator">&lt;</span>then-part<span class="token operator">></span>,<span class="token operator">&lt;</span>else-part<span class="token operator">></span><span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
 <p>即 if 函数的参数可以是两个，也可以是三个。&lt;condition&gt; 参数是 if 的表达式，如果其返回的为非空字符串，那么这个表达式就相当于返回真，于是，&lt;then-part&gt; 会被计算，否则 &lt;else-part&gt; 会被计算。</p>
 <h4 id="shell-函数"><a href="#shell-函数" class="headerlink" title="shell 函数"></a>shell 函数</h4><p>操作系统 Shell 的命令<br>shell 函数把执行操作系统命令后的输出作为函数返回</p>
-<h4 id="控制-make-的函数"><a href="#控制-make-的函数" class="headerlink" title="控制 make 的函数"></a>控制 make 的函数</h4><pre class=" language-bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>error <span class="token operator">&lt;</span>text <span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span> 
-<span class="token variable"><span class="token variable">$(</span>warning <span class="token operator">&lt;</span>text <span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span> 
-</code></pre>
+<h4 id="控制-make-的函数"><a href="#控制-make-的函数" class="headerlink" title="控制 make 的函数"></a>控制 make 的函数</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>error <span class="token operator">&lt;</span>text <span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span> 
+<span class="token variable"><span class="token variable">$(</span>warning <span class="token operator">&lt;</span>text <span class="token punctuation">..</span>.<span class="token operator">></span><span class="token variable">)</span></span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>很像 error 函数，只是它并不会让 make 退出，只是输出一段警告信息，而 make 继续执行。</p>
-<h4 id="wildcard"><a href="#wildcard" class="headerlink" title="wildcard"></a><strong>wildcard</strong></h4><pre class=" language-makefile"><code class="language-makefile"><span class="token comment" spellcheck="true">#显示扩展名</span>
-<span class="token variable">$</span><span class="token punctuation">(</span><span class="token keyword">wildcard</span> *.v<span class="token punctuation">)</span>  
-</code></pre>
-<h4 id="readlink"><a href="#readlink" class="headerlink" title="readlink"></a>readlink</h4><pre class=" language-makefile"><code class="language-makefile">打印解析符号链接或符号链接的规范文件名
+<h4 id="wildcard"><a href="#wildcard" class="headerlink" title="wildcard"></a><strong>wildcard</strong></h4><pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile"><span class="token comment">#显示扩展名</span>
+<span class="token variable">$</span><span class="token punctuation">(</span><span class="token function">wildcard</span> *.v<span class="token punctuation">)</span>  <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="readlink"><a href="#readlink" class="headerlink" title="readlink"></a>readlink</h4><pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile">打印解析符号链接或符号链接的规范文件名
 -f 通过递归给出指定名称的符号链接
 当前脚本的绝对路径：
-    readlink -m <span class="token variable">$0</span>
-</code></pre>
-<h4 id="abspath"><a href="#abspath" class="headerlink" title="abspath"></a>abspath</h4><pre class=" language-makefile"><code class="language-makefile"><span class="token variable">$</span><span class="token punctuation">(</span><span class="token keyword">abspath</span> ./src<span class="token punctuation">)</span> <span class="token comment" spellcheck="true"># 返回目录或者文件的绝对路径</span>
-</code></pre>
-<h4 id="用法"><a href="#用法" class="headerlink" title="$$ 用法"></a>$$ 用法</h4><pre class=" language-makefile"><code class="language-makefile">SRC <span class="token operator">:=</span> A.c B.c
-<span class="token symbol">process</span><span class="token punctuation">:</span>
-    for i in <span class="token variable">$</span><span class="token punctuation">(</span>SRC<span class="token punctuation">)</span><span class="token punctuation">;</span> do \
-        readlink -f <span class="token variable">$$i</span> >> <span class="token variable">$file</span> \
-    done
-使用两个<span class="token variable">$$，是因为i在shell的for循环中展开，属于shell的变量，相当于两层变量的嵌套。make读到$$i时候，会进行转义，展开成$i，然后交给shell解释程序。施加了$$的变量，需要两次展开，才能得到变量的值。</span>
-</code></pre>
-<h3 id="Makefile中C编译、链接选项"><a href="#Makefile中C编译、链接选项" class="headerlink" title="Makefile中C编译、链接选项"></a>Makefile中C编译、链接选项</h3><pre class=" language-makefile"><code class="language-makefile">CFLAGS参数		<span class="token operator">|</span><span class="token operator">|</span>编译<span class="token operator">|</span><span class="token operator">|</span>
--c		<span class="token comment" spellcheck="true"># 将C编译成.o目标文件，不链接</span>
--o		<span class="token comment" spellcheck="true"># 重命名</span>
--Idir	<span class="token comment" spellcheck="true"># 将新路径添加到include路径中，-I. -I/opt/usr...</span>
--Wall   <span class="token comment" spellcheck="true"># 生成所有warning，并停止编译</span>
--w		<span class="token comment" spellcheck="true"># 关闭所有warning</span>
--O		<span class="token comment" spellcheck="true"># 优化编译选项</span>
+	readlink -m <span class="token variable">$0</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="abspath"><a href="#abspath" class="headerlink" title="abspath"></a>abspath</h4><pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile"><span class="token variable">$</span><span class="token punctuation">(</span><span class="token function">abspath</span> ./src<span class="token punctuation">)</span> <span class="token comment"># 返回目录或者文件的绝对路径</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="用法"><a href="#用法" class="headerlink" title="$$ 用法"></a>$$ 用法</h4><pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile">SRC <span class="token operator">:=</span> A.c B.c
+<span class="token target symbol">process</span><span class="token punctuation">:</span>
+	for i in <span class="token variable">$</span><span class="token punctuation">(</span>SRC<span class="token punctuation">)</span><span class="token punctuation">;</span> do \
+		readlink -f <span class="token variable">$$i</span> >> <span class="token variable">$file</span> \
+	done
+使用两个<span class="token variable">$$，是因为i在shell的for循环中展开，属于shell的变量，相当于两层变量的嵌套。make读到$$i时候，会进行转义，展开成$i，然后交给shell解释程序。施加了$$的变量，需要两次展开，才能得到变量的值。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="Makefile中C编译、链接选项"><a href="#Makefile中C编译、链接选项" class="headerlink" title="Makefile中C编译、链接选项"></a>Makefile中C编译、链接选项</h3><pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile">CFLAGS参数		<span class="token operator">|</span><span class="token operator">|</span>编译<span class="token operator">|</span><span class="token operator">|</span>
+-c		<span class="token comment"># 将C编译成.o目标文件，不链接</span>
+-o		<span class="token comment"># 重命名</span>
+-Idir	<span class="token comment"># 将新路径添加到include路径中，-I. -I/opt/usr...</span>
+-Wall   <span class="token comment"># 生成所有warning，并停止编译</span>
+-w		<span class="token comment"># 关闭所有warning</span>
+-O		<span class="token comment"># 优化编译选项</span>
 
 LDFLAGS参数		<span class="token operator">|</span><span class="token operator">|</span>链接<span class="token operator">|</span><span class="token operator">|</span>
--lxxx	<span class="token comment" spellcheck="true"># 添加动态链接库，在搜索目录中找xxx.a，xxx.so的库文件</span>
--static	<span class="token comment" spellcheck="true"># 使用静态链接库生成目标文件，避免使用共享库</span>
-</code></pre>
+-lxxx	<span class="token comment"># 添加动态链接库，在搜索目录中找xxx.a，xxx.so的库文件</span>
+-static	<span class="token comment"># 使用静态链接库生成目标文件，避免使用共享库</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -859,7 +855,7 @@ LDFLAGS参数		<span class="token operator">|</span><span class="token operator"
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.6k</span>
+                        class="white-color">31.6k</span>
             
             
             

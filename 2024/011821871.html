@@ -293,7 +293,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.6k
+                    1.8k
                 </div>
                 
 
@@ -324,14 +324,14 @@
 </li>
 </ul>
 <p>​	反标问题我们是看Pin to pin nets的反标，如果这一行的Not Annotated非0，那么就一定存在RC反标问题。	常见反标问题原因：</p>
-<pre class=" language-tcl"><code class="language-tcl">spef正确，但netlist错误
-Netlist正确，spef错误
-</code></pre>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">spef正确，但netlist错误
+Netlist正确，spef错误<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
 <img src="/2024/011821871/image-20240118192337980.png" alt style="zoom: 50%;">
 
 <p>手修timing</p>
-<pre class=" language-markdown"><code class="language-markdown">size_cell U324 INVD8
-</code></pre>
+<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown">size_cell U324 INVD8<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <ul>
 <li><p>setup </p>
 <p>替换大驱动的cell。 x4 &#x3D;&gt; x16<br>(有时候替换了大cell，delay会增加，因为驱动能力的增加不足以抵消input transition和output load的增加)</p>
@@ -357,16 +357,18 @@ Netlist正确，spef错误
 <p>尽可能使用size_cell来修违例，而不用insert_buffer，因为RC是准确的，保证net delay是对的。</p>
 <p>如果想运行dmsa，那么在启动pt的时候，必须加上-mul选项启动多线程，不然是无法进行dmsa优化的。</p>
 <p>在icc中，摆放eco 的cell</p>
-<pre class=" language-tcl"><code class="language-tcl"><span class="token keyword">source</span> iccpt.tcl
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token keyword">source</span> iccpt.tcl
 legalize_placement <span class="token operator">-</span>eco <span class="token operator">-</span>incremental 
 route_zrt_eco <span class="token operator">-</span>utilize_dangling_wires true <span class="token operator">-</span>reuse_existing_global_route true <span class="token operator">-</span>open_net_driven true 
-save_mv_cel <span class="token operator">-</span>as eco_routed 
-</code></pre>
+save_mv_cel <span class="token operator">-</span>as eco_routed <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p>在ICC中打开mw_lib中的cell</p>
-<pre class=" language-tcl"><code class="language-tcl"><span class="token keyword">source</span> xxx.setup
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token keyword">source</span> xxx.setup
 open_mw_lib ..<span class="token operator">/</span>..<span class="token operator">/</span>XXX.lib
-open_mw_cell FMCW_DCORE_TOP
-</code></pre>
+open_mw_cell FMCW_DCORE_TOP<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+
 <ul>
 <li><p><strong>max_transition设置</strong></p>
 <p>signoff的标准是0.6，在pr阶段一般会过约束，可以将data_path设置为0.5，clock上设置为0.45，而clock path的max transition在cts之前再约束sdc里面就不再单独设置。</p>
@@ -416,7 +418,7 @@ open_mw_cell FMCW_DCORE_TOP
 <p>pt吐出的sdf文件</p>
 <p><img src="/2024/011821871/image-20240127193134312.png"></p>
 <p>​	措施：在使用annotated函数时，指定max&#x2F;min延迟类型，其中max用于setup检查，min用于hold检查。</p>
-<pre class=" language-tcl"><code class="language-tcl">$<span class="token variable">sdf_annotate</span> <span class="token punctuation">(</span>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">$<span class="token variable">sdf_annotate</span> <span class="token punctuation">(</span>
 “sdf_file”<span class="token punctuation">[</span>, 
 “module_instance”<span class="token punctuation">]</span> <span class="token punctuation">[</span>,<span class="token operator">/</span><span class="token operator">/</span> 实例化
 “sdf_configfile”<span class="token punctuation">]</span><span class="token punctuation">[</span>,  <span class="token operator">/</span><span class="token operator">/</span> 一般缺省
@@ -424,12 +426,12 @@ open_mw_cell FMCW_DCORE_TOP
 “mtm_spec”<span class="token punctuation">]</span> <span class="token punctuation">[</span>,		<span class="token operator">/</span><span class="token operator">/</span> 指定延迟类型，MINIMUM<span class="token punctuation">(</span>min<span class="token punctuation">)</span>, TYPICAL<span class="token punctuation">(</span>typ<span class="token punctuation">)</span>,MAXIMUM<span class="token punctuation">(</span>max<span class="token punctuation">)</span>
 “scale_factors”<span class="token punctuation">]</span><span class="token punctuation">[</span>,  <span class="token operator">/</span><span class="token operator">/</span> 缩放因子，默认1:1:1
 “scale_type” 		<span class="token operator">/</span><span class="token operator">/</span> 指定缩放之前延迟值得来源,“FROM_TYPICAL”,“FROM_MIMINUM”, 			
-                    <span class="token operator">/</span><span class="token operator">/</span> “FROM_MAXIMUM<span class="token string">"和"</span>FROM_MTM” <span class="token punctuation">(</span>default<span class="token punctuation">)</span>.
+					<span class="token operator">/</span><span class="token operator">/</span> “FROM_MAXIMUM<span class="token string">"和"</span>FROM_MTM” <span class="token punctuation">(</span>default<span class="token punctuation">)</span>.
 <span class="token operator">/</span><span class="token operator">/</span> FROM_MINIMUX 选择SDF文件中mininum timing，组合逻辑的延时最小，侧重于hold time 的检查
 <span class="token operator">/</span><span class="token operator">/</span> FROM_TYPICAL 选择SDF文件中typical timing
 <span class="token operator">/</span><span class="token operator">/</span> FROM_MAXIMUM 选择SDF文件中maximum timing，组合逻辑的延时最大，侧重于setup time的检查
-<span class="token punctuation">]</span><span class="token punctuation">)</span>;
-</code></pre>
+<span class="token punctuation">]</span><span class="token punctuation">)</span>;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <ul>
 <li>在后仿过程中，需要care的点<ol>
 <li>input 端口都要给定值，不能floating不给初值，否则内部出现x态。</li>
@@ -444,7 +446,12 @@ open_mw_cell FMCW_DCORE_TOP
 <li><p>后仿的各种组合情况</p>
 <p>PVT_corner + fast&#x2F;typical&#x2F;slow SDF</p>
 </li>
+<li><p>ECO</p>
+<p>在芯片设计完成后，用于修复出现的问题。分为两个阶段：pre-mask ECO和post-mask ECO；</p>
+</li>
 </ul>
+<p>​	pre-mask ECO ：在设计完成后芯片还未进入工艺制造前所进行的修改。该流程的主要目的是解决设计中存在的问题，如电路逻辑不正确、功耗太高或者时序不满足等问题。</p>
+<p>​	 post-mask ECO ：设计团队需要将已制作的芯片样品反馈回来进行修改，从而修复设计中的问题。通常，post-mask ECO 采用物理层面上的修改来解决问题，例如通过引入金属连接或者改变物理结构等方式进行修复。</p>
 
                 
             </div>
@@ -822,7 +829,7 @@ open_mw_cell FMCW_DCORE_TOP
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.6k</span>
+                        class="white-color">31.6k</span>
             
             
             

@@ -11,9 +11,10 @@
 带同步复位的寄存器后紧跟一个不带复位的寄存器
 
 always @(posedge clk) begin
-    if(!nrst)	q1 &amp;lt;= 1&#39;b0;
-    else begin
-        q1 &amp;lt">
+	if(!nrst)	q1 &amp;lt;= 1&#39;b0;
+	else begin
+		q1 &amp;lt;= d;
+		q2 &amp;">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -296,7 +297,7 @@ always @(posedge clk) begin
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.2k
+                    1.3k
                 </div>
                 
 
@@ -326,26 +327,26 @@ always @(posedge clk) begin
 <ol>
 <li>带同步复位的寄存器后紧跟一个不带复位的寄存器</li>
 </ol>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>	q1 <span class="token operator">&lt;=</span> <span class="token number">1'b0</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> <span class="token keyword">begin</span>
-        q1 <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
-        q2 <span class="token operator">&lt;=</span> q1<span class="token punctuation">;</span>
-    <span class="token keyword">end</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	<span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>	q1 <span class="token operator">&lt;=</span> <span class="token number">1'b0</span><span class="token punctuation">;</span>
+	<span class="token keyword">else</span> <span class="token keyword">begin</span>
+		q1 <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
+		q2 <span class="token operator">&lt;=</span> q1<span class="token punctuation">;</span>
+	<span class="token keyword">end</span>
 <span class="token keyword">end</span>
-<span class="token comment" spellcheck="true">// 错误的复位方式    q2没有被正确的复位，并且综合生成的电路也非常奇怪。</span>
-</code></pre>
+<span class="token comment">// 错误的复位方式    q2没有被正确的复位，并且综合生成的电路也非常奇怪。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <img src="/2023/122543491/image-20231225203911890.png" alt style="zoom: 33%;"></li>
 </ul>
 <p>​	因为在rst_n有效时，q2没有动作，所以rst_n作为第二级寄存器的ld_en信号，将q1的结果输出在q2上。</p>
 <p><strong>正确的code style</strong></p>
-<pre><code>always @(posedge clk) begin
-    if(!nrst)	q1 &lt;= 0;
-    else 		q1 &lt;= d;
+<pre class="line-numbers language-none"><code class="language-none">always @(posedge clk) begin
+	if(!nrst)	q1 &lt;&#x3D; 0;
+	else 		q1 &lt;&#x3D; d;
 end
 always @(posedge clk)
-    q2 &lt;= q1;
-</code></pre>
+	q2 &lt;&#x3D; q1;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <img src="/2023/122543491/image-20231225204528665.png" alt style="zoom: 33%;">
 
 <p><strong>同步复位</strong>：复位信号，只在clk的有效边沿才会发挥作用，参与输入信号d的组合逻辑，相当于做“与”逻辑。这种情况下，if-else的优先级就很重要。reset需要在if中发挥作用。</p>
@@ -404,17 +405,17 @@ always @(posedge clk)
 <p>异步复位同步器综合了两者的优点，</p>
 </li>
 </ul>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-        nrst1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-        nrst2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
-        nrst1 <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-        nrst2 <span class="token operator">&lt;=</span> nrst1<span class="token punctuation">;</span>
-    <span class="token keyword">end</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	<span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+		nrst1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+		nrst2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	<span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+		nrst1 <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+		nrst2 <span class="token operator">&lt;=</span> nrst1<span class="token punctuation">;</span>
+	<span class="token keyword">end</span>
 <span class="token keyword">end</span>
-第二级的nrst2是为了消除，第一级异步复位信号释放带来的任何亚稳态。
-</code></pre>
+第二级的nrst2是为了消除，第一级异步复位信号释放带来的任何亚稳态。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <img src="/2023/122543491/image-20231226100118399.png" alt style="zoom:50%;">
 
 <ul>
@@ -422,6 +423,14 @@ always @(posedge clk)
 <p>通过延迟电路，将延迟前后的信号做”与”，即可得到真正的复位信号。</p>
 <img src="/2023/122543491/image-20240220172053034.png" alt style="zoom: 50%;"></li>
 </ul>
+<h5 id="容易出现的问题"><a href="#容易出现的问题" class="headerlink" title="容易出现的问题"></a>容易出现的问题</h5><ul>
+<li>异步复位容易产生毛刺，导致整个电路发生复位；<br>解决办法：使用毛刺过滤电路；<br>对于时序逻辑的复位信号，当有连续周期的reset时才进行复位；<br>对于组合逻辑的复位信号，使用reset_delay &amp; reset_delay10ns判断复位；</li>
+<li>复位信号的扇出很大，需要特殊考虑<br>解决办法：和cts一样处理；</li>
+</ul>
+<h3 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h3><blockquote>
+<p>《 硬件架构的艺术 数字电路的设计方法与技术》</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/104550266">https://zhuanlan.zhihu.com/p/104550266</a></p>
+</blockquote>
 
                 
             </div>
@@ -587,9 +596,9 @@ always @(posedge clk)
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="makefile">
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="Makefile">
                         
-                        <span class="card-title">makefile</span>
+                        <span class="card-title">Makefile</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -799,7 +808,7 @@ always @(posedge clk)
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.6k</span>
+                        class="white-color">31.6k</span>
             
             
             

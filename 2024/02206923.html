@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="dc_flow, RayBiiao">
-    <meta name="description" content="dc_topo模式dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。流程：       1. dct生成一版网表netlist，给ICC，导出floorplan的DEF文件       2. 根据icc导出的de">
+    <meta name="description" content="dc_topo模式dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。流程：    1. dct生成一版网表netlist，给ICC，导出floorplan的DEF文件    2. 根据icc导出的def文件，重新">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -288,7 +288,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    379
+                    697
                 </div>
                 
 
@@ -313,14 +313,14 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="dc-topo模式"><a href="#dc-topo模式" class="headerlink" title="dc_topo模式"></a>dc_topo模式</h2><p>dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。<br>流程：<br>       1. dct生成一版网表netlist，给ICC，导出floorplan的DEF文件<br>       2. 根据icc导出的def文件，重新在dct模式下综合，得到的网表更准确<br>       3. compile_ultra</p>
+                <h2 id="dc-topo模式"><a href="#dc-topo模式" class="headerlink" title="dc_topo模式"></a>dc_topo模式</h2><p>dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。<br>流程：<br>    1. dct生成一版网表netlist，给ICC，导出floorplan的DEF文件<br>    2. 根据icc导出的def文件，重新在dct模式下综合，得到的网表更准确<br>    3. compile_ultra</p>
 <img src="/2024/02206923/image-20240220161903358.png" alt style="zoom: 50%;">
 
-<pre class=" language-tcl"><code class="language-tcl"><span class="token operator">/</span><span class="token operator">/</span> icc 写def 命令
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token operator">/</span><span class="token operator">/</span> icc 写def 命令
 write_def <span class="token operator">-</span>output name.def
 <span class="token operator">/</span><span class="token operator">/</span> dct 读def命令
-extract_physical_constraints name.def
-</code></pre>
+extract_physical_constraints name.def<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p><strong>注意事项：第一次时，topo模式需要创建milkway，第二次进入dct模式时，已经有def文件，但是不需要创建milkway库，直接打开就可以</strong></p>
 <h2 id="常见命令"><a href="#常见命令" class="headerlink" title="常见命令"></a>常见命令</h2><h3 id="link"><a href="#link" class="headerlink" title="link"></a>link</h3><ol>
 <li><p>将设计与工艺库中stdcel进行对应。</p>
@@ -333,14 +333,28 @@ extract_physical_constraints name.def
 <h3 id="report-芯片面积"><a href="#report-芯片面积" class="headerlink" title="report 芯片面积"></a>report 芯片面积</h3><p>三种方式描述面积：1. 晶体管级 transitor 2. 2输入与非门的个数 3. 实际的面积</p>
 <p>report_area 输出实际的面积,也会显示综合后的标准单元个数。如果想要转换到与非门的个数，将报出的面积除以与非门的面积，得到2输入与非门个数。</p>
 <p>查看综合后的网表有多少门</p>
-<pre><code>sizeof_collection [get_cells * h]
-</code></pre>
+<pre class="line-numbers language-none"><code class="language-none">sizeof_collection [get_cells * h]<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <p>查看2输入与非门的面积：</p>
 <ol>
 <li>打开logic 库，查看NA2的面积，<strong>tsmc65大概是2.16平方微米</strong>。</li>
 <li>tcl查询，NAND2的属性 attribution <code>get_attribute[get_lib_cell */nand2]</code> </li>
 <li>单独综合一个与非门，查看面积。</li>
 </ol>
+<h2 id="针对课题组项目"><a href="#针对课题组项目" class="headerlink" title="针对课题组项目"></a>针对课题组项目</h2><p>1、由于数字校准模块的数字时钟为经过DTC延迟后的时钟，所有有 <strong>100ps左右的jitter</strong>，在约束setup的clock_uncertainly时需要加上该值；</p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_uncertainly <span class="token operator">-</span>setup 0.25 <span class="token punctuation">[</span>get_clock clk<span class="token punctuation">]</span>
+<span class="token comment"># 0.25 = jitter（0.1+0.05ns） + skew + margin    </span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>2、dc的跨时钟域约束<br>     由于SPI模块是课题组原有的，不需要对内部逻辑进行修改；SPI按照10M约束，数字校准模块按照125M约束，定义两个时钟为异步的。针对异步时钟，作如下约束  </p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_group <span class="token operator">-</span>asynchronous <span class="token operator">-</span>group clk_100 <span class="token operator">-</span>group <span class="token operator">-</span>clk_1 
+set_max_delay 7 <span class="token operator">-</span>from <span class="token punctuation">[</span>get_pins xx<span class="token operator">/</span>Q<span class="token punctuation">]</span> <span class="token operator">-</span>to <span class="token punctuation">[</span>get_pins xx<span class="token operator">/</span>D<span class="token punctuation">]</span> <span class="token operator">-</span>datapath_only
+set_max_delay 3 <span class="token operator">-</span>from <span class="token punctuation">[</span>get_pins xx<span class="token operator">/</span>Q<span class="token punctuation">]</span> <span class="token operator">-</span>to <span class="token punctuation">[</span>get_pins xx<span class="token operator">/</span>D<span class="token punctuation">]</span> <span class="token operator">-</span>datapath_only
+set_input_delay  <span class="token operator">-</span>clock clk_1   <span class="token operator">&lt;</span>输入延迟<span class="token operator">></span> <span class="token punctuation">[</span>get_pins <span class="token operator">&lt;</span>输入信号<span class="token operator">></span><span class="token punctuation">]</span>
+set_output_delay <span class="token operator">-</span>clock clk_100 <span class="token operator">&lt;</span>输出延迟<span class="token operator">></span> <span class="token punctuation">[</span>get_pins <span class="token operator">&lt;</span>输出信号<span class="token operator">></span><span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>基础：set_max&#x2F;min_delay这两种约束，一般用于异步时钟的数据约束上。set clock group -asynchronous或者set false path设置 对这两个时钟域数据不进行时序检查，但是一般需要保证跨时钟传递的数据要满足最大最小延迟，而不会高的离谱。比如异步fifo读写指针的格雷码，如果延迟时间太长，目的时钟域周期太短，会导致传输路径延迟超过两个周期。</p>
+</blockquote>
 
                 
             </div>
@@ -718,7 +732,7 @@ extract_physical_constraints name.def
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.6k</span>
+                        class="white-color">31.6k</span>
             
             
             

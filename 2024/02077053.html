@@ -289,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    732
+                    815
                 </div>
                 
 
@@ -335,11 +335,10 @@
 <p>​	Exclusive access 作用的对象是对应的Slave，支持Exclusive access的Slave会在slave中实现一个Exclusive access monitor，如果monitor记录了能够访问的master，那么对应的master就能通过Exclusive access来访问，其他的未记录的Exclusive access就都不能访问。Exclusive access对总线系统是没有要求的，只是对slave做了特殊要求，即使出错也不会影响系统其他部分，最多访问失败而已。</p>
 <h4 id="窄传输"><a href="#窄传输" class="headerlink" title="窄传输"></a>窄传输</h4><p>当数据传输的位宽小于数据总线的位宽时，称为窄位宽传输。通常通过wstrb来控制哪些字节有效。<br>当从机自身限制或者其他客观条件时，比如从机每次只能接收1个字节数据，且不能缓冲多字节数据，<strong>主机就要进行窄传输。</strong>可以将传输数据都放在数据总线上，每次传输只需要改变wstrb即可。</p>
 <p>32位数据总线，wstrb为4bit；64位数据总线，wstrb是8bit。</p>
-<p>AXI-Lite协议</p>
+<p>AXI-Lite协议<br>    不支持突发传输，且每次传输一个数据，没有last信号；<br>    支持多master，多slave</p>
 <ul>
-<li><p>不支持突发传输，且每次传输一个数据，没有last信号；</p>
-</li>
-<li><p>支持多master，多slave</p>
+<li><p>AXI和AHB传输对比：</p>
+<p>AHB突发传输的 每次传输都需要发送地址；并且每次传输都是先发地址，再传输数据；<br>AXI突发传输，只要第一次传输地址即可，后续的地址都是计算出来的；地址和数据可以乱序，提供总线效率</p>
 </li>
 </ul>
 
@@ -719,7 +718,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.6k</span>
+                        class="white-color">31.6k</span>
             
             
             

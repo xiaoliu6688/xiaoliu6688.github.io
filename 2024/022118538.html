@@ -296,7 +296,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.1k
+                    1.2k
                 </div>
                 
 
@@ -330,7 +330,7 @@
 <li>任意小数分频（非50%占空比）</li>
 </ol>
 <h3 id="1-偶分频（50-占空比）"><a href="#1-偶分频（50-占空比）" class="headerlink" title="1. 偶分频（50%占空比）"></a>1. 偶分频（50%占空比）</h3><p>假设偶分频系数为N， 共有两种方式实现50%的偶分频。<br>方式1：计数到 N&#x2F;2-1，将clk_out翻转。</p>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span>posedeg clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span>posedeg clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
         cnt <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
     <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>cnt <span class="token operator">&lt;=</span> N<span class="token operator">/</span><span class="token number">2</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span>
@@ -343,10 +343,10 @@
         clkout <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
     <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>cnt <span class="token operator">==</span> N<span class="token operator">/</span><span class="token number">2</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span>
         clkout <span class="token operator">&lt;=</span> <span class="token operator">~</span>clkout<span class="token punctuation">;</span>
-<span class="token keyword">end</span>
-</code></pre>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p>方式2：计数到N-1，小于 N&#x2F;2 - 1，clkout输出0，否则输出1；(可实现不同占空比)</p>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk_in <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk_in <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
         cnt <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
     <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>cnt <span class="token operator">==</span> N <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span>
@@ -361,16 +361,17 @@
         clk_out <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
     <span class="token keyword">else</span> 
         clk_out <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-<span class="token keyword">end</span>
-</code></pre>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <h3 id="2-奇分频（非50-占空比）"><a href="#2-奇分频（非50-占空比）" class="headerlink" title="2. 奇分频（非50%占空比）"></a>2. 奇分频（非50%占空比）</h3><p>不需要使用双边沿逻辑，和偶分频的第二种方式类似。</p>
-<h3 id="3-奇分频（50-占空比）"><a href="#3-奇分频（50-占空比）" class="headerlink" title="3. 奇分频（50%占空比）"></a>3. 奇分频（50%占空比）</h3><p>需要双边沿逻辑；假设实现占空比50%的5分频，实现方法：</p>
+<h3 id="3-奇分频（50-占空比）"><a href="#3-奇分频（50-占空比）" class="headerlink" title="3. 奇分频（50%占空比）"></a>3. 奇分频（50%占空比）</h3><p>假设实现7分频时钟，需要3个完整周期+半个周期的电平翻转，可以通过两个3分频时钟 or 在一起得到，两个时钟相差半个周期，通过上升沿和下降沿触发得到。</p>
+<p>需要双边沿逻辑；假设实现占空比50%的5分频，实现方法：</p>
 <ol>
 <li>采用正沿和负沿分别实现5分频</li>
 <li>占空比为（5-1）&#x2F;2个源时钟周期</li>
 <li>正沿和负沿产生的时钟信号做 <strong>或</strong></li>
 </ol>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">module</span> Odd_div_50p #<span class="token punctuation">(</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> Odd_div_50p #<span class="token punctuation">(</span>
     <span class="token keyword">parameter</span> N <span class="token operator">=</span> <span class="token number">5</span>
 <span class="token punctuation">)</span><span class="token punctuation">(</span>
     <span class="token keyword">input</span>       clk_in<span class="token punctuation">,</span>
@@ -400,7 +401,7 @@
         cnt_neg <span class="token operator">&lt;=</span> cnt_neg <span class="token operator">+</span> <span class="token number">'h1</span><span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 
-<span class="token comment" spellcheck="true">// clk_pos clk_neg</span>
+<span class="token comment">// clk_pos clk_neg</span>
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk_in <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
         clk_pos <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
@@ -420,12 +421,12 @@
 
 <span class="token keyword">assign</span> clk_out <span class="token operator">=</span> clk_pos <span class="token operator">|</span> clk_neg<span class="token punctuation">;</span>
 
-<span class="token keyword">endmodule</span>
-</code></pre>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <h3 id="4-半整数（x-5）分频（非50-占空比）"><a href="#4-半整数（x-5）分频（非50-占空比）" class="headerlink" title="4. 半整数（x.5）分频（非50%占空比）"></a>4. 半整数（x.5）分频（非50%占空比）</h3><p>假设实现3.5分频，正沿计数器循环计数到7，分别交替产生分频比为4和3的时钟信号，平均下来得到的时钟信号为（4+3）&#x2F; 2 &#x3D; 3.5分频。但是每个分频时钟不是严格的3.5分频。<strong>因此，需要对不均匀的分频比进行调整，采用负沿计数器计数到7，分别交替产生分频比为3和4的时钟信号</strong>，将正沿和负沿产的时钟信号做 <strong>与</strong>操作，得到均匀的3.5分频的时钟信号。</p>
 <img src="/2024/022118538/image-20240221164423487.png" alt style="zoom:67%;">
 
-<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">module</span> Half_Int_div #<span class="token punctuation">(</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> Half_Int_div #<span class="token punctuation">(</span>
     <span class="token keyword">parameter</span> N <span class="token operator">=</span> <span class="token number">3.5</span>
 <span class="token punctuation">)</span><span class="token punctuation">(</span>
     <span class="token keyword">input</span>           clk_in<span class="token punctuation">,</span>
@@ -501,8 +502,8 @@
 
 <span class="token keyword">assign</span> clk_out <span class="token operator">=</span> clk_pos <span class="token operator">|</span> clk_neg<span class="token punctuation">;</span>
 
-<span class="token keyword">endmodule</span>
-</code></pre>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <h3 id="5-任意小数分频（非50-占空比）"><a href="#5-任意小数分频（非50-占空比）" class="headerlink" title="5. 任意小数分频（非50%占空比）"></a>5. 任意小数分频（非50%占空比）</h3><p>同样不能做到50%的占空比。基于可变分频和平均分频得到，在长时间内，得到小数分频比。<br>比如7.6分频，保证76个源时钟周期时间内，目的时钟经过10个周期的时间。即对源时钟进行 <strong>6次8分频，4次7分频（6*8+4*7&#x3D;76）。</strong>5.76分频，对源时钟进行 <strong>76次6分频，24次5分频</strong></p>
 <p>以 7.6 倍分频为例，7 分频和 8 分频的实现顺序一般有以下 4 种：</p>
 <p>(1) 先进行 4 次 7 分频，再进行 6 次 8 分频；<br>(2) 先进行 6 次 8 分频，再进行 4 次 7 分频；<br>(3) 将 4 次 7 分频平均的插入到 6 次 8 分频中；<br>(4) 将 6 次 8 分频平均的插入到 4 次 7 分频中。</p>
@@ -884,7 +885,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.6k</span>
+                        class="white-color">31.6k</span>
             
             
             

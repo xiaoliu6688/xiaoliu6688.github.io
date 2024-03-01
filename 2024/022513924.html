@@ -294,7 +294,7 @@ assign clk1_t = ">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    369
+                    482
                 </div>
                 
 
@@ -325,10 +325,10 @@ assign clk1_t = ">
 <h3 id="组合逻辑选通"><a href="#组合逻辑选通" class="headerlink" title="组合逻辑选通"></a>组合逻辑选通</h3><p>电路对时钟信号非常敏感，如果采用组合逻辑选通时钟，很有可能在时钟上产生毛刺，导致功能错误，或者不满足时序要求，造成亚稳态。</p>
 <img src="/2024/022513924/image-20240225231635368.png" alt="image-20240225231635368" style="zoom: 25%;">
 
-<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">assign</span> clk1_t <span class="token operator">=</span> clk1 <span class="token operator">&amp;</span> sel_clk1<span class="token punctuation">;</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">assign</span> clk1_t <span class="token operator">=</span> clk1 <span class="token operator">&amp;</span> sel_clk1<span class="token punctuation">;</span>
 <span class="token keyword">assign</span> clk2_t <span class="token operator">=</span> clk2 <span class="token operator">&amp;</span> <span class="token operator">!</span>sle_clk1<span class="token punctuation">;</span>
-<span class="token keyword">assign</span> clk_out <span class="token operator">=</span> clk1_t <span class="token operator">|</span> clk2_t<span class="token punctuation">;</span>
-</code></pre>
+<span class="token keyword">assign</span> clk_out <span class="token operator">=</span> clk1_t <span class="token operator">|</span> clk2_t<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
 <img src="/2024/022513924/8f134e7b11982eb43608e728782d78da.png" alt style="zoom: 33%;">
 
 <h3 id="时序逻辑选通"><a href="#时序逻辑选通" class="headerlink" title="时序逻辑选通"></a>时序逻辑选通</h3><p><strong>产生毛刺的本质原因是sel信号是异步的，无法保证输出的时钟在低电平时切换。</strong></p>
@@ -338,12 +338,12 @@ assign clk1_t = ">
 <p>此外，由于sel信号是异步输入，为了降低亚稳态，可以打两拍，再进行时钟切换。</p>
 <img src="/2024/022513924/12ba42985f38e4091d39bc8bae8d191e.jpeg" style="zoom:50%;">
 
-<pre class=" language-Verilog"><code class="language-Verilog">/*********************************************************************
+<pre class="line-numbers language-Verilog" data-language="Verilog"><code class="language-Verilog">&#x2F;*********************************************************************
  * Author           : liu
  * Last modified    : 2023-05-30 15:25
  * Filename         : switch_clock.v
  * Description      : 
- * ******************************************************************/
+ * ******************************************************************&#x2F;
 module switch_clock(
   input clk1,
   input rstn1,
@@ -360,42 +360,42 @@ module switch_clock(
   reg clk2_reg_rrr;
   
   always @(posedge clk1 or negedge rstn1)begin
-    if(!rstn1) begin
-      clk1_reg_r <= 0;
-      clk1_reg_rr <= 0;
-    end
-    else begin
-      clk1_reg_r <= clk1_select;
-      clk1_reg_rr <= clk1_reg_r;
-    end
+	if(!rstn1) begin
+	  clk1_reg_r &lt;&#x3D; 0;
+	  clk1_reg_rr &lt;&#x3D; 0;
+	end
+	else begin
+	  clk1_reg_r &lt;&#x3D; clk1_select;
+	  clk1_reg_rr &lt;&#x3D; clk1_reg_r;
+	end
   end
   always @(posedge clk2 or negedge rstn2)begin
-    if(!rstn2) begin
-      clk2_reg_r <= 0;
-      clk2_reg_rr <= 0;
-    end
-    else begin
-      clk2_reg_r <= clk2_select;
-      clk2_reg_rr <= clk2_reg_r;
-    end
+	if(!rstn2) begin
+	  clk2_reg_r &lt;&#x3D; 0;
+	  clk2_reg_rr &lt;&#x3D; 0;
+	end
+	else begin
+	  clk2_reg_r &lt;&#x3D; clk2_select;
+	  clk2_reg_rr &lt;&#x3D; clk2_reg_r;
+	end
   end
-  assign clk1_select = select & (~clk2_reg_rrr);
-  assign clk2_select = ~select & (~clk1_reg_rrr);
+  assign clk1_select &#x3D; select &amp; (~clk2_reg_rrr);
+  assign clk2_select &#x3D; ~select &amp; (~clk1_reg_rrr);
   always @(negedge clk1 or negedge rstn1) begin
-    if(!rstn1)
-      clk1_reg_rrr <= 0;
-    else
-      clk1_reg_rrr <= clk1_reg_rr;
+	if(!rstn1)
+	  clk1_reg_rrr &lt;&#x3D; 0;
+	else
+	  clk1_reg_rrr &lt;&#x3D; clk1_reg_rr;
   end
   always @(negedge clk2 or negedge rstn2) begin
-    if(!rstn2)
-      clk2_reg_rrr <= 0;
-    else
-      clk2_reg_rrr <= clk2_reg_rr;
+	if(!rstn2)
+	  clk2_reg_rrr &lt;&#x3D; 0;
+	else
+	  clk2_reg_rrr &lt;&#x3D; clk2_reg_rr;
   end
-  assign clkout = (clk1 & clk1_reg_rrr ) || (clk2 & clk2_reg_rrr);
-endmodule
-</code></pre>
+  assign clkout &#x3D; (clk1 &amp; clk1_reg_rrr ) || (clk2 &amp; clk2_reg_rrr);
+endmodule<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p><img src="/2024/022513924/48bccb9764f34ae5948dd826d5dcb0f5.png" alt="测试结果"></p>
 
                 
@@ -774,7 +774,7 @@ endmodule
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.6k</span>
+                        class="white-color">31.6k</span>
             
             
             

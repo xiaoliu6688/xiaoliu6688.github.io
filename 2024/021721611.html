@@ -296,7 +296,7 @@ EN">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    464
+                    436
                 </div>
                 
 
@@ -322,8 +322,8 @@ EN">
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <h3 id="Awk处理文本数据"><a href="#Awk处理文本数据" class="headerlink" title="Awk处理文本数据"></a><strong>Awk处理文本数据</strong></h3><p>格式：</p>
-<pre class=" language-bash"><code class="language-bash"><span class="token function">awk</span> <span class="token punctuation">[</span>选项<span class="token punctuation">]</span> ‘匹配规则和处理规则’  <span class="token punctuation">[</span>处理文本路径<span class="token punctuation">]</span>
-</code></pre>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">awk</span> <span class="token punctuation">[</span>选项<span class="token punctuation">]</span> ‘匹配规则和处理规则’  <span class="token punctuation">[</span>处理文本路径<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <ul>
 <li><p>处理规则：</p>
 <p>BEGIN{}: BEGIN是在awk处理文本之前运行</p>
@@ -343,49 +343,49 @@ EN">
 <li><p>输出后，获取下一行，执行上述操作</p>
 </li>
 </ol>
-<h5 id="awk变量"><a href="#awk变量" class="headerlink" title="awk变量"></a><strong>awk变量</strong></h5><pre class=" language-tcl"><code class="language-tcl">$<span class="token variable">0</span>:当前行的内容
+<h5 id="awk变量"><a href="#awk变量" class="headerlink" title="awk变量"></a><strong>awk变量</strong></h5><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">$<span class="token variable">0</span>:当前行的内容
 NR：行号
 NF: 总字段数
 FS：输入字段分隔符，默认空格
-OFS：输出字段分隔符
-</code></pre>
-<pre class=" language-bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'&amp;#123;if(NR > 7)&amp;#123;print NR,<span class="token variable">$0</span>&amp;#125;&amp;#125;'</span> /etc/passwd
-<span class="token operator">==</span> <span class="token function">awk</span> -F: <span class="token string">'NR > 7 &amp;#123;print NR,<span class="token variable">$0</span>&amp;#125;'</span> /etc/passwd
+OFS：输出字段分隔符<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'&#123;if(NR > 7)&#123;print NR,$0&#125;&#125;'</span> /etc/passwd
+<span class="token operator">==</span> <span class="token function">awk</span> -F: <span class="token string">'NR > 7 &#123;print NR,$0&#125;'</span> /etc/passwd
 // 输出第7行之后的内容
 
 指定<span class="token string">','</span>作为分隔符，-F<span class="token string">','</span>
 -F:  ：表示以<span class="token string">':'</span>作为分隔符
-<span class="token function">awk</span> -F<span class="token string">':'</span> <span class="token string">'BEGIN&amp;#123;FS=","&amp;#125;&amp;#123;print <span class="token variable">$1</span>,<span class="token variable">$2</span>&amp;#125;'</span> 
+<span class="token function">awk</span> -F<span class="token string">':'</span> <span class="token string">'BEGIN&#123;FS=","&#125;&#123;print $1,$2&#125;'</span> 
 FS的优先级大于-F指定的
 
 输出指定分隔符
-<span class="token function">awk</span> -F<span class="token string">':'</span> <span class="token string">'BEGIN&amp;#123;OFS=" >>> "&amp;#125;&amp;#123;print <span class="token variable">$1</span>,<span class="token variable">$2</span>&amp;#125;'</span>
-</code></pre>
+<span class="token function">awk</span> -F<span class="token string">':'</span> <span class="token string">'BEGIN&#123;OFS=" >>> "&#125;&#123;print $1,$2&#125;'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <ul>
 <li><strong>正则表达式</strong></li>
 </ul>
-<pre class=" language-bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'/^xxx/'</span> /etc/passwd
-</code></pre>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'/^xxx/'</span> /etc/passwd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <ul>
 <li>条件模式</li>
 </ul>
-<pre class=" language-bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'NR > 7'</span> /etc/passwd
-</code></pre>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'NR > 7'</span> /etc/passwd<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <ul>
 <li>算数运算</li>
 </ul>
-<pre class=" language-bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'&amp;#123;print <span class="token variable">$1</span>,<span class="token variable">$2</span>+1&amp;#125;'</span>
-</code></pre>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">awk</span> -F: <span class="token string">'&#123;print $1,$2+1&#125;'</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <ul>
 <li>if判断</li>
 </ul>
-<pre class=" language-bash"><code class="language-bash">单分支：
-    if<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;&amp;#125;</span>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">单分支：
+	<span class="token function-name function">if</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
 双分支：
-    if<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;&amp;#125; else &amp;#123;&amp;#125;</span>
+	<span class="token function-name function">if</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span>
 多分支：
-    if<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;&amp;#125; else if()&amp;#123;&amp;#125; else &amp;#123;&amp;#125;</span>
-</code></pre>
+	<span class="token function-name function">if</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token function-name function">if</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -763,7 +763,7 @@ FS的优先级大于-F指定的
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">30.6k</span>
+                        class="white-color">31.6k</span>
             
             
             
