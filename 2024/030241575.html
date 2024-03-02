@@ -4,17 +4,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="异步复位和同步复位, RayBiiao">
+    <meta name="keywords" content="总线仲裁算法, RayBiiao">
     <meta name="description" content="
-常用的复位方式
-
-带同步复位的寄存器后紧跟一个不带复位的寄存器
-
-always @(posedge clk) begin
-	if(!nrst)	q1 &amp;lt;= 1&#39;b0;
-	else begin
-		q1 &amp;lt;= d;
-		q2 &amp;">
+主要参考博客如下https://blog.csdn.net/Ocean_Yv/article/details/126496121https://blog.csdn.net/weixin_43698385/article/details/1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -26,7 +18,7 @@ always @(posedge clk) begin
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>异步复位和同步复位 | RayBiiao</title>
+    <title>总线仲裁算法 | RayBiiao</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -234,12 +226,12 @@ always @(posedge clk) begin
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/14.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/9.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">异步复位和同步复位</h1>
+                    <h1 class="description center-align post-title">总线仲裁算法</h1>
                 </div>
             </div>
         </div>
@@ -261,25 +253,12 @@ always @(posedge clk) begin
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                    <div class="article-tag">
-                        
-                            <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-                                <span class="chip bg-color">基础知识</span>
-                            </a>
-                        
-                    </div>
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
                     
                 </div>
                 <div class="col s5 right-align">
-                    
-                    <div class="post-cate">
-                        <i class="fas fa-bookmark fa-fw icon-category"></i>
-                        
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                数字前端
-                            </a>
-                        
-                    </div>
                     
                 </div>
             </div>
@@ -288,7 +267,7 @@ always @(posedge clk) begin
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2023-12-25
+                    2024-03-02
                 </div>
                 
 
@@ -297,7 +276,7 @@ always @(posedge clk) begin
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.3k
+                    1.1k
                 </div>
                 
 
@@ -322,115 +301,107 @@ always @(posedge clk) begin
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <ul>
-<li><p>常用的复位方式</p>
-<ol>
-<li>带同步复位的寄存器后紧跟一个不带复位的寄存器</li>
-</ol>
-<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-	<span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>	q1 <span class="token operator">&lt;=</span> <span class="token number">1'b0</span><span class="token punctuation">;</span>
-	<span class="token keyword">else</span> <span class="token keyword">begin</span>
-		q1 <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
-		q2 <span class="token operator">&lt;=</span> q1<span class="token punctuation">;</span>
-	<span class="token keyword">end</span>
-<span class="token keyword">end</span>
-<span class="token comment">// 错误的复位方式    q2没有被正确的复位，并且综合生成的电路也非常奇怪。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<img src="/2023/122543491/image-20231225203911890.png" alt style="zoom: 33%;"></li>
-</ul>
-<p>​	因为在rst_n有效时，q2没有动作，所以rst_n作为第二级寄存器的ld_en信号，将q1的结果输出在q2上。</p>
-<p><strong>正确的code style</strong></p>
-<pre class="line-numbers language-none"><code class="language-none">always @(posedge clk) begin
-	if(!nrst)	q1 &lt;&#x3D; 0;
-	else 		q1 &lt;&#x3D; d;
-end
-always @(posedge clk)
-	q2 &lt;&#x3D; q1;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<img src="/2023/122543491/image-20231225204528665.png" alt style="zoom: 33%;">
-
-<p><strong>同步复位</strong>：复位信号，只在clk的有效边沿才会发挥作用，参与输入信号d的组合逻辑，相当于做“与”逻辑。这种情况下，if-else的优先级就很重要。reset需要在if中发挥作用。</p>
-<p>使用同步复位出现的问题：综合工具DC无法分辨复位信号和其他数据信号。<br>带同步复位的可加载触发器如下</p>
-<img src="/2023/122543491/image-20240220164819082.png" alt style="zoom:50%;">
-
-<p>​	综合工具也可能会综合成下面的结构，两者实现的功能相同。</p>
-<img src="/2023/122543491/image-20240220164859844.png" alt style="zoom:50%;">
-
-<p>​	第二种方式在门级仿真时，如果rst_n信号为低，mux的输入都是0，如果load是x态，导致触发器会输出x态，而不会复位。<strong>本质区别是 rst_n的优先级，第一种方式rst_n的优先级要高于第二种，第一种可以保证在仿真时复位的有效性</strong>，这两种方式在实际硬件中，都是可以正常复位的。因此，在仿真过程中，使用编译指令，告知综合工具，让复位信号rst_n尽可能靠近触发器，提高复位信号的优先级。</p>
-<p><strong>优点：</strong></p>
-<pre><code>1. 可以使用基于周期仿真的模拟器，比如verilator。
-2. 确保了所有的电路都是同步的。
-3. 由于是时钟有效时，才可以复位，所以可以过滤一些reset的毛刺。
-</code></pre>
-<p><strong>缺点：</strong></p>
-<ol>
-<li>同步复位可能需要脉冲展宽器来保证复位脉冲足够宽</li>
-<li>对于时钟门控的寄存器，同步复位无效。</li>
-</ol>
-<ul>
-<li><strong>三态总线的复位</strong></li>
-</ul>
-<p>为了防止芯片上电时，内部三态总线上的总线竞争，就迫切需要时钟产生复位；</p>
-<p>因此，芯片需要具有异步复位的功能。</p>
-<img src="/2023/122543491/image-20231225235555437.png" alt style="zoom: 33%;">
-
-<p>也可以使用同步复位的方式实现，但是也必须使用复位信号直接撤销三态门的使能，寄存器的输出必须与rst_n做与；</p>
-<img src="/2023/122543491/image-20231225235658088.png" alt style="zoom: 33%;">
-
-<h4 id="异步复位"><a href="#异步复位" class="headerlink" title="异步复位"></a>异步复位</h4><p>​	异步复位可以保证 数据路径上没有复位信号的参与，在复位时，数据路径是干净的。		</p>
-<p>​	异步复位最大的问题是 复位信号的释放。</p>
-<p>​	在DC阶段，对于clock和reset信号，通过设置输入驱动为0，表示驱动能力最强，<code>set_drive 0</code>。并设置<code>set_dont_touch_network</code>保护clk和reset信号不被修改。这样做的目的是 因为综合时，没有布局布线信息，在dc时即使插入buffer对clk和reset信号优化，也是没有意义的，到ICC阶段也会重新插buffer。反而，可能会对物理实现带来负面影响。所以最好的办法是不处理，在CTS时才真正的解决clk和reset。</p>
-<p><strong>优点：</strong></p>
-<pre><code> 1. 保证复位信号不会参与到数据路径中，保证数据路径是干净的。
- 2. 不需要时钟，就可以进行电路的复位。
-</code></pre>
-<p><strong>缺点：</strong></p>
-<ol>
-<li>不能使用基于周期的仿真器</li>
-<li>异步复位时，不会有亚稳态的影响，但是在释放时，很有可能clk是上升沿会采到rstn在变化，造成亚稳态。导致复位后的稳定状态丢失。</li>
-<li>会受到毛刺的影响</li>
-<li>异步复位 带来时序分析的困难</li>
-</ol>
-<ul>
-<li><p>异步复位和异步置位寄存器</p>
-<p>尽可能避免出现该类型的寄存器，否则，可能会造成综合前后结果不一致的问题。</p>
-</li>
-</ul>
-<p>异步复位需要考虑recovery time和removal time的违例。</p>
-<p>recovery time类似于setup time，在有效时钟沿上升之前，rst发生变化的最短时间。</p>
-<p>removal time类似hold time，在有效时钟沿上升之后，rst发生变化所需要的最短时间。</p>
-<ul>
-<li><p>key points</p>
-<p><strong>每个使用异步复位的ASIC电路，都应该包括复位同步器电路</strong>，也就是异步复位，同步释放。</p>
-<p>异步复位同步器综合了两者的优点，</p>
-</li>
-</ul>
-<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-	<span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-		nrst1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-		nrst2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-	<span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
-		nrst1 <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-		nrst2 <span class="token operator">&lt;=</span> nrst1<span class="token punctuation">;</span>
-	<span class="token keyword">end</span>
-<span class="token keyword">end</span>
-第二级的nrst2是为了消除，第一级异步复位信号释放带来的任何亚稳态。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<img src="/2023/122543491/image-20231226100118399.png" alt style="zoom:50%;">
-
-<ul>
-<li><p><strong>异步复位毛刺过滤器</strong></p>
-<p>通过延迟电路，将延迟前后的信号做”与”，即可得到真正的复位信号。</p>
-<img src="/2023/122543491/image-20240220172053034.png" alt style="zoom: 50%;"></li>
-</ul>
-<h5 id="容易出现的问题"><a href="#容易出现的问题" class="headerlink" title="容易出现的问题"></a>容易出现的问题</h5><ul>
-<li>异步复位容易产生毛刺，导致整个电路发生复位；<br>解决办法：使用毛刺过滤电路；<br>对于时序逻辑的复位信号，当有连续周期的reset时才进行复位；<br>对于组合逻辑的复位信号，使用reset_delay &amp; reset_delay10ns判断复位；</li>
-<li>复位信号的扇出很大，需要特殊考虑<br>解决办法：和cts一样处理；</li>
-</ul>
-<h3 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h3><blockquote>
-<p>《 硬件架构的艺术 数字电路的设计方法与技术》</p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/104550266">https://zhuanlan.zhihu.com/p/104550266</a></p>
+                <blockquote>
+<p>主要参考博客如下<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/Ocean_Yv/article/details/126496121">https://blog.csdn.net/Ocean_Yv/article/details/126496121</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43698385/article/details/126112076">https://blog.csdn.net/weixin_43698385/article/details/126112076</a></p>
 </blockquote>
+<h2 id="总线仲裁算法"><a href="#总线仲裁算法" class="headerlink" title="总线仲裁算法"></a>总线仲裁算法</h2><h3 id="固定优先级算法"><a href="#固定优先级算法" class="headerlink" title="固定优先级算法"></a>固定优先级算法</h3><p>采用固定的优先级，不同请求信号req完成仲裁后，下次请求信号到来时，仲裁机制按照一样的优先级顺序仲裁，纯组合逻辑就可以完成。可以用优先级或者补码特性来判断 </p>
+<h4 id="if-elseif-case"><a href="#if-elseif-case" class="headerlink" title="if elseif &#x2F; case"></a>if elseif &#x2F; case</h4><p>通常使用有优先级的if elseif else或者带优先级的case完成固定优先级算法的仲裁。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token comment">// first way : if elseif else</span>
+<span class="token keyword">module</span> <span class="token function">arbiter_fixed</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>      <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   request<span class="token punctuation">,</span>
+    <span class="token keyword">output</span> <span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   grant
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// request[0] has high priority</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span>request<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        grant <span class="token operator">=</span> <span class="token number">4'b0001</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>request<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        grant <span class="token operator">=</span> <span class="token number">4'b0010</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>request<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        grant <span class="token operator">=</span> <span class="token number">4'b0100</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>request<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        grant <span class="token operator">=</span> <span class="token number">4'b1000</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span>
+        grant <span class="token operator">=</span> <span class="token number">4'b0000</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token keyword">endmodule</span>
+
+<span class="token comment">// second way : case</span>
+<span class="token keyword">module</span> <span class="token function">arbiter_fixed</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>      <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   request<span class="token punctuation">,</span>
+    <span class="token keyword">output</span> <span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   grant
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// request[0] has high priority</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">case</span><span class="token punctuation">(</span><span class="token number">1'b1</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        request<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token punctuation">:</span> grant <span class="token operator">=</span> <span class="token number">4'b1000</span><span class="token punctuation">;</span>
+        request<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token punctuation">:</span> grant <span class="token operator">=</span> <span class="token number">4'b0100</span><span class="token punctuation">;</span>
+        request<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token punctuation">:</span> grant <span class="token operator">=</span> <span class="token number">4'b0010</span><span class="token punctuation">;</span>
+        request<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token punctuation">:</span> grant <span class="token operator">=</span> <span class="token number">4'b0001</span><span class="token punctuation">;</span> 
+        <span class="token keyword">default</span> <span class="token punctuation">:</span> grant <span class="token operator">=</span> <span class="token number">4'b0000</span><span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>按照上面的case方式综合出来的语句和if else-if else得到的电路是一样的，都是由固定的优先级</p>
+<h4 id="补码特性"><a href="#补码特性" class="headerlink" title="补码特性"></a>补码特性</h4><p>利用补码的特性，原码和补码相 “<strong>与</strong>”，得到一个独热码，该独热码为1的位置 是 原码从右到左第一个为1的位置；</p>
+<p><strong>补码 &#x3D; 原码 取反 + 1；	原码 &#x3D;（补码 - 1）+ 1；</strong></p>
+<p>比如，req &#x3D; 4’b0110，（0110 - 0001）&#x3D; 0101； ~0101 &#x3D; 1010 ；   1010 &amp; 0110 &#x3D; <strong>0010</strong></p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token comment">// third way : con</span>
+<span class="token keyword">module</span> <span class="token function">arbiter_fixed</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>   <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   request<span class="token punctuation">,</span>
+    <span class="token keyword">output</span>  <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   grant
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> grant <span class="token operator">=</span> request<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">&amp;</span> <span class="token punctuation">(</span><span class="token operator">~</span><span class="token punctuation">(</span>request<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">-</span> <span class="token operator">&#123;</span><span class="token number">3'b0</span><span class="token punctuation">,</span> <span class="token number">1'b1</span><span class="token operator">&#125;</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="轮询优先级算法"><a href="#轮询优先级算法" class="headerlink" title="轮询优先级算法"></a>轮询优先级算法</h3><p>每次仲裁后，需要改变优先级，也就是说输出不仅与输入有关，还和当前的状态有关。所以只能是时序逻辑。轮询的方式有两种，比如优先级A&gt;B&gt;C&gt;D，如果仲裁授予masterC，优先级可以变为D&gt;A&gt;B&gt;C，也可以变为A&gt;B&gt;D&gt;C，第二种方式优先级变化没有规律，实现起来很复杂，通过采用第一种轮询的方式。</p>
+<p>同样有两种方式可以实现该轮询方式，第一种基于状态机跳转实现，第二种基于优化后补码特性实现</p>
+<h4 id="基于状态机跳转"><a href="#基于状态机跳转" class="headerlink" title="基于状态机跳转"></a>基于状态机跳转</h4><p>仲裁后的优先级排序方式共有4种，每次仲裁结果作为当前状态，根据输入信号req决定下次仲裁结果grant；</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token comment">// 伪代码</span>
+mastera<span class="token punctuation">:</span>
+	<span class="token function">case</span><span class="token punctuation">(</span>request_abc<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+		<span class="token number">3'b000</span><span class="token punctuation">:</span>nxt_state <span class="token operator">&lt;=</span> mastera<span class="token punctuation">;</span>
+		<span class="token number">3'b001</span><span class="token punctuation">:</span>nxt_state <span class="token operator">&lt;=</span> masterc<span class="token punctuation">;</span>
+		<span class="token number">3'b010</span><span class="token punctuation">:</span>nxt_state <span class="token operator">&lt;=</span> masterb<span class="token punctuation">;</span>
+		<span class="token number">3'b011</span><span class="token punctuation">:</span>nxt_state <span class="token operator">&lt;=</span> masterb<span class="token punctuation">;</span>
+		<span class="token number">3'b100</span><span class="token punctuation">:</span>nxt_state <span class="token operator">&lt;=</span> mastera<span class="token punctuation">;</span>
+		<span class="token number">3'b101</span><span class="token punctuation">:</span>nxt_state <span class="token operator">&lt;=</span> masterc<span class="token punctuation">;</span>
+		<span class="token number">3'b110</span><span class="token punctuation">:</span>nxt_state <span class="token operator">&lt;=</span> masterb<span class="token punctuation">;</span>
+		<span class="token number">3'b111</span><span class="token punctuation">:</span>nxt_state <span class="token operator">&lt;=</span> masterb<span class="token punctuation">;</span>
+		<span class="token keyword">endcase</span>
+	<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="基于优化后补码特性实现"><a href="#基于优化后补码特性实现" class="headerlink" title="基于优化后补码特性实现"></a>基于优化后补码特性实现</h4><p>参考上面的思路，补码与原码相 “与”，得到从右到左第一个不为0的位置的独热码；计算原码时，**-1 具有特殊的意义，表示从右第一个数开始，向左寻找，第一个不为0的数，将其转换成独热码。**如果减去的值为上次的grant值，相当于从该位置开始，向左寻找第一个不为0的数，将其转换成独热码。但是会存在一个问题，开始位置的后面是无法遍历到的。因此，采用将两个仲裁优先级拼接，从开始位置向左遍历，一定可以遍历完一个循环。如果请求master在开始位置的后面，仲裁结果位于高4bit中，所以再将结果的高4bit和低4bit进行合并，得到最终结果。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">round_robin_arb</span><span class="token punctuation">(</span>
+    <span class="token keyword">input</span>   clk         <span class="token punctuation">,</span>
+    <span class="token keyword">input</span>   rst_n       <span class="token punctuation">,</span>
+    
+    <span class="token keyword">input</span>  <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> request<span class="token punctuation">,</span>
+    <span class="token keyword">output</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> grant
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 存储移位后上一次仲裁结果</span>
+    <span class="token keyword">reg</span>  <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> last_state<span class="token punctuation">;</span>
+    <span class="token important">always@</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rst_n<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rst_n<span class="token punctuation">)</span>
+            last_state <span class="token operator">&lt;=</span> <span class="token number">4'b0001</span><span class="token punctuation">;</span>     <span class="token comment">// 默认值，表示最低位的优先级最高</span>
+        <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">|</span>request<span class="token punctuation">)</span>
+            last_state <span class="token operator">&lt;=</span> <span class="token operator">&#123;</span>grant<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">,</span>grant<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span>grant<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span>grant<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token operator">&#125;</span><span class="token punctuation">;</span> <span class="token comment">// 有仲裁请求，根据上一次的仲裁结果，左移1bit后用于控制新的优先级</span>
+        <span class="token keyword">else</span>
+            last_state <span class="token operator">&lt;=</span> last_state<span class="token punctuation">;</span>  <span class="token comment">// 无仲裁请求时，pre_state不更新</span>
+    <span class="token keyword">end</span>
+
+    <span class="token comment">// 如果最左侧几个高优先级主机都为发起仲裁请求，需要从最低位开始轮询。</span>
+    <span class="token comment">// 此处通过两个request拼接，将右侧低位拼接到左侧，即可实现对低位的判断。</span>
+    <span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> grant_ext<span class="token punctuation">;</span>
+    <span class="token keyword">assign</span> grant_ext <span class="token operator">=</span> <span class="token operator">&#123;</span>request<span class="token punctuation">,</span>request<span class="token operator">&#125;</span> <span class="token operator">&amp;</span> <span class="token operator">~</span><span class="token punctuation">(</span><span class="token operator">&#123;</span>request<span class="token punctuation">,</span>request<span class="token operator">&#125;</span> <span class="token operator">-</span> last_state<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 得到的grant_ext必定为一个独热码，但是置高位可能在代表低位的高4bit中，因此进行求或运算</span>
+    <span class="token keyword">assign</span> grant <span class="token operator">=</span> grant_ext<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">|</span> grant_ext<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">4</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -457,7 +428,7 @@ always @(posedge clk)
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://xiaoliu6688.github.io/2023/122543491.html">https://xiaoliu6688.github.io/2023/122543491.html</a>
+                    <a href="https://xiaoliu6688.github.io/2024/030241575.html">https://xiaoliu6688.github.io/2024/030241575.html</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -494,11 +465,7 @@ always @(posedge clk)
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            
-                                <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-                                    <span class="chip bg-color">基础知识</span>
-                                </a>
-                            
+                            <span class="chip bg-color">无标签</span>
                         </div>
                     
                 </div>
@@ -539,66 +506,18 @@ always @(posedge clk)
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2024/011821871.html">
+                <a href="/2024/030241575.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="PT flow">
+                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="总线仲裁算法">
                         
-                        <span class="card-title">PT flow</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-01-18
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/ASIC%E6%95%B0%E5%AD%97%E5%90%8E%E7%AB%AF%E6%B5%81%E7%A8%8B/" class="post-category">
-                                    ASIC数字后端流程
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/PT/">
-                        <span class="chip bg-color">PT</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2023/11277120.html">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="Makefile">
-                        
-                        <span class="card-title">Makefile</span>
+                        <span class="card-title">总线仲裁算法</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -609,14 +528,52 @@ always @(posedge clk)
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-11-27
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-03-02
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            刘瑞彪
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/030235044.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="低功耗方法学">
+                        
+                        <span class="card-title">低功耗方法学</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-03-02
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Linux%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-category">
-                                    Linux基础知识
+                            <a href="/categories/%E6%95%B0%E5%AD%97ic%E8%AE%BE%E8%AE%A1/" class="post-category">
+                                    数字ic设计
                                 </a>
                             
                             
@@ -626,8 +583,8 @@ always @(posedge clk)
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/Makefile/">
-                        <span class="chip bg-color">Makefile</span>
+                    <a href="/tags/%E7%AC%94%E8%AE%B0/">
+                        <span class="chip bg-color">笔记</span>
                     </a>
                     
                 </div>

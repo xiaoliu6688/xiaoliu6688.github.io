@@ -288,7 +288,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    471
+                    516
                 </div>
                 
 
@@ -315,8 +315,8 @@
             <div id="articleContent">
                 <h4 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h4><p>​	最近一直在写code，随着学习的深入，越来越想知道verilog 语法和对应的电路实现是什么样子的。</p>
 <p>​	首先，确定一点，完备的case，所有的分支都是并行的，且互斥，所以讨论有没有优先级是没有意义的，它对应的电路是一个MUX。（没有优先级）</p>
-<pre class=" language-verilog"><code class="language-verilog">完备的<span class="token keyword">case</span>分支，等价于 <span class="token keyword">if</span> <span class="token keyword">else</span><span class="token operator">-</span><span class="token keyword">if</span> <span class="token keyword">else</span><span class="token operator">-</span><span class="token keyword">if</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-</code></pre>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog">完备的<span class="token keyword">case</span>分支，等价于 <span class="token keyword">if</span> <span class="token keyword">else</span><span class="token operator">-</span><span class="token keyword">if</span> <span class="token keyword">else</span><span class="token operator">-</span><span class="token keyword">if</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <ul>
 <li>缺省case</li>
 </ul>
@@ -332,9 +332,10 @@
 <p>告诉DC，所有条件都是互斥的，且都是并行，不存在优先级。</p>
 <p>优先级只会存在于多对一的情况下。</p>
 <p><strong>在仿真的时候出现了多对一的情况，会导致仿真执行有一定的优先级，这样就不是parallel case。如果针对这种情况dc时，加上parallel case，会综合出没有优先级的编码器。</strong></p>
+<p>通过<strong>遍历条件</strong>在case中是否<strong>只会被执行一次</strong>，我们可以判断case的综合结果为串行还是并行</p>
 </li>
 </ul>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>​	当case 是full且是parallel的时候，综合出来的电路是没有优先级的MUX</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>​	当case 是full且是parallel的时候，综合出来的电路是没有优先级的MUX，多选一数据选择器；</p>
 <p>​	如果case不是full，又没有default，会综合出latch。</p>
 
                 
@@ -713,7 +714,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">31.6k</span>
+                        class="white-color">32.9k</span>
             
             
             

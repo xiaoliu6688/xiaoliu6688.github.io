@@ -699,7 +699,8 @@ pre<span class="token punctuation">[</span><span class="token number">5</span><s
 <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
 <span class="token operator">~</span>pre <span class="token operator">&amp;</span> data_in <span class="token operator">=></span> One_Hot
 <span class="token comment">// MIN</span>
-data_in <span class="token operator">&amp;</span> <span class="token operator">~</span><span class="token punctuation">(</span>data_in <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">=></span> One_Hot<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment">// 利用补码的特性，原码和补码”与“操作后，得到独热码，1的位置为原码最低位为1的位置</span>
+data_in <span class="token operator">&amp;</span> <span class="token operator">~</span><span class="token punctuation">(</span>data_in <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">=></span> One_Hot<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">Find_Max_1</span><span class="token punctuation">(</span>
     <span class="token keyword">input</span>       clk<span class="token punctuation">,</span>
@@ -727,6 +728,7 @@ data_in <span class="token operator">&amp;</span> <span class="token operator">~
 <span class="token keyword">assign</span> data_out <span class="token operator">=</span> data_in <span class="token operator">&amp;</span> <span class="token operator">~</span><span class="token punctuation">(</span>data_in <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
 <span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -1092,7 +1094,7 @@ data_in <span class="token operator">&amp;</span> <span class="token operator">~
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">31.6k</span>
+                        class="white-color">32.9k</span>
             
             
             
