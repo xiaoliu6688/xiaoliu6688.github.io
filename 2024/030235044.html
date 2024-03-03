@@ -4,11 +4,11 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="低功耗方法学, RayBiiao">
-    <meta name="description" content="低功耗方法学 for SoC1 介绍1.1 功耗和能量​	功耗是瞬时能量，能量是一个总和；类似于速度和距离的关系；
+    <meta name="keywords" content="低功耗方法学（一）, RayBiiao">
+    <meta name="description" content="低功耗方法学(一)前言
+参考《Low_Power_Methodology_Manual_for_Soc_Design》，将认为重点的知识点进行记录和总结。
 
-
-1.2 动态功耗">
+1 介绍1.1 功耗和能量​	功耗是瞬时能量，能量是一个总和；类似于速度和距离的关">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -20,7 +20,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>低功耗方法学 | RayBiiao</title>
+    <title>低功耗方法学（一） | RayBiiao</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -228,12 +228,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">低功耗方法学</h1>
+                    <h1 class="description center-align post-title">低功耗方法学（一）</h1>
                 </div>
             </div>
         </div>
@@ -257,8 +257,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/%E7%AC%94%E8%AE%B0/">
-                                <span class="chip bg-color">笔记</span>
+                            <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+                                <span class="chip bg-color">读书笔记</span>
                             </a>
                         
                     </div>
@@ -269,8 +269,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/%E6%95%B0%E5%AD%97ic%E8%AE%BE%E8%AE%A1/" class="post-category">
-                                数字ic设计
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                数字前端
                             </a>
                         
                     </div>
@@ -291,7 +291,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    48
+                    846
                 </div>
                 
 
@@ -316,10 +316,43 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="低功耗方法学-for-SoC"><a href="#低功耗方法学-for-SoC" class="headerlink" title="低功耗方法学 for SoC"></a>低功耗方法学 for SoC</h1><h2 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1 介绍"></a>1 介绍</h2><h3 id="1-1-功耗和能量"><a href="#1-1-功耗和能量" class="headerlink" title="1.1 功耗和能量"></a>1.1 功耗和能量</h3><p>​	功耗是瞬时能量，能量是一个总和；类似于速度和距离的关系；</p>
-<img src="/2024/030235044/image-20240302005439890.png" style="zoom: 50%;">
+                <h1 id="低功耗方法学-一"><a href="#低功耗方法学-一" class="headerlink" title="低功耗方法学(一)"></a>低功耗方法学(一)</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><blockquote>
+<p>参考《Low_Power_Methodology_Manual_for_Soc_Design》，将认为重点的知识点进行记录和总结。</p>
+</blockquote>
+<h2 id="1-介绍"><a href="#1-介绍" class="headerlink" title="1 介绍"></a>1 介绍</h2><h3 id="1-1-功耗和能量"><a href="#1-1-功耗和能量" class="headerlink" title="1.1 功耗和能量"></a>1.1 功耗和能量</h3><p>​	功耗是瞬时能量，能量是一个总和；类似于速度和距离的关系；</p>
+<img src="/2024/030235044/image-20240302005439890.png" style="zoom: 40%;">
 
-<h3 id="1-2-动态功耗"><a href="#1-2-动态功耗" class="headerlink" title="1.2 动态功耗"></a>1.2 动态功耗</h3>
+<h3 id="1-2-动态功耗"><a href="#1-2-动态功耗" class="headerlink" title="1.2 动态功耗"></a>1.2 动态功耗</h3><p>动态功耗有两种，电容充放电功耗和短路电流功耗；</p>
+<img src="/2024/030235044/image-20240303101531073.png" alt="image-20240303101531073" style="zoom: 33%;">
+
+<p>第一项是电容充放电功耗，第二项是短路电流功耗，tsc为短路电流持续时间。随着工艺尺寸的降低，静态功耗的占比越来越大，甚至超过动态功耗。</p>
+<p>降低电压会大大降低功耗，但是会导致载流子的速度降低，影响性能。一般SoC设计者，使用以下方式降低功耗。</p>
+<ol>
+<li>多电压技术。不同设备采用不同电压，外围低速设备使用低电压。</li>
+<li>电压缩放技术，动态电压管理技术。一个模块支持多电压工作，在执行繁忙任务时，使用高电压，在执行低性能任务时，使用低电压。</li>
+<li>时钟门控技术，降低信号翻转带来的功耗。</li>
+</ol>
+<h3 id="静态功耗"><a href="#静态功耗" class="headerlink" title="静态功耗"></a>静态功耗</h3><p>​	静态功耗是在信号不翻转时的功耗，又称为漏电功耗。来源：栅极漏电、衬底电流和漏极反偏结漏电。</p>
+<img src="/2024/030235044/image-20240303151547141.png" alt style="zoom:33%;">
+
+<h2 id="2-标准低功耗方法学"><a href="#2-标准低功耗方法学" class="headerlink" title="2 标准低功耗方法学"></a>2 标准低功耗方法学</h2><h3 id="2-1-时钟门控"><a href="#2-1-时钟门控" class="headerlink" title="2.1 时钟门控"></a>2.1 时钟门控</h3><p>动态功耗中，时钟缓冲器带来的功耗占比超过50%，甚至更多。降低这种功耗最常见的办法是在不需要时钟时，关闭时钟。</p>
+<p>在现在的EDA工具中，带有同步使能的寄存器，通过会自动识别并转换成门控时钟电路，而不影响逻辑功能，如下图所示。</p>
+<img src="/2024/030235044/image-20240303154850877.png" alt style="zoom: 40%;">
+
+<p>如果使用时钟门控的寄存器为多bit，比如32bit，使用时钟门控技术对于功耗的降低是非常明显的。因为使用一个门控时钟，输出连接32个寄存器，节省了32个重复的选择器逻辑。</p>
+<h3 id="2-2-门级功耗优化"><a href="#2-2-门级功耗优化" class="headerlink" title="2.2 门级功耗优化"></a>2.2 门级功耗优化</h3><p>除了门控时钟优化，也可以通过优化门级逻辑，降低功耗。</p>
+<img src="/2024/030235044/image-20240303162241287.png" alt style="zoom:50%;">
+
+<p>上图与门的输出就有较高的活动性，通过降低与门输出线上的负载电容，可以降低功耗。因此，将后级或非门拆分为或门和非门，减小与门输出的负载。</p>
+<p>下图4输入的与门，不同的输入引脚有不同的输入功率。对于活动性高的信号可以接入输入功率低的引脚，活动性低的信号可以接入输入功率高的引脚，避免输入功率大和开关活动性高同时出现，进而降低功耗。</p>
+<p>通过修改管子的尺寸，改变驱动能力，可以降低动态功耗。</p>
+<p><strong>门级逻辑优化技术，由工具自动实现，对RTL设计人员是透明的。</strong></p>
+<h3 id="2-3-多电压"><a href="#2-3-多电压" class="headerlink" title="2.3 多电压"></a>2.3 多电压</h3><p>功耗与电压成二次方关系，不同模块采用不同电压。但是需要复杂的电源网络供电，以及信号电平转换器等。</p>
+<img src="/2024/030235044/image-20240303165214237.png" alt style="zoom:50%;">
+
+<h3 id="2-4-多阈值电压逻辑"><a href="#2-4-多阈值电压逻辑" class="headerlink" title="2.4 多阈值电压逻辑"></a>2.4 多阈值电压逻辑</h3><p>工艺库中通常提供不同阈值电压相同逻辑的单元，通常是在满足时序的基础上，使用高阈值电压的管子降低功耗。</p>
+<img src="/2024/030235044/image-20240303165856495.png" alt style="zoom:50%;">
+
                 
             </div>
             <hr/>
@@ -383,8 +416,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/%E7%AC%94%E8%AE%B0/">
-                                    <span class="chip bg-color">笔记</span>
+                                <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
+                                    <span class="chip bg-color">读书笔记</span>
                                 </a>
                             
                         </div>
@@ -452,11 +485,23 @@
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            刘瑞彪
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                    数字前端
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+                        <span class="chip bg-color">基础知识</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -672,7 +717,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">32.9k</span>
+                        class="white-color">33.7k</span>
             
             
             
