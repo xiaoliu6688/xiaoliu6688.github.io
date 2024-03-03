@@ -4,8 +4,10 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="dc_flow, RayBiiao">
-    <meta name="description" content="dc_topo模式dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。流程：    1. dct生成一版网表netlist，给ICC，导出floorplan的DEF文件    2. 根据icc导出的def文件，重新">
+    <meta name="keywords" content="DC_FLOW(一), RayBiiao">
+    <meta name="description" content="dc_topo模式dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。DEF文件只有物理信息，没有timing信息，流程如下：
+1. dct生成一版网表netlist，给ICC，导出floorplan的DEF文件
+">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +19,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>dc_flow | RayBiiao</title>
+    <title>DC_FLOW(一) | RayBiiao</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -225,12 +227,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/14.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/3.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">dc_flow</h1>
+                    <h1 class="description center-align post-title">DC_FLOW(一)</h1>
                 </div>
             </div>
         </div>
@@ -288,7 +290,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    697
+                    881
                 </div>
                 
 
@@ -313,7 +315,13 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="dc-topo模式"><a href="#dc-topo模式" class="headerlink" title="dc_topo模式"></a>dc_topo模式</h2><p>dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。<br>流程：<br>    1. dct生成一版网表netlist，给ICC，导出floorplan的DEF文件<br>    2. 根据icc导出的def文件，重新在dct模式下综合，得到的网表更准确<br>    3. compile_ultra</p>
+                <h2 id="dc-topo模式"><a href="#dc-topo模式" class="headerlink" title="dc_topo模式"></a>dc_topo模式</h2><p>dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。DEF文件只有物理信息，没有timing信息，流程如下：</p>
+<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown"><span class="token list punctuation">1.</span> dct生成一版网表netlist，给ICC，导出floorplan的DEF文件
+<span class="token list punctuation">2.</span> 根据icc导出的def文件，作为DC的物理约束，在dct模式下综合，得到的网表更准确
+<span class="token list punctuation">3.</span> compile_ultra<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">dc_shell <span class="token operator">-</span>topo <span class="token operator">-</span>f run.tcl <span class="token operator">|</span> tee <span class="token operator">-</span>i run.log <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 <img src="/2024/02206923/image-20240220161903358.png" alt style="zoom: 50%;">
 
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token operator">/</span><span class="token operator">/</span> icc 写def 命令
@@ -322,6 +330,11 @@ write_def <span class="token operator">-</span>output name.def
 extract_physical_constraints name.def<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p><strong>注意事项：第一次时，topo模式需要创建milkway，第二次进入dct模式时，已经有def文件，但是不需要创建milkway库，直接打开就可以</strong></p>
+<h2 id="DC前期环境配置"><a href="#DC前期环境配置" class="headerlink" title="DC前期环境配置"></a>DC前期环境配置</h2><p>ddc是专用的二进制设计数据库格式，可以被ICC、PT读取；<br>工艺库中的db库给dc读的，lib是给人看的。</p>
+<p>link library 中， * 代表DC Memory 内存空间；<br>在link前需要指明当前current_design<br>link后要check_design 检查是否有丢失的pins和没有添加进来的实例。</p>
+<ul>
+<li>读取设计文件<br>analyze elaborate，elaborate 是唯一一种可以指明代码中参数的方式。-parameter “ xxx”<br>read_verilog命令会生成“GETCH”库中unmapped的ddc格式的文件</li>
+</ul>
 <h2 id="常见命令"><a href="#常见命令" class="headerlink" title="常见命令"></a>常见命令</h2><h3 id="link"><a href="#link" class="headerlink" title="link"></a>link</h3><ol>
 <li><p>将设计与工艺库中stdcel进行对应。</p>
 </li>
@@ -355,6 +368,11 @@ set_output_delay <span class="token operator">-</span>clock clk_100 <span class=
 <blockquote>
 <p>基础：set_max&#x2F;min_delay这两种约束，一般用于异步时钟的数据约束上。set clock group -asynchronous或者set false path设置 对这两个时钟域数据不进行时序检查，但是一般需要保证跨时钟传递的数据要满足最大最小延迟，而不会高的离谱。比如异步fifo读写指针的格雷码，如果延迟时间太长，目的时钟域周期太短，会导致传输路径延迟超过两个周期。</p>
 </blockquote>
+<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><h4 id="dc-shell中执行bash命令"><a href="#dc-shell中执行bash命令" class="headerlink" title="dc_shell中执行bash命令"></a>dc_shell中执行bash命令</h4><p>​	前面加shell &#x2F; sh，比如 <code>shell gvim</code></p>
+<h4 id="帮助"><a href="#帮助" class="headerlink" title="帮助"></a>帮助</h4><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">help <span class="token string">"set_input_delay"</span>
+set_input_delay <span class="token operator">-</span>help
+man set_input_delay<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -732,7 +750,7 @@ set_output_delay <span class="token operator">-</span>clock clk_100 <span class=
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">33.7k</span>
+                        class="white-color">34.1k</span>
             
             
             

@@ -291,7 +291,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.6k
+                    1.8k
                 </div>
                 
 
@@ -425,6 +425,18 @@
 </li>
 </ul>
 <h5 id="计算bit的位宽"><a href="#计算bit的位宽" class="headerlink" title="计算bit的位宽"></a>计算bit的位宽</h5><p>​	两个unsigned 8bit数相加&#x2F;乘，需要设置相应的位宽为：9bit&#x2F;16bit<br>​	两个signed 8bti数相加&#x2F;乘，需要设置结果位宽为：9bit&#x2F;15bit</p>
+<h3 id="乒乓操作"><a href="#乒乓操作" class="headerlink" title="乒乓操作"></a>乒乓操作</h3><img src="/2024/012448005/image-20240303220028047.png" alt="image-20240303220028047" style="zoom: 33%;">
+
+<p>输入数据通过输入选择单元和输出选择单元，有节拍的切换数据流，形成流水线的操作。</p>
+<p>最大的特点：站在乒乓操作模块两侧，输入和输出数据的连续不断的，没有停顿。</p>
+<ul>
+<li><p>节省缓冲区的长度</p>
+<p>前提是所有的数据并不是同时使用的，这样速度就会慢一些。</p>
+</li>
+<li><p>用低速模块处理高速数据流</p>
+<p>使用DPRAM，读写是可以同时进行的。假设时钟为10ms，前5ms向DPRAM1写入数据，后5ms就可以读出前5ms写入的低地址数据，第一个10ms就多出5ms。第二个10ms，DPRAM1的数据完全可以读出数据。第三个10ms，前5ms继续向DPRAM1的低地址写入数据，但是这5ms可以读出高地址的数据，相当于又多出来5ms。因此，对于DPRAM1中的数据，最多有 <strong>20ms</strong>时间可以给下级处理，对应两个时钟周期，数据吞吐量为50Mbps。</p>
+<img src="/2024/012448005/image-20240303230150945.png" alt="image-20240303230150945" style="zoom:40%;"></li>
+</ul>
 <h2 id="设计方法学"><a href="#设计方法学" class="headerlink" title="设计方法学"></a>设计方法学</h2><h3 id="解耦合"><a href="#解耦合" class="headerlink" title="解耦合"></a>解耦合</h3><p>​	降低模块间的依赖关系，提高可移植性。</p>
 
                 
@@ -803,7 +815,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">33.7k</span>
+                        class="white-color">34.1k</span>
             
             
             
