@@ -5,9 +5,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="DC_FLOW(一), RayBiiao">
-    <meta name="description" content="dc_topo模式dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。DEF文件只有物理信息，没有timing信息，流程如下：
-1. dct生成一版网表netlist，给ICC，导出floorplan的DEF文件
-">
+    <meta name="description" content="工艺库文件解读以90nm为例，常见的文件夹如下
+
+
+cel：存放spice网表    
+打开其中一个，找到INV的网表如下，可以看出是spice格式的，l&amp;#x3D;0.1u，表示的是90nm的工艺(特征尺寸）
+
+INVX1,2,4,8,1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -290,7 +294,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    881
+                    5k
                 </div>
                 
 
@@ -315,34 +319,289 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="dc-topo模式"><a href="#dc-topo模式" class="headerlink" title="dc_topo模式"></a>dc_topo模式</h2><p>dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。DEF文件只有物理信息，没有timing信息，流程如下：</p>
+                <h2 id="工艺库文件解读"><a href="#工艺库文件解读" class="headerlink" title="工艺库文件解读"></a>工艺库文件解读</h2><p>以90nm为例，常见的文件夹如下</p>
+<img src="/2024/02206923/image-20240309145119997.png" alt="image-20240309145119997" style="zoom: 33%;">
+
+<p>cel：存放spice网表<br>    <img src="/2024/02206923/image-20240309145242615.png" alt="image-20240309145242615" style="zoom: 15%;"></p>
+<p>打开其中一个，找到INV的网表如下，可以看出是spice格式的，l&#x3D;0.1u，表示的是90nm的工艺(特征尺寸）</p>
+<p><img src="/2024/02206923/image-20240309145339988.png" alt="image-20240309145339988"></p>
+<p>INVX1,2,4,8,16,32  X后面的数据表示驱动能力，描述的是signal上升和下降速度。不同的数字电路结构是有区别的，m表示并联管子的个数，w l相同，m越大，驱动能力越强。或者通过调整w的大小，描述不同的驱动能力。</p>
+<p>ULVT: 极低阈值电压</p>
+<p>LVT: 低阈值电压</p>
+<p>SVT(RVT): 常规的阈值电压</p>
+<p>HVT：高阈值电压</p>
+<p>EHVT：极高阈值电压</p>
+<p>阈值电压高，leakage功耗小，速度慢。</p>
+<p>40G 40LP 40ULP 描述的不同的功耗</p>
+<ul>
+<li>db</li>
+</ul>
+<p>db文件夹的东西是给DC读，不给人读。由lib可转换而来</p>
+<img src="/2024/02206923/image-20240309145449601.png" alt="image-20240309145449601" style="zoom: 25%;">
+
+<p>其中，ff，ss，tt表示不同工艺角 (p是point)  PVT对应不同条件</p>
+<p>可以看书有2个ff工艺角，工作环境：1.32v，125度；1.32v，-40度</p>
+<p>2个ss工艺角，工作环境：1.08v，125度；1.08v，-40度</p>
+<p>1个tt工艺角，工作环境：1.20v，25度</p>
+<p>1P3M_8K表示1层ploy，3层金属，最高层金属的厚度是8K</p>
+<p>ffg_cbest_min 描述工艺参数，min表示快的逻辑，hold time；c电容最好；</p>
+<p>Lib中包含了工艺库中标准单元的时序、面积、功耗信息，通过查找表的方式实现的，即通过输入转换时间和输出负载电容找的对应的信息，</p>
+<img src="/2024/02206923/image-20240309145628255.png" alt="image-20240309145628255" style="zoom: 25%;">
+
+<p>INVX1的时序信息</p>
+<img src="/2024/02206923/image-20240309145659989.png" alt="image-20240309145659989" style="zoom: 25%;">
+
+<p>如何定义电路中一个反向器的延迟？是通过查表实现，由输入转换时间和输出负载电容决定。</p>
+<p>这里有一个DRC的概念，即max_transition, max_capacitance, max_fanout, 限制了查找表的两个维度，transition_time和最大load_cap。如果电路中出现了非查找表上的数据，通过内插或者外插的方式得到，为什么要设置DRC呢，是因为超过这个限制，得到的PPA就会失真，与实际得到的结果相差很大。</p>
+<ul>
+<li>GDS</li>
+</ul>
+<p>gds    保存着标准单元库的详细版图文件</p>
+<img src="/2024/02206923/image-20240309145822475.png" alt="image-20240309145822475" style="zoom: 50%;">
+
+<img src="/2024/02206923/image-20240309145834084.png" alt="image-20240309145834084" style="zoom:50%;">
+
+<p>上面是VCC电源电压，下面是地VSS</p>
+<p>所有的标准单元有一个共同特点是height相同，在芯片同一个track中，只能采用相同height的SC，可以划定不同区域采用不同height的SC，比如有SC7,SC9，height高的唯一好处是速度快，但是功耗大，面积大。</p>
+<p>Lef   描述SC的简略信息，是GDS的子集，简化版本</p>
+<p>GDS记录了芯片制造过程中的每一层尺寸信息和规则，在pr中不需要这么多信息，所以进行了简化，LEF文件主要记录的是金属层的信息。定义了SC的尺寸，位置等。</p>
+<img src="/2024/02206923/wps2.jpg" alt="img" style="zoom: 50%;">
+
+<p>​							<img src="/2024/02206923/wps3.jpg" alt="img" style="zoom: 67%;"> </p>
+<p>Verilog       描述了SC的rtl模型，里面包含了各种原语（UDP）操作</p>
+<p><img src="/2024/02206923/wps6.jpg" alt="img"></p>
+<p><img src="/2024/02206923/wps7.jpg" alt="img"> </p>
+<img src="/2024/02206923/wps8.jpg" alt="img" style="zoom: 80%;"> 
+
+<p>需要注意的是 specify的概念，定义延迟路径的延迟大小，这里有两个延迟时间，一个快，一个慢。在延迟反标做后仿时需要注意这点。</p>
+<img src="/2024/02206923/image-20240309150126225.png" alt="image-20240309150126225" style="zoom:67%;">
+
+<h2 id="dc-topo模式"><a href="#dc-topo模式" class="headerlink" title="dc_topo模式"></a>dc_topo模式</h2><p>dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件，milkway和工艺文件tf。DEF文件只有物理信息，没有timing信息，流程如下：</p>
 <pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown"><span class="token list punctuation">1.</span> dct生成一版网表netlist，给ICC，导出floorplan的DEF文件
 <span class="token list punctuation">2.</span> 根据icc导出的def文件，作为DC的物理约束，在dct模式下综合，得到的网表更准确
 <span class="token list punctuation">3.</span> compile_ultra<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
-<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">dc_shell <span class="token operator">-</span>topo <span class="token operator">-</span>f run.tcl <span class="token operator">|</span> tee <span class="token operator">-</span>i run.log <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">dc_shell <span class="token operator">-</span>topo <span class="token operator">-</span>f run.tcl <span class="token operator">|</span> tee <span class="token operator">-</span>i run.log  
+<span class="token comment">#   | tee -i dc.log, 将dc运行结果写入指定日志文件</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
 <img src="/2024/02206923/image-20240220161903358.png" alt style="zoom: 50%;">
 
-<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token operator">/</span><span class="token operator">/</span> icc 写def 命令
-write_def <span class="token operator">-</span>output name.def
-<span class="token operator">/</span><span class="token operator">/</span> dct 读def命令
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; icc 写def 命令
+write_def -output name.def
+&#x2F;&#x2F; dct 读def命令
 extract_physical_constraints name.def<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p><strong>注意事项：第一次时，topo模式需要创建milkway，第二次进入dct模式时，已经有def文件，但是不需要创建milkway库，直接打开就可以</strong></p>
 <h2 id="DC前期环境配置"><a href="#DC前期环境配置" class="headerlink" title="DC前期环境配置"></a>DC前期环境配置</h2><p>ddc是专用的二进制设计数据库格式，可以被ICC、PT读取；<br>工艺库中的db库给dc读的，lib是给人看的。</p>
+<p>synthetic_library是DC软件提供的库；design ware library中有一些优化的ip核，在优化时被调用。</p>
 <p>link library 中， * 代表DC Memory 内存空间；<br>在link前需要指明当前current_design<br>link后要check_design 检查是否有丢失的pins和没有添加进来的实例。</p>
 <ul>
-<li>读取设计文件<br>analyze elaborate，elaborate 是唯一一种可以指明代码中参数的方式。-parameter “ xxx”<br>read_verilog命令会生成“GETCH”库中unmapped的ddc格式的文件</li>
+<li><p>读取设计文件<br>analyze elaborate，elaborate 是唯一一种可以指明代码中参数的方式。-parameter “ xxx”<br>read_verilog命令会生成“GETCH”库中unmapped的ddc格式的文件</p>
+</li>
+<li><p>工艺库</p>
+</li>
 </ul>
-<h2 id="常见命令"><a href="#常见命令" class="headerlink" title="常见命令"></a>常见命令</h2><h3 id="link"><a href="#link" class="headerlink" title="link"></a>link</h3><ol>
+<img src="/2024/02206923/image-20240305004108655.png" alt="image-20240305004108655" style="zoom:50%;">
+
+<p>Reference library：包括cell的尺寸和管脚的位置，就是milkway 库。milkway物理库中有不同的view：</p>
+<ol>
+<li>cel：整个版图视图，布局布线完成后被使用，生成最后的GDSII文件</li>
+<li>fram：对于ICC和DC-topo使用的抽象视图，仅用于布局布线的最小数据。</li>
+<li>lm（逻辑库）：具有时序和功耗相关的逻辑库，被icc和dc_topo使用。</li>
+</ol>
+<p>designware library是synopsys库，综合库，默认的标准 Designware 由 DC 软件商提供，无需指定。里面</p>
+<p>GDS可以产生CEL，LEF可以产生FRAM，不能产生CEL，用LEF做的FRAM出gds后，需要到virtuoso中或者calibre中merge gds得到完整的gds再去做DRC&#x2F;LVS</p>
+<p>Technology file：定义了布线层，过孔，DRC的规则，金属和过孔的电学特性参数</p>
+<p>TLUPlus file：寄生参数rc模型，rc参数查找表</p>
+<p>Layer Mapping File：匹配不同名称的相同图层，匹配tf和tluplus文件</p>
+<img src="/2024/02206923/image-20240305004609790.png" alt="image-20240305004609790" style="zoom: 67%;">
+
+<h2 id="理论基础"><a href="#理论基础" class="headerlink" title="理论基础"></a>理论基础</h2><ol>
+<li><p>标准单元输出信号的延迟取决于 输入转换时间input_transition和输出负载output load；</p>
+</li>
+<li><p>如果设计中只有一个路径，如果关键路径无法优化，dc give up it，会导致其他less critical path也无法优化。</p>
+</li>
+<li><p>做静态时序分析时，路径的起点可以是input port，clock pin，存储器的输出，路径的终点可以是寄存器D，output port，存储器的输入port。</p>
+</li>
+<li><p>在工艺库的查找表中，如果输入的约束在范围内，做内插；如果超过范围做外插（表破了），影响仿真结果。</p>
+</li>
+<li><p>在先进制程工艺的工艺库中，存在INV和CLKINV两种不同的反相器，CLKINV的N管的W要小一些，是因为保证时钟信号上升和下降的时间均衡（tphl&#x3D;tplh），便于静态时序分析,PMOS的w大概是NMOS的2.7倍左右。</p>
+</li>
+<li><p>在DC综合后，会生成sdf文件（带有实际电路门级网表路径延迟的信息），将sdc文件反标在上述的verilog模型中，得到具有延迟信息的电路，利用verilog和sdf文件可以在Vcs&#x2F;Verdi仿真结果可以看出延迟信息。一个sdf文件对应一个corner。</p>
+</li>
+<li><p>DC是如何计算三个反相器串联的总延迟？第一个反相器的延迟，是第二个反相器的transition，电容由电路结构确定，根据查表依次进行，得到三个反相器串联的总延迟。</p>
+</li>
+</ol>
+<img src="/2024/02206923/image-20240309144041702.png" alt="image-20240309144041702" style="zoom:50%;">
+
+<img src="/2024/02206923/image-20240309144202884.png" alt="image-20240309144202884" style="zoom:50%;">
+
+<p>​	那么串联的电路DC又如何计算延迟呢？<br>​	第一个反相器的A输入到最后输出，会有很多种可能的时间，DC会把所有的延迟计算出来，最长的时间用于setup时间的检查，最短的路径时间用于hold时间检查。这里就引申出静态时序分析STA的概念。在电路没有工作的时候，把所有的情况计算出来，进行setup&#x2F;hold time检查。</p>
+<img src="/2024/02206923/image-20240309144231306.png" alt="image-20240309144231306" style="zoom:50%;">
+
+<ol start="8">
+<li><p>setup time &#x2F; hold time计算</p>
+<img src="/2024/02206923/wps1.jpg" alt="img" style="zoom:50%;">
+
+<p>1 2 3 max  4 5 min &#x3D;&gt; 检查setup time  1+2+3 -（4+5）&lt; Tcycle</p>
+<p>1 2 3 min  4 5 max &#x3D;&gt; 检查hold time   1+2+3 &gt; 4+5</p>
+<p>6属于common path，如果两个寄存器是同沿触发，则6不起作用，被抵消，如果是不同沿触发，要看沿的指向（不同沿的延迟是不一样的，需要分开算）</p>
+<p>在ICC&#x2F;PT中，有相关命令考虑common path。当做STA时，common path会导致发射路径和捕获路径的计算cell的delay不一样，为了消除这种悲观情况，引入CRPR，也叫cppr，依次抹平common path的差异。</p>
+</li>
+<li><p>Verilog RTL代码读入后，生成的gtech文件，是未映射到具体工艺的，GTECH.db是DC软件自带的库，不是dw。</p>
+</li>
+<li><p>DC综合过程</p>
+</li>
+</ol>
+<p>   ①翻译（转换）：将RTL转换成门级网表</p>
+<p>   ②逻辑优化</p>
+<p>   ③映射：映射到具体的工艺库</p>
+<ol start="11">
+<li>level shifter作为stdcel，在lib中，同样具有相同的track，L2H level shifter需要两个电压，另外一个电压端口作为输入端口接到stdcel上。</li>
+<li>降低功耗可以从以下角度考虑</li>
+</ol>
+<ul>
+<li>降低时钟翻转带来的动态功耗</li>
+<li>门级电路优化</li>
+<li>静态多电压技术、多阈值标准单元</li>
+</ul>
+<h2 id="环境约束"><a href="#环境约束" class="headerlink" title="环境约束"></a>环境约束</h2><h3 id="工作条件"><a href="#工作条件" class="headerlink" title="工作条件"></a>工作条件</h3><p>设置工作条件：<code>set_operating_conditions</code>，用来描述设计的工艺、电压、温度。PVT</p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token punctuation">[</span><span class="token operator">-</span>library lib_name<span class="token punctuation">]</span>     <span class="token comment">#指定工艺库</span>
+<span class="token punctuation">[</span><span class="token operator">-</span>analysis_type<span class="token punctuation">]</span>    	<span class="token comment">#应执行的分析类型，最慢，最快，基于芯片变异性的延迟</span>
+<span class="token punctuation">[</span><span class="token operator">-</span>max max_condition<span class="token punctuation">]</span>	<span class="token comment">#该工作点应考虑执行最慢的分析，如-max WCMIL</span>
+<span class="token punctuation">[</span><span class="token operator">-</span>min min_condition<span class="token punctuation">]</span>	<span class="token comment">#该工作点应考虑执行最快的分析，如-min BCIND</span>
+<span class="token punctuation">[</span><span class="token operator">-</span>max_library max_lib<span class="token punctuation">]</span>	<span class="token comment">#指定最慢的库</span>
+<span class="token punctuation">[</span><span class="token operator">-</span>min_library min_lib<span class="token punctuation">]</span>	<span class="token comment">#指定最快的库</span>
+<span class="token punctuation">[</span><span class="token operator">-</span>object_list objects<span class="token punctuation">]</span>	<span class="token comment">#设计对象，通常为整个设计，故很少使用</span>
+<span class="token punctuation">[</span>condition<span class="token punctuation">]</span>				<span class="token comment">#工作条件 </span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="线负载模型"><a href="#线负载模型" class="headerlink" title="线负载模型"></a>线负载模型</h3><p>标准单元库中提供了stdcel的延迟信息、功耗、面积等信息，但是没有提供连线的延迟。在dc阶段使用线负载模型估计net delay，在icc阶段根据版图抽取寄生得到较为准确的延迟。线负载模型的计算方式：根据扇出和连线长度，预估电容，电阻和面积等参数，通过计算得到。越先进的工艺，连线延迟占比越大，而且集成度的提高，造成了布线的复杂，这也是物理综合走向前端的原因。</p>
+<img src="/2024/02206923/image-20240309142358349.png" alt="image-20240309142358349" style="zoom:60%;">
+
+<h3 id="线负载模式"><a href="#线负载模式" class="headerlink" title="线负载模式"></a>线负载模式</h3><p><code>set_wire_load_mode</code></p>
+<p>top模式定义层次中的所有连线将继承和顶层模块同样的线载模型。exclosed指定所有连线（属于子模块的）将继承完全包含该子模块的模块线载模型。例如设计者综合完全被模块A包含的子模块B和C，则子模块B和C会继承为模块A定义的线载模型。segmented用于跨越层次边界的连线。在上例中，子模块B和C继承特定于他们的线载模型，而子模块B和C间的连线（在模块A）会继承为模块A指定的线载模型。</p>
+<ul>
+<li>top：所有的线模型都是top层的</li>
+<li>exclosed：线的延时使用mid的来计算</li>
+<li>segmented：分开算</li>
+</ul>
+<img src="/2024/02206923/image-20240309142504896.png" alt="image-20240309142504896" style="zoom: 67%;">
+
+<h2 id="时序约束"><a href="#时序约束" class="headerlink" title="时序约束"></a>时序约束</h2><h4 id="时钟相关clock"><a href="#时钟相关clock" class="headerlink" title="时钟相关clock"></a>时钟相关clock</h4><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token comment"># clock latency = 内部延迟+外部延迟</span>
+set_clock_latency <span class="token operator">-</span>source <span class="token operator">-</span>max 4 <span class="token punctuation">[</span>get_clock clk<span class="token punctuation">]</span> <span class="token comment">#时钟源到clock外部端口的延迟</span>
+set_clock_latency <span class="token operator">-</span>max 4 <span class="token punctuation">[</span>get_clock clk<span class="token punctuation">]</span>  <span class="token comment">#内部时钟网络延迟</span>
+
+set_clock_uncertainty <span class="token operator">-</span>setup 0.5 $<span class="token variable">CLOCK</span> <span class="token comment">#包括jitter、skew、margin</span>
+set_clock_transition <span class="token operator">-</span>max 0.08 $<span class="token variable">CLOCK</span>
+
+<span class="token comment">#指明时钟的名字和占空比</span>
+create_clock <span class="token operator">-</span>name clk <span class="token operator">-</span>period 5 <span class="token operator">-</span>wareform <span class="token punctuation">&#123;</span>0 3<span class="token punctuation">&#125;</span> <span class="token punctuation">[</span>get_ports Clk<span class="token punctuation">]</span>
+
+<span class="token comment">#CTS综合后的时序约束</span>
+<span class="token comment">#CTS后，时钟clock的transition上升、下降时间，内部延迟时间和skew时钟偏斜时间都已经确定</span>
+set_clock_latency <span class="token operator">-</span>source <span class="token operator">-</span>max 4 $<span class="token variable">CLOCK</span> 
+set_propagated__clock $<span class="token variable">CLOCK</span> 
+set_clock_uncertainty <span class="token operator">-</span>setup 0.2 $ CLOCK <span class="token operator">/</span><span class="token operator">/</span> jitter<span class="token operator">+</span>margin 
+
+report_clock <span class="token comment"># -skew检查时钟约束</span>
+report_port <span class="token operator">-</span>verbose  <span class="token comment"># verbose 详细的输出</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="输入输出约束"><a href="#输入输出约束" class="headerlink" title="输入输出约束"></a>输入输出约束</h4><h5 id="约束输入-输出延迟"><a href="#约束输入-输出延迟" class="headerlink" title="约束输入&#x2F;输出延迟"></a>约束输入&#x2F;输出延迟</h5><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token comment"># 一般设置外部延迟值占周期的60%</span>
+<span class="token comment">#设置输入延迟</span>
+set_input_delay <span class="token operator">-</span>max 0.5 <span class="token operator">-</span>clock clk <span class="token punctuation">[</span>remove_from_collection <span class="token punctuation">[</span>all_inputs<span class="token punctuation">]</span> <span class="token punctuation">[</span>get_ports clk<span class="token punctuation">]</span><span class="token punctuation">]</span>
+remove_input_delay <span class="token punctuation">[</span>get_ports clk<span class="token punctuation">]</span>
+<span class="token comment"># 设置的input_delay 和 output_delay 都是基于clock的,也可以指定基于clock的上升沿还是下降沿。</span>
+
+set_input_delay <span class="token operator">/</span>set_output_delay <span class="token operator">-</span>max 2 <span class="token operator">-</span>clock clk <span class="token punctuation">[</span>get_ports A<span class="token punctuation">]</span>
+set_input_delay <span class="token operator">/</span>set_output_delay <span class="token operator">-</span>max 2 <span class="token operator">-</span>clock clk <span class="token operator">-</span>clock_fall <span class="token operator">-</span>add_delay <span class="token punctuation">[</span>get_ports A<span class="token punctuation">]</span>
+<span class="token comment">#-add_delay 指明还有另外一个寄存器与该端口相连</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<img src="/2024/02206923/image-20240309212251864.png" alt="image-20240309212251864" style="zoom:50%;">
+
+<h5 id="约束输入转换时间"><a href="#约束输入转换时间" class="headerlink" title="约束输入转换时间"></a>约束输入转换时间</h5><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_input_transition <span class="token operator">-</span>max 0.2 <span class="token punctuation">[</span>get_ports A<span class="token punctuation">]</span> 
+set_driving_cell <span class="token operator">-</span>libcell OR3B <span class="token punctuation">[</span>get_ports A<span class="token punctuation">]</span>
+set_driving_cell <span class="token operator">-</span>no_design_rule <span class="token operator">-</span>lib_cell invlal $<span class="token variable">ALL_INP_EXC_CLK</span>
+<span class="token comment"># 两种方式都可以约束输入转换时间，</span>
+<span class="token comment">#当静态时序分析时，当出现违例时，优先修复input transition time的违例，因为他影响下级延迟的计算。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="设计规则约束"><a href="#设计规则约束" class="headerlink" title="设计规则约束"></a>设计规则约束</h5><h5 id="路径分组"><a href="#路径分组" class="headerlink" title="路径分组"></a>路径分组</h5><p>由于综合工具发现同一组路径中最差的路径没办法优化到slack大于0，就会放弃优化退出综合。通过路径分组，可以将其他clock group路径的关键路径也会得到优化。</p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">group_path <span class="token operator">-</span>name INPUT <span class="token operator">-</span>from <span class="token punctuation">[</span>all_inputs<span class="token punctuation">]</span>
+group_path <span class="token operator">-</span>name OUTPUT <span class="token operator">-</span>to <span class="token punctuation">[</span>all_outputs<span class="token punctuation">]</span>
+group_path <span class="token operator">-</span>name INOUT <span class="token operator">-</span>from <span class="token punctuation">[</span>all_inputs<span class="token punctuation">]</span> <span class="token operator">-</span>to <span class="token punctuation">[</span>all_outputs<span class="token punctuation">]</span>
+group_path <span class="token operator">-</span>name CLK <span class="token operator">-</span>critical_range 0.2 
+	<span class="token operator">-</span>weight ：权重设置，建议值为5、2、1三个档。如果设置太高，可能会顾头不顾尾。
+	<span class="token operator">-</span>critical_range：设置优化过程中的余裕边界，靠近关键路径的违例路径也会被优化。
+<span class="token comment">#reg-reg的路径设置5，less path 路径设置2，</span>
+<span class="token comment">#默认设置1，设置权重 默认值为 1 权重越高工具就会越集中力量优化该 group_path。</span>
+
+<span class="token comment">#这样设定group_path将会把这些不同种类的路径区分对待，优化时给予同等代价比重去进行优化，不会因为某一部分（如input逻辑）时序违反最大而不去优化其他路径。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<img src="/2024/02206923/image-20240307010436686.png" alt="image-20240307010436686" style="zoom:50%;">
+
+<h4 id="报告命令"><a href="#报告命令" class="headerlink" title="报告命令"></a>报告命令</h4><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">Check_timing  <span class="token comment">#约束加好后，检查约束的一致性 检查是否有路径没有加入约束。</span>
+get_libs <span class="token comment">#获取当前设计的库</span>
+report_path_group <span class="token comment">#输出当前设计的路径分组</span>
+report_costraint <span class="token operator">-</span>all_violators <span class="token comment">#得到设计中所有的违例</span>
+report_timing <span class="token comment">#独立的输出每一条路径的时序</span>
+	<span class="token operator">-</span>delay max<span class="token operator">/</span>min <span class="token punctuation">(</span>max <span class="token operator">-</span><span class="token operator">></span> setup time, min <span class="token operator">-</span><span class="token operator">></span> hold time<span class="token punctuation">)</span>
+	<span class="token operator">-</span>from 起点
+	<span class="token operator">-</span>to 终点
+	<span class="token operator">-</span>through 经过哪些 pin port
+	<span class="token operator">-</span>group 只输出该 group 的信息
+	<span class="token operator">-</span>input_pins 只输出输入引脚相关的信息
+	<span class="token operator">-</span>max_paths 指定只输出多少条最坏的时序路径信息
+	<span class="token operator">-</span>nworst 输出该端点上的最坏的几条时序路径信息
+	<span class="token operator">-</span>nets 输出fanout信息
+	
+set_host_options <span class="token operator">-</span>max_cores 4  <span class="token comment">#最大四个核处理</span>
+report_congestion <span class="token comment">#输出当前设计的阻塞情况</span>
+report_design <span class="token comment"># 得到最大最小的工作条件和线负载模型</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="修复违例"><a href="#修复违例" class="headerlink" title="修复违例"></a>修复违例</h2><p>如果电路中的最大WNS违例的时间占clock period的15%以上，认为电路中存在较大的时序违例。需要做的：</p>
+<p>1.检查约束 是不是出现问题<br>2.检查模块划分，组合逻辑是不是穿过多个模块<br>3.重新编译优化后的网表<br>4.修改rtl代码</p>
+<p>如果电路中负的最大裕量是比较小的，认为约束和模块划分都是正确的，不需要将网表返回到GTECH结构，也不需要做逻辑级的优化，可以使用compile -incremental_mapping 增量优化，DC所要作的是进行门级单元的替换，即在不违反设计规则的情况下用延时小的单元替换延时较大的单元。也可以根据违例情况，添加选项进行单独修复。</p>
+<h3 id="修复hold违例"><a href="#修复hold违例" class="headerlink" title="修复hold违例"></a>修复hold违例</h3><p>通常作法是插入buffer，但是可能会带来建立时间的违例；<br>hold的检查一般到cts后才可以得到准确值。<strong>DC 不修正保持时间的违例</strong></p>
+<p>由于反相器具有再生特性，可以在长连线中插入多级buffer，目的就是降低rc延迟。</p>
+<h2 id="常见命令"><a href="#常见命令" class="headerlink" title="常见命令"></a>常见命令</h2><h3 id="Synopsis-Tcl"><a href="#Synopsis-Tcl" class="headerlink" title="Synopsis Tcl"></a><strong>Synopsis Tcl</strong></h3><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">get_<span class="token operator">*</span> 和all_<span class="token operator">*</span>返回的都是collection类型的句柄，而不是list。
+<span class="token keyword">set</span> <span class="token variable">foo</span> <span class="token punctuation">[</span>get_ports <span class="token operator">*</span><span class="token punctuation">]</span> 
+<span class="token comment">#得到的foo只是个集合“collection”的句柄，不是列表，用echo和puts无效，用query_objects $foo输出</span>
+get_object_name $<span class="token variable">foo</span>比query_object更有
+collection是DC<span class="token operator">-</span>Tcl特有的数据类型，描述多个属性元素的集合，为了描述硬件而设计的。
+
+<span class="token comment">#Filter collection</span>
+Filter_collection <span class="token punctuation">[</span>get_cells <span class="token operator">*</span><span class="token punctuation">]</span> “ref_name = <span class="token operator">~</span>AN<span class="token operator">*</span>”
+Set fastclk <span class="token punctuation">[</span>get_cells <span class="token operator">*</span> <span class="token operator">-</span>filter “period <span class="token operator">&lt;</span> 10”<span class="token punctuation">]</span>  <span class="token comment">#更有效</span>
+
+collection用于访问数据库数据，list是用户定义的用来存储数据的。
+<span class="token builtin">foreach</span>遍历list列表，而foreach_in_collection用来遍历collection，
+foreach_in_collection cell <span class="token punctuation">[</span>get_cells <span class="token operator">-</span>filter “is_hierarchical <span class="token operator">==</span> true”<span class="token punctuation">]</span> <span class="token punctuation">&#123;</span>
+echo “instance <span class="token punctuation">[</span>get_object_name $<span class="token variable">cell</span><span class="token punctuation">]</span> is hierarchical <span class="token punctuation">&#125;</span>
+
+get_lib <span class="token comment">#获取工艺库</span>
+get_attribute slow time_unit_name <span class="token comment">#获取dc中的时间单位</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="link"><a href="#link" class="headerlink" title="link"></a><strong>link</strong></h3><ol>
 <li><p>将设计与工艺库中stdcel进行对应。</p>
 </li>
 <li><p>将设计连接到这些库单元上。</p>
 <p>link后，生成没有工艺库对应的getch库文件，以ddc的格式保存。</p>
-<p>link后，进行uniquify，创建同一个reference的不同instance，以便根据不同的物理环境做优化。</p>
+<p>link后，进行uniquify，创建同一个reference的不同instance，以便根据不同的物理环境做优化。<br>Link 命令不会去读取verilog rtl，而是去DC memory中寻找模块的getch库名称，与工艺库做一个匹配，read命令完成的是在DC memory中创建模块</p>
 </li>
 </ol>
+<h3 id="compile"><a href="#compile" class="headerlink" title="compile"></a><strong>compile</strong></h3><p>compile_ultra会对违例的关键路径进行重组优化，high effort 代价较高，其自动调用high map effort </p>
+<p>compile 需要显式调用 -map_effort high</p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">compile_ultra <span class="token operator">-</span>timing
+<span class="token comment"># 通过在关键路径使用 寄存器复制 用于优化综合的时序问题，使用compile_ultra会自动调用，可以人为的设定寄存器组的数目限制， </span>
+
+compile <span class="token operator">-</span>retime
+<span class="token comment"># 移动、复制、合并寄存器以满足时序的要求，如果设计需要固定的寄存器位置和名字，不建议使用 -retime</span>
+<span class="token comment"># 设置set_dont_retime &lt;cell or design> true</span>
+
+<span class="token comment"># Dc默认只优化最关键的路径，通过crtical_range可以指定优化范围</span>
+set_critical_range <span class="token comment"># 同时优化多条路径，可能会优化关键路径。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="uniquify"><a href="#uniquify" class="headerlink" title="uniquify"></a>uniquify</h3><p>Uniquify 将多次引用的模块的个数拷贝需要的数目,然后对他们分别命名而得到不同的模块名，DC默认储存器的模块都只是引用一次的，如果使用uniquify，可以使得模块的各个引用针对不用环境分别优化得到更好效果。（因为在物理上是独立的模块）DC可以把他们当做两个不同的模块，根据不同的周围环境做优化。</p>
+<h3 id="for-formality"><a href="#for-formality" class="headerlink" title="for formality"></a>for formality</h3><p>DC在综合过程中，会生成svf文件，记录了设计的boundary改变，寄存器的重新定位和路径分组信息，这些信息可以被formality形式验证工具读取，默认是&lt;default.svf&gt;，可以通过set_svf &lt;name.svf&gt; 修改，一定要在read RTL之前进行。</p>
 <h3 id="report-芯片面积"><a href="#report-芯片面积" class="headerlink" title="report 芯片面积"></a>report 芯片面积</h3><p>三种方式描述面积：1. 晶体管级 transitor 2. 2输入与非门的个数 3. 实际的面积</p>
 <p>report_area 输出实际的面积,也会显示综合后的标准单元个数。如果想要转换到与非门的个数，将报出的面积除以与非门的面积，得到2输入与非门个数。</p>
 <p>查看综合后的网表有多少门</p>
@@ -369,9 +628,14 @@ set_output_delay <span class="token operator">-</span>clock clk_100 <span class=
 <p>基础：set_max&#x2F;min_delay这两种约束，一般用于异步时钟的数据约束上。set clock group -asynchronous或者set false path设置 对这两个时钟域数据不进行时序检查，但是一般需要保证跨时钟传递的数据要满足最大最小延迟，而不会高的离谱。比如异步fifo读写指针的格雷码，如果延迟时间太长，目的时钟域周期太短，会导致传输路径延迟超过两个周期。</p>
 </blockquote>
 <h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><h4 id="dc-shell中执行bash命令"><a href="#dc-shell中执行bash命令" class="headerlink" title="dc_shell中执行bash命令"></a>dc_shell中执行bash命令</h4><p>​	前面加shell &#x2F; sh，比如 <code>shell gvim</code></p>
+<p>​	-tee 读取标准输入数据到文件    -i 忽略中断信号</p>
+<p>​	| 管道命令</p>
+<p>​	cat file1 | file2 	#将file1的输出作为输入保存在file2中 </p>
 <h4 id="帮助"><a href="#帮助" class="headerlink" title="帮助"></a>帮助</h4><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">help <span class="token string">"set_input_delay"</span>
 set_input_delay <span class="token operator">-</span>help
-man set_input_delay<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+man set_input_delay
+
+synoff <span class="token comment">#取消 工艺库lib文件中显示的底色</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
                 
@@ -750,7 +1014,7 @@ man set_input_delay<span aria-hidden="true" class="line-numbers-rows"><span></sp
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">34.1k</span>
+                        class="white-color">43.1k</span>
             
             
             

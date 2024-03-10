@@ -287,6 +287,112 @@
              <!-- 隐藏某个文章 -->
             <div class="article col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
+                    <a href="/2024/022536323.html">
+                        <div class="card-image">
+                            
+                            
+                            <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="一生一芯-Cache设计(二)">
+                            
+                            <span class="card-title">一生一芯-Cache设计(二)</span>
+                        </div>
+                    </a>
+
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                Cache实现根据上述的理论知识，确定cache的设计要求如下
+
+采用直接映射缓存的方式，cache size为2KB，cache line为8Bytes，
+
+当访问cache缺省时，采用读分配Read allocate和写分配Write 
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-25
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-bookmark fa-fw icon-category"></i>
+                                
+                                <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                    数字前端
+                                </a>
+                                
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="card-action article-tags">
+                        
+                        <a href="/tags/%E4%B8%80%E7%94%9F%E4%B8%80%E8%8A%AF/">
+                            <span class="chip bg-color">一生一芯</span>
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+              <!-- 隐藏某个文章 -->
+            
+             <!-- 隐藏某个文章 -->
+            <div class="article col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
+                    <a href="/2024/022542394.html">
+                        <div class="card-image">
+                            
+                            
+                            <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="一生一芯-Cache设计（一）">
+                            
+                            <span class="card-title">一生一芯-Cache设计（一）</span>
+                        </div>
+                    </a>
+
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                Cache基础知识
+部分参考网上的学习资料，侵删。
+
+概念时间局部性：在程序中，某个数据在短时间内会被频繁用到。空间局部性：访问某个数据时，通过附近数据的概率也很大，比如循环访问数组数据。
+Cache：用一块小而块的存储设备（采用SRAM实
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-25
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-bookmark fa-fw icon-category"></i>
+                                
+                                <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                    数字前端
+                                </a>
+                                
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                    <div class="card-action article-tags">
+                        
+                        <a href="/tags/%E4%B8%80%E7%94%9F%E4%B8%80%E8%8A%AF/">
+                            <span class="chip bg-color">一生一芯</span>
+                        </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+              <!-- 隐藏某个文章 -->
+            
+             <!-- 隐藏某个文章 -->
+            <div class="article col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
                     <a href="/2024/022437262.html">
                         <div class="card-image">
                             
@@ -562,9 +668,13 @@ eg. 存在函数返回值为指针时，由于返回的是地址，当stack内�
                     <div class="card-content article-content">
                         <div class="summary block-with-text">
                             
-                                dc_topo模式dc_topo模式 指 在综合时考虑物理约束，需要ICC阶段生成的def文件。DEF文件只有物理信息，没有timing信息，流程如下：
-1. dct生成一版网表netlist，给ICC，导出floorplan的DEF文件
+                                工艺库文件解读以90nm为例，常见的文件夹如下
 
+
+cel：存放spice网表    
+打开其中一个，找到INV的网表如下，可以看出是spice格式的，l&#x3D;0.1u，表示的是90nm的工艺(特征尺寸）
+
+INVX1,2,4,8,1
                             
                         </div>
                         <div class="publish-info">
@@ -808,108 +918,6 @@ SOC芯片的功耗分为：动态功耗和静态功耗
             </div>
               <!-- 隐藏某个文章 -->
             
-             <!-- 隐藏某个文章 -->
-            <div class="article col s12 m6 l4" data-aos="zoom-in">
-                <div class="card">
-                    <a href="/2024/012760393.html">
-                        <div class="card-image">
-                            
-                            
-                            <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="计算机体系结构">
-                            
-                            <span class="card-title">计算机体系结构</span>
-                        </div>
-                    </a>
-
-                    <div class="card-content article-content">
-                        <div class="summary block-with-text">
-                            
-                                超流水线：    通过增加流水线级数来缩短指令执行速度。细化流水，提高主频。用时间换空间。超流水线技术对芯片的工作速度要求比较高，同时硬件系统比较复杂，需要占用较大的芯片的面积，因此超流水线结构在嵌入式RISC处理器中很少采用。
-超标量： 
-                            
-                        </div>
-                        <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-01-27
-                            </span>
-                            <span class="publish-author">
-                                
-                                <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                
-                                <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                    数字前端
-                                </a>
-                                
-                                
-                            </span>
-                        </div>
-                    </div>
-
-                    
-                    <div class="card-action article-tags">
-                        
-                        <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-                            <span class="chip bg-color">基础知识</span>
-                        </a>
-                        
-                    </div>
-                    
-                </div>
-            </div>
-              <!-- 隐藏某个文章 -->
-            
-             <!-- 隐藏某个文章 -->
-            <div class="article col s12 m6 l4" data-aos="zoom-in">
-                <div class="card">
-                    <a href="/2024/012448005.html">
-                        <div class="card-image">
-                            
-                            
-                            <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="电路设计（RTL）">
-                            
-                            <span class="card-title">电路设计（RTL）</span>
-                        </div>
-                    </a>
-
-                    <div class="card-content article-content">
-                        <div class="summary block-with-text">
-                            
-                                
-课题组项目 后端指导前端 log
-在做pt eco的时候，有个模块lms_delay的路径修复好几次都不成功。report_timing发现组合逻辑的路径太长造成的。检查RTL代码确实是先进行了减法 又进行了乘法，中间没有打拍。
-采取的方
-                            
-                        </div>
-                        <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-01-24
-                            </span>
-                            <span class="publish-author">
-                                
-                                <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                
-                                <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                    数字前端
-                                </a>
-                                
-                                
-                            </span>
-                        </div>
-                    </div>
-
-                    
-                    <div class="card-action article-tags">
-                        
-                        <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-                            <span class="chip bg-color">基础知识</span>
-                        </a>
-                        
-                    </div>
-                    
-                </div>
-            </div>
-              <!-- 隐藏某个文章 -->
-            
         </div>
     </article>
 
@@ -927,7 +935,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
             
         </div>
         <div class="page-info col m4 l4 hide-on-small-only">
-            <div class="center-align b-text-gray">2 / 3</div>
+            <div class="center-align b-text-gray">2 / 4</div>
         </div>
         <div class="col s6 m4 l4">
             
@@ -960,7 +968,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">34.1k</span>
+                        class="white-color">43.1k</span>
             
             
             

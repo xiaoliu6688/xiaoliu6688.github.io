@@ -1,0 +1,1016 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="低功耗方法学（二）, RayBiiao">
+    <meta name="description" content="4 电源门控概述（power gating）为了减少芯片的总泄漏功耗，非常希望添加关闭未使用的模块的机制，这种技术称为电源门控 power gating
+4.1 动态功耗和泄漏功耗分布电源门控的基本策略是提供两种电源模式：低功率模式和活动模">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>低功耗方法学（二） | RayBiiao</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+
+
+    <!-- bg-cover style     -->
+
+
+
+<link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+<link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+<link rel="stylesheet" type="text/css" href="/css/matery.css">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<link rel="stylesheet" type="text/css" href="/css/dark.css" media="none" onload="if(media!='all')media='all'">
+
+
+
+
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+    <link rel="stylesheet" href="/css/post.css">
+
+
+
+
+    
+
+
+
+    <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">RayBiiao</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+  <li>
+    <a href="javascript:;" class="waves-effect waves-light" onclick="switchNightMode()" title="深色/浅色模式" >
+      <i id="sum-moon-icon" class="fas fa-sun" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">RayBiiao</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/15.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">低功耗方法学（二）</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2024-03-06
+                </div>
+                
+
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    2.4k
+                </div>
+                
+
+                
+
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="4-电源门控概述（power-gating）"><a href="#4-电源门控概述（power-gating）" class="headerlink" title="4 电源门控概述（power gating）"></a>4 电源门控概述（power gating）</h2><p>为了减少芯片的总泄漏功耗，非常希望添加关闭未使用的模块的机制，这种技术称为电源门控 <strong>power gating</strong></p>
+<h3 id="4-1-动态功耗和泄漏功耗分布"><a href="#4-1-动态功耗和泄漏功耗分布" class="headerlink" title="4.1 动态功耗和泄漏功耗分布"></a>4.1 动态功耗和泄漏功耗分布</h3><p>电源门控的基本策略是提供两种电源模式：低功率模式和活动模式。目标是在恰当的时间以适当的方式在这些模式中切换，以最大限度的节省功耗，同时最大限度的减少对性能的影响。</p>
+<p>电源门控比时钟门控更有复杂，因为需要模块之间复杂的通信和时间延迟以安全进入和退出电源门控模式。电源门控的控制权可以由软件调度，作为设备驱动程序或操作系统空闲任务的一部分，也可以由电源管理控制器在硬件中启动。需要从以下角度考虑选择哪种控制模式</p>
+<ol>
+<li>可能节省的漏电功耗</li>
+<li>产生进入和退出电源门控模式的时间</li>
+<li>进入和离开这个模式消耗的能量</li>
+<li>模块的活动分布（活动或者睡眠的比例）</li>
+</ol>
+<p><strong>术语</strong></p>
+<p>​	SLEEP：进入低功耗模式<br>​	WAKE：返回活动模式</p>
+<ul>
+<li><p>通过时钟门控降低功耗</p>
+<img src="/2024/030658141/image-20240306225913409.png" alt="image-20240306225913409" style="zoom: 33%;">
+</li>
+<li><p>通过电源门控降低功耗</p>
+<p>WAKE时间和时钟运行直接的响应时间很重要，在系统设计层次不能</p>
+<img src="/2024/030658141/1709739346255.jpg" alt="1709739346255" style="zoom:33%;">
+</li>
+<li><p>电源门控切换速度不彻底（真实情况）</p>
+<img src="/2024/030658141/image-20240306234721173.png" alt="image-20240306234721173" style="zoom:33%;"></li>
+</ul>
+<h3 id="4-2-电源门控在不同子系统上的影响"><a href="#4-2-电源门控在不同子系统上的影响" class="headerlink" title="4.2 电源门控在不同子系统上的影响"></a>4.2 电源门控在不同子系统上的影响</h3><p>带有缓存的CPU系统通常可能长期处于休眠或者不活动状态，使得电源门控的设计更加具有必要性。需要考虑一下因素：</p>
+<ul>
+<li>电压门控技术可以很好的降低CPU的泄漏功耗</li>
+<li>如果每次CPU断电时缓存内容都丢失，上电时需要重新填充，可能需要花费大量时间和成本</li>
+<li>节省的净能量取决于睡眠和唤醒的活动性。即电源门控节省的能量和重新加载消耗的能量。</li>
+</ul>
+<p>外围子系统受到设备驱动程序和操作系统的电源管理方案控制。需要在唤醒时快速恢复状态以最大限度的节省功耗</p>
+<ul>
+<li>设备驱动程序可能需要显示加载&#x2F;恢复密钥状态或启动硬件定时器控制作为唤醒&#x2F;睡眠的一部分</li>
+<li>更好的方式是外设在睡眠模式时，保存一些状态，但是需要额外的电路和控制。</li>
+</ul>
+<h3 id="4-3-电源门控的设计原理"><a href="#4-3-电源门控的设计原理" class="headerlink" title="4.3 电源门控的设计原理"></a>4.3 电源门控的设计原理</h3><p>使用电源门控的SoC简化视图如下，与时钟通电的模块不同，电源门控功能模块通过电源开关网络接收电源。电源开关网络分布在电源门控功能模块周围。Isol模块放置在电源门控模块和始终开启模块之间，当输入处于阈值电压时，输出电压的过渡状态很短，不会对后面always on模块产生较大影响，起到了隔离的作用。</p>
+<img src="/2024/030658141/image-20240307135341610.png" alt="image-20240307135341610" style="zoom:40%;">
+
+<p>对于某些电源门控模块，非常希望在断电时保留模块内部状态，并在通电期间恢复该状态。这种策略在上电期间可以节省大量时间和功耗。实现方式：将保留寄存器替代普通寄存器。</p>
+<p>保持寄存器通常具有比主寄存器慢但是泄漏电流小得多的辅助寄存器或者影子寄存器。影子寄存器始终处于通电状态，并在电源门控期间存储主存储器的内容。该控制信号由电源门控控制器提供。</p>
+<h4 id="4-3-1-电源切换-细粒度和粗粒度"><a href="#4-3-1-电源切换-细粒度和粗粒度" class="headerlink" title="4.3.1 电源切换-细粒度和粗粒度"></a>4.3.1 电源切换-细粒度和粗粒度</h4><p>电源切换一般有两种方法：细粒度电源门控和粗粒度电源门控</p>
+<p>在细粒度电源切换门控中，开关放置在库中每个标准单元中，由于开关必须提供电源所需要的最坏情况电流，因此必须相当大，以免影响性能。每个单元的面积开销很大（通常是原始单元大小的2到4倍）。下面是带上拉的细粒度与门。</p>
+<img src="/2024/030658141/image-20240307144844883.png" alt="image-20240307144844883" style="zoom:50%;">
+
+<p>细粒度电源门控的主要优点是，开关上的IR压降的时序影响和钳位器的行为很容易表征，因为他们包含在单元内，可以采用传统的设计方法部署细粒度电源门控。</p>
+<p>在粗粒度电源门控中，一组门级单元通过一组开关单元来切换电源。时序分析困难，但是面积相比细粒度小很多。</p>
+<p>目前，设计中都是使用粗粒度电源门控。任何电源门控的关键挑战是减小涌浪电流，以避免电源网络中出现过多的IR压降。否则，电源门控模块的功能和状态 当进行睡眠&#x2F;复位顺序不同时会被破坏。</p>
+<h4 id="4-3-2-电源门控的挑战"><a href="#4-3-2-电源门控的挑战" class="headerlink" title="4.3.2 电源门控的挑战"></a>4.3.2 电源门控的挑战</h4><ol>
+<li>电源开关结构设计</li>
+<li>电源门控控制器设计</li>
+<li>保持寄存器和隔离寄存器的选择和使用</li>
+<li>最大限度减少电源门控对时序和面积的影响</li>
+<li>接口隔离</li>
+<li>时钟和复位的功能控制</li>
+<li>对每个受支持的电源状态与状态相关的验证</li>
+<li>制造和生产测试策略</li>
+</ol>
+<h2 id="电源门控设计"><a href="#电源门控设计" class="headerlink" title="电源门控设计"></a>电源门控设计</h2><p>带有电源门控的SoC结构，需要解决的问题：开关网络和电源门控控制器的设计、何时何地插入保留寄存器和隔离寄存器。</p>
+<img src="/2024/030658141/image-20240309092347605.png" alt="image-20240309092347605" style="zoom: 67%;">
+
+<h3 id="5-1-开关结构设计"><a href="#5-1-开关结构设计" class="headerlink" title="5.1 开关结构设计"></a>5.1 开关结构设计</h3><p>第一种架构是切换VDD还是VSS，或者同时切换。一般采用NMOS传递低电压，PMOS传递高电压，因为没有阈值电压损失。但是这种切换的开关电源会导致较大的IR Drop在电源上，进而影响设计中门的延迟。</p>
+<img src="/2024/030658141/image-20240309094251614.png" alt="image-20240309094251614" style="zoom:50%;">
+
+<p>对于Header-Switch结构，当开关关闭时，GATED VDD输出趋近于低电平。对于Footer-Switch 结构，当开关关闭时，GATED VSS输出趋近于高电平。</p>
+<p>注意，在NMOS导通传递低电平，在PMOS导通传输高电平时，无法保证没有电压损失，因为开关有漏电流。<strong>这也是为什么输出需要隔离单元的原因之一</strong></p>
+<p>推荐的方式:</p>
+<ul>
+<li>切换电源或者低，而不是两者都切换，以减小IR drop。</li>
+<li>在设计前期决定是Header-Switch还是GATED VDD更适合系统设计。</li>
+<li>Header-Switch更适合外部电源门控</li>
+<li>Header-Switch适合用在多电压或者电压调节技术中</li>
+</ul>
+<p>缺点：</p>
+<p>Footer-Switch电源门控与外部开关电源或者多个电源混用时，会导致整个设计的功耗、时序和功能变得复杂，对标准单元库提出了更复杂的要求。</p>
+<h4 id="5-1-1-控制开关网络"><a href="#5-1-1-控制开关网络" class="headerlink" title="5.1.1 控制开关网络"></a>5.1.1 控制开关网络</h4><p>关键问题在于限制模块电源切换时所产生的涌浪电流，过多的这种电流会导致电源出现电压尖峰，可能损坏常开模块中寄存器以及电源门控模块中的保留寄存器。</p>
+<p>一种代表性降低涌浪电流的方法是将控制信号以链表方式连接到开关，来自电源控制器的控制信号连接到第一个开关，它缓冲（具有适当的延迟）信号并将其发送到下一个开关。</p>
+<p>这种链的结果是，从发出“加电”信号到模块加电需要一些时间。因此，交换结构通常会提供确认信号来指示该结构已完全加电。该信号可以简单地是“加电”控制信号的最终缓冲版本。</p>
+<p>更激进的一种方式是依次使用多个上电控制信号，第一控制信号可以打开一组弱开关或“涓流”开关，这些开关启动加电但限制浪涌电流。然后第二控制信号可以打开主电源开关组。</p>
+<p>无论具体的控制方法如何，在上电序列期间，重要的是要等到交换结构完全上电，然后才能使电源门控块恢复正常操作。该上电序列的时序由电源控制器负责。</p>
+<p>电源开关结构的控制信号（电源开&#x2F;关和确认的整个链）必须由始终开启的缓冲区进行缓冲，而不是由电源门控缓冲区进行缓冲。</p>
+<h4 id="5-1-1-电源门控的建议和陷阱"><a href="#5-1-1-电源门控的建议和陷阱" class="headerlink" title="5.1.1 电源门控的建议和陷阱"></a>5.1.1 电源门控的建议和陷阱</h4><p>建议</p>
+<ul>
+<li>电源控制器需要针对特定的电源门控技术来设计</li>
+<li>应该为电源门控控制端口提供断言，以匹配所选的开关技术，确保RTL设计环境中的功能验证和覆盖率</li>
+<li>电源门控控制信号必须在测试期间可控。</li>
+</ul>
+<p>陷阱</p>
+<ul>
+<li>将外部电源门控和内部电源门控相结合可能会很麻烦，因为在内部的电源在外部电源门控期间可能不会“始终开启”。在这种情况下需要仔细设计和验证。</li>
+</ul>
+<h3 id="5-2-信号隔离"><a href="#5-2-信号隔离" class="headerlink" title="5.2 信号隔离"></a>5.2 信号隔离</h3>
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">刘瑞彪</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://xiaoliu6688.github.io/2024/030658141.html">https://xiaoliu6688.github.io/2024/030658141.html</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">刘瑞彪</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2024/03097089.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="DC_FLOW（二）">
+                        
+                        <span class="card-title">DC_FLOW（二）</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-03-09
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            刘瑞彪
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/030241575.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="总线仲裁算法">
+                        
+                        <span class="card-title">总线仲裁算法</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-03-02
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                    数字前端
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+                        <span class="chip bg-color">基础知识</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'PRE' || selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: RayBiiao<br />'
+            + '文章作者: 刘瑞彪<br />'
+            + '文章链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+
+    <div class="container row center-align"
+         style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2023-2024</span>
+            
+            <a href="/about" target="_blank">刘瑞彪</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            
+            <br>
+            
+                &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                        class="white-color">43.1k</span>
+            
+            
+            
+                
+            
+            
+                <span id="busuanzi_container_site_pv">
+                &nbsp;|&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;
+                    <span id="busuanzi_value_site_pv" class="white-color"></span>
+            </span>
+            
+            
+                <span id="busuanzi_container_site_uv">
+                &nbsp;|&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;
+                    <span id="busuanzi_value_site_uv" class="white-color"></span>
+            </span>
+            
+            <br>
+
+            <!-- 运行天数提醒. -->
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=1603386505" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 1603386505" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 白天和黑夜主题 -->
+<div class="stars-con">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>  
+</div>
+
+<script>
+    function switchNightMode() {
+        $('<div class="Cuteen_DarkSky"><div class="Cuteen_DarkPlanet"></div></div>').appendTo($('body')),
+        setTimeout(function () {
+            $('body').hasClass('DarkMode') 
+            ? ($('body').removeClass('DarkMode'), localStorage.setItem('isDark', '0'), $('#sum-moon-icon').removeClass("fa-sun").addClass('fa-moon')) 
+            : ($('body').addClass('DarkMode'), localStorage.setItem('isDark', '1'), $('#sum-moon-icon').addClass("fa-sun").removeClass('fa-moon')),
+            
+            setTimeout(function () {
+            $('.Cuteen_DarkSky').fadeOut(1e3, function () {
+                $(this).remove()
+            })
+            }, 2e3)
+        })
+    }
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    
+
+    
+    
+    
+
+    <!-- 雪花特效 -->
+    
+
+    <!-- 鼠标星星特效 -->
+     
+        <script type="text/javascript">
+            // 只在桌面版网页启用特效
+            var windowWidth = $(window).width();
+            if (windowWidth > 768) {
+                document.write('<script type="text/javascript" src="/libs/others/star.js"><\/script>');
+            }
+        </script>
+    
+
+     
+        <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
+        <script src="/libs/others/TencentCaptcha.js"></script>
+        <button id="TencentCaptcha" data-appid="xxxxxxxxxx" data-cbfn="callback" type="button" hidden></button>
+    
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
