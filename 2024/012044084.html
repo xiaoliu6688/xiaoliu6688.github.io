@@ -307,7 +307,7 @@ tcbn65lpwc1d081d08">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    125
+                    206
                 </div>
                 
 
@@ -419,7 +419,7 @@ tcbn65lpwc1d081d08">
 <td>Cworstm40</td>
 </tr>
 <tr>
-<td>lt+Cbest</td>
+<td><strong>lt+Cbest</strong></td>
 <td>ff</td>
 <td>1.32v</td>
 <td>-40</td>
@@ -438,6 +438,8 @@ tcbn65lpwc1d081d08">
 <blockquote>
 <p>删除的bc+Cbest&#x2F;Cworst，原因是这两种case位于wc和lt之间，没必须再去分析。</p>
 </blockquote>
+<p>Q：在检查hold违例时，lt+Cbest下已经保证了组合逻辑是最短的，为什么要进行Cworst的组合？</p>
+<p>因此，lt仅仅是满足了路径上组合逻辑的延迟，而时钟网络的延迟带来的skew对hold检查也非常重要，所以要进行Cworst检查。</p>
 
                 
             </div>
@@ -815,7 +817,7 @@ tcbn65lpwc1d081d08">
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">44.6k</span>
+                        class="white-color">46k</span>
             
             
             

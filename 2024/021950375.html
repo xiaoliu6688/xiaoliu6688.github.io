@@ -289,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    813
+                    1k
                 </div>
                 
 
@@ -346,6 +346,9 @@
 
 <img src="/2024/021950375/image-20240220150606788.png" alt style="zoom: 50%;">
 
+<p>针对跳转指令后的冲刷，如果没有取指令单元是组合逻辑，IF_ID寄存器直接冲刷即可。 如果取指令是时序逻辑，在冲刷IF_ID时，有可能指令还没得到，导致无法及时冲刷，在下个周期写入到IF_ID寄存器中，导致错误。所以在写入到IF_ID时需要判断PC出来的addr和写入IF_ID的地址是不是一致的，如果是一致的，就可以写入。</p>
+<p>对于带cache的方案，当时hit没有命中时，会进行读分配操作，在IDLE时进行hit判断，即使发生了跳转，addr发生了变化，也不会hit，所以无需担心，不能彻底冲刷流水线的问题。</p>
+<p>对于只有axi的方案，需要在写入IF_ID时，判断来自pc的地址和 ifu模块锁存的地址是否一致，只有一致才写入。</p>
 <h2 id="数据冒险-控制冒险-冲突"><a href="#数据冒险-控制冒险-冲突" class="headerlink" title="数据冒险+控制冒险 冲突"></a>数据冒险+控制冒险 冲突</h2><p>当译码阶段的指令是jalr时，rs1发生了数据冒险，且是load-use类型，bypass模块发出stall和nop信号；bru模块发出jump和nop信号。对于IF_ID寄存器，同时收到了bypass的stall和bru的nop信号。<strong>此时，产生了冒险冲突</strong></p>
 <p>解决办法：<strong>先stall处理完数据冒险，再nop处理控制冒险保证处理控制冒险时，跳转地址的计算是正确的。</strong></p>
 <pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">&#x2F;&#x2F; ex
@@ -740,7 +743,7 @@ jalr  a5 <span aria-hidden="true" class="line-numbers-rows"><span></span><span><
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">44.6k</span>
+                        class="white-color">46k</span>
             
             
             
