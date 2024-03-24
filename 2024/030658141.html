@@ -594,6 +594,24 @@ create_power_switch my_power_switch
 <li>建模时，确保电源门控、保持、复位和时钟的优先级顺序。</li>
 </ul>
 <p>UPF提供命令来指定保留寄存器的“always on”电源网络以及保存和恢复控制信号。默认情况下，set_retention命令会将电源域中的所有寄存器转换为保留寄存器。</p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_retention my_retention_strategy 
+	<span class="token operator">-</span>domain my_power_domain
+	<span class="token operator">-</span>retention_power_net VDD_SOC
+	
+set_retention_control my_retention_strategy
+	<span class="token operator">-</span>domain my_power_domain
+	<span class="token operator">-</span>save_signal <span class="token punctuation">&#123;</span>SAVE posedge<span class="token punctuation">&#125;</span>
+	<span class="token operator">-</span>restore_signal <span class="token punctuation">&#123;</span>NRESTORE negedge<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>通过RTL来建模描述保存和恢复寄存器的行为</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> save_current_state<span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> SAVE<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	save_current_state <span class="token operator">&lt;=</span> current_state<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> NRESTORE<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	current_state <span class="token operator">&lt;=</span> save_current_state<span class="token punctuation">;</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -955,7 +973,7 @@ create_power_switch my_power_switch
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">55.3k</span>
+                        class="white-color">53.3k</span>
             
             
             
