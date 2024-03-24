@@ -5,8 +5,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="串口通信协议-UART、SPI、I2C, RayBiiao">
-    <meta name="description" content="未完待续~
-">
+    <meta name="description" content="
+Reference 
+https://blog.csdn.net/qq_40268672/article/details/124436244
+
+UART全双工的异步串口协议，主要用于调试，至少三根线RX、TX和GND
+协议主要包括空闲位，">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -276,7 +280,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    4
+                    1.4k
                 </div>
                 
 
@@ -301,7 +305,58 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>未完待续~</p>
+                <blockquote>
+<p>Reference </p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40268672/article/details/124436244">https://blog.csdn.net/qq_40268672/article/details/124436244</a></p>
+</blockquote>
+<h2 id="UART"><a href="#UART" class="headerlink" title="UART"></a>UART</h2><p>全双工的异步串口协议，主要用于调试，至少三根线RX、TX和GND</p>
+<p>协议主要包括空闲位，起始位，数据位，奇偶校验位和停止位。空闲位是高电平，起始位是1bit的低电平，数据位一般是5,6,7,8位（如果不用奇偶校验位，数据帧可以为9bit），停止位一般是1位的高电平。UART常见的波特率一般有4800，9600,19200，38400，115200。</p>
+<img src="/2024/031321104/20200803195509148.png" alt="img" style="zoom: 67%;">
+
+<p>优点：只有两根线，不需要时钟信号；具有奇偶校验位。<br>缺点：数据帧最大9位，不支持多从。传输速率受到波特率的限制。·</p>
+<h2 id="SPI"><a href="#SPI" class="headerlink" title="SPI"></a>SPI</h2><p>全双工的同步串口协议，常用于显示驱动器外设通信。由一个主设备和多个从设备组成，SPI接口信号有sdi串行数据输入，sdo串口数据输出，sck时钟信号以及cs片选信号。cs决定了唯一的与主设备通信的从设备，片选信号低电平有效。SPI协议有多种不同的配置，由时钟相位和时钟极性决定。</p>
+<p>时钟极性表示当SCLK为空闲时，电平是高电平还是低电平。</p>
+<ul>
+<li>CPOL&#x3D;0；时钟空闲是低电平</li>
+<li>CPOL&#x3D;1；时钟空闲是高电平</li>
+</ul>
+<p>时钟相位CPHA决定在第几个时钟变化边沿开始采样数据；</p>
+<ul>
+<li>CPHA&#x3D;0；在时钟信号SCK的第一个跳变沿采样</li>
+<li>CPHA&#x3D;1；在时钟信号SCK的第二个跳变沿采样</li>
+</ul>
+<p>因此，不同的时钟相位和极性共有4种SPI协议的配置。CPHA&#x3D;0，表示第一个边沿：<br>对于CPOL&#x3D;0，idle时候的是低电平，第一个边沿就是从低变到高，所以是上升沿采样<br>对于CPOL&#x3D;1，idle时候的是高电平，第一个边沿就是从高变到低，所以是下降沿采样<br>CPHA&#x3D;1，表示第二个边沿：<br>对于CPOL&#x3D;0，idle时候的是低电平，第二个边沿就是从高变到低，所以是下降沿采样<br>对于CPOL&#x3D;1，idle时候的是高电平，第一个边沿就是从低变到高，所以是上升沿采样</p>
+<p>从机数目受到系统负载电容的限制，降低master在电平之间的切换能力。</p>
+<img src="/2024/031321104/v2-90fa89c6af8665282dd058768841801f_1440w.webp" alt="img" style="zoom: 50%;">
+
+<p>优点：没有起始位和停止位，可以持续传输数据；数据传输速率快，比I2C快几乎两倍，全双工通信。<br>缺点：使用四根线，没有数据传输反馈信号和奇偶校验位。</p>
+<h2 id="IIC"><a href="#IIC" class="headerlink" title="IIC"></a>IIC</h2><p>两根线：一根是时钟线SCL和一个数据线SDA，属于半双工通信。</p>
+<p>IIC的起始条件为在SCL为高电平期间，SDA出现下降沿</p>
+<img src="/2024/031321104/a4b57424cb284c92a2362c24d2958404.png" alt="在这里插入图片描述" style="zoom:67%;">
+
+<p>结束条件为在SCL高电平期间，SDA出现上升沿</p>
+<img src="/2024/031321104/a74416ae63334f068ae25c988fa5fbb2.png" alt="在这里插入图片描述" style="zoom:67%;">
+
+<p>在数据传输时，只有SCL在低电平期间，才允许数据变化，在高电平期间不允许变化，因为是判断起止条件的。</p>
+<img src="/2024/031321104/ac4872ce1ace49e998acd746db02c1c2.png" alt="在这里插入图片描述" style="zoom:50%;">
+
+<p>IIC有一个很重要的概念： <strong>应答</strong>。slave收到数据后，会给master发送一个应答信号，slave的时钟信号是master发出的。应答出现在每一次主机完成8个数据位传输后紧跟着的时钟周期，<strong>低电平0表示应答，1表示非应答</strong>。需要应答时，数据发出方将SDA总线设置为3态输入，由于IIC总线上有上拉电阻，因此此时总线默认高电平，若数据接收方正确接收到数据，则数据接收方将SDA总线拉低，以示正确应答。</p>
+<p><strong>IIC传输时是从MSB开始传输到LSB结束的</strong></p>
+<p>写时序</p>
+<p><img src="/2024/031321104/image-20240323140356689.png" alt="image-20240323140356689"></p>
+<p>读时序</p>
+<p><img src="/2024/031321104/image-20240323140811569.png" alt="image-20240323140811569"></p>
+<p>​	1.产生start信号。<br>​	2.传送器件地址（写ID_Address），ACK。<br>​	3.传送字地址（写REG_Address），ACK。<br>​	4.再次产生start信号<br>​	5.再传送一次器件地址，ACK。<br>​	6.读取一个字节的数据，<strong>读数据最后结束前无应答(NO ACK)信号</strong>。<br>​	7.产生stop信号。</p>
+<img src="/2024/031321104/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBAd2VpeGluXzQxMzM4MDgx,size_14,color_FFFFFF,t_70,g_se,x_16.png" alt="img" style="zoom:67%;">
+
+<p>​	I2C是单主机多从机，发出的地址和数据对所有slave都是可见的，如果发送的地址和slave的地址匹配，slave就会给master一个应答。在时钟线（SCL）为高电平的时候，一定不能动数据线（SDA）状态，除非是启动或者结束总线。</p>
+<p>优点：I2C支持多主多从；占用的GPIO少，节省资源。有应答机制。<br>缺点：slave不能太多，增加负载电容。半双工通信。</p>
+<h2 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h2><h3 id="设备从属关系"><a href="#设备从属关系" class="headerlink" title="设备从属关系"></a>设备从属关系</h3><p>​	UART没有主从关系；SPI存在主从关系，通过CS片选信号选择从机；IIC也存在主从关系，通过发出的数据地址选择从机。</p>
+<h3 id="通信方式"><a href="#通信方式" class="headerlink" title="通信方式"></a>通信方式</h3><p>​	UART和SPI都是全双工通信，两根数据线。I2C是半双工通信。  SPI和I2C是同步通信方式，UART是异步通信</p>
+<h3 id="传输速度"><a href="#传输速度" class="headerlink" title="传输速度"></a>传输速度</h3><p>​	UART传输速度最慢，SPI比I2C要快，达到几Mbps</p>
+<h3 id="传输距离"><a href="#传输距离" class="headerlink" title="传输距离"></a>传输距离</h3><p>​	I2C弱于UART和SPI，使用上拉电阻（实现线与），抗干扰能力较弱。适合短距离通信。</p>
+<h3 id="通信特征"><a href="#通信特征" class="headerlink" title="通信特征"></a>通信特征</h3><p>​	UART：异步，一帧传输5 6 7 8位，低位先传输。UART需要固定的波特率，两位数据的间隔要相等。<br>​	SPI：同步，允许一位一位传输，允许暂停。从最高位开始传输。<br>​	I2C：同步，一次传输8bit，最高位开始传输。<br>​	SPI和I2C都是同步的，没有波特率的要求。</p>
+<p>未完待续~</p>
 
                 
             </div>
@@ -653,7 +708,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">46k</span>
+                        class="white-color">55.3k</span>
             
             
             

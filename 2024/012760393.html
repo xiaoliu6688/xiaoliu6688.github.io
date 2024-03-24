@@ -5,8 +5,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="计算机体系结构, RayBiiao">
-    <meta name="description" content="超流水线：    通过增加流水线级数来缩短指令执行速度。细化流水，提高主频。用时间换空间。超流水线技术对芯片的工作速度要求比较高，同时硬件系统比较复杂，需要占用较大的芯片的面积，因此超流水线结构在嵌入式RISC处理器中很少采用。
-超标量： ">
+    <meta name="description" content="
+reference
+https://blog.csdn.net/qq_57502075/article/details/131935482?spm=1001.2014.3001.5502
+https://zhuanlan.zhihu.co">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -289,7 +291,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    148
+                    914
                 </div>
                 
 
@@ -314,8 +316,38 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>超流水线：<br>    通过增加流水线级数来缩短指令执行速度。细化流水，提高主频。用时间换空间。超流水线技术对芯片的工作速度要求比较高，同时硬件系统比较复杂，需要占用较大的芯片的面积，因此超流水线结构在嵌入式RISC处理器中很少采用。</p>
-<p>超标量：<br>    一个时钟周期可以发射多条指令，CPU中有一条以上的流水线，每个周期可以完成一条以上的指令。用硬件来换速度。</p>
+                <blockquote>
+<p>reference</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_57502075/article/details/131935482?spm=1001.2014.3001.5502">https://blog.csdn.net/qq_57502075/article/details/131935482?spm=1001.2014.3001.5502</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/601688983">https://zhuanlan.zhihu.com/p/601688983</a></p>
+</blockquote>
+<h3 id="流水线类型"><a href="#流水线类型" class="headerlink" title="流水线类型"></a>流水线类型</h3><p>超流水线：<br>    通过增加流水线级数来缩短指令执行速度。细化流水，提高主频。用时间换空间。超流水线技术对芯片的工作速度要求比较高，同时硬件系统比较复杂，需要占用较大的芯片的面积，因此超流水线结构在嵌入式RISC处理器中很少采用。</p>
+<p>超标量：<br>    一个时钟周期可以获取、译码多条指令，CPU中有一条以上的流水线，每个周期可以完成一条以上的指令。用硬件来换速度。分支预测会预测分支指令的结果，保证获取指令的过程不被中断。进入后续流水段的指令彼此之间有数据相关，需要对指令译码后，先用 <strong>寄存器重命名</strong>消除假相关关系，然后把命名过后的指令分配到”待发射区”（也叫保留站）。</p>
+<p>处理器会同时“监视”待发射区&#x2F;保留站内所有指令的源数据的准备情况，只要源数据可用，指令就会被<strong>“发射”</strong>到功能单元开始执行。一般把处理器这种“监视然后择机发射”的行为称为<strong>“动态调度”</strong>。</p>
+<p>指令执行完后，结果会被按照指令原始顺序排入一个FIFO队列中（也叫做ReOrder Buffer，ROB），这个过程会把乱序执行的指令恢复成原始顺序，被称为“重排序”，处理器每周期提交队头若干条指令的结果，通过这种方式可以实现<strong>“精确中断”</strong>。</p>
+<p>相对于标量流水线，超标量最大的优点的提高了指令并行度，每个周期可以执行多条指令，提高指令的吞吐量。</p>
+<h3 id="数据相关性"><a href="#数据相关性" class="headerlink" title="数据相关性"></a>数据相关性</h3><p>CPU中，一段程序会被编译成一连串的汇编指令，指令与指令之间具有相关性。一条指令的结果会影响或依赖于上条指令的结果。</p>
+<ol>
+<li>写后写 WAW</li>
+</ol>
+<p>​	两条指令都将结果写入同一个目的寄存器。</p>
+<ol start="2">
+<li><p>读后写 WAR</p>
+<p>读指令和写指令的目的寄存器是一样的。</p>
+</li>
+<li><p>写后读RAW</p>
+</li>
+</ol>
+<p>​	真相关，一条指令的源寄存器来自于上条指令写的结果。</p>
+<p><strong>处理器内部实际存在的寄存器称为物理寄存器（Physical Register）</strong>，<strong>指令集中定义的寄存器称为逻辑寄存器（Logical Register）或者架构寄存器（Architecture Register）</strong>，解决相关性的目的是为了程序的并行性。</p>
+<p>对于写后写和读后写相关， 解决办法就是用硬件来管理寄存器的重命名。逻辑寄存器和物理寄存器之间，通过重命名映射表保存映射关系，对于程序中的指令，源寄存器通过映射表找到对应的物理寄存器。</p>
+<p>e.g.</p>
+<img src="/2024/012760393/ef7954cbfc134075922c6745ab44f752.png" alt="img" style="zoom: 33%;">
+
+<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown"><span class="token list punctuation">1.</span> 在R2=R1+R0执行时，重命名映射表将R2映射到了物理寄存器p2上，将R1+R0的结果写到p2中。
+<span class="token list punctuation">2.</span> 在执行第二行指令，对R2逻辑寄存器进行WAW的时候，更新重命名映射表，将R2映射到物理寄存器p4上，然后将R1×R0的结果写到p4中。
+<span class="token list punctuation">3.</span> 执行第三行指令，需要读取R2逻辑寄存器做加法，此时就会去查询重命名映射表，发现R2映射到了p4物理寄存器，所以其实就会去读取p4寄存器的值（R1×R0），然后再做加法。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -693,7 +725,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">46k</span>
+                        class="white-color">55.3k</span>
             
             
             

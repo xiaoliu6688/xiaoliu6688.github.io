@@ -5,12 +5,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="低功耗设计, RayBiiao">
-    <meta name="description" content="低功耗设计时钟频率的增加导致功耗的增加，温度升高带来大规模集成电路的散热问题，导致性能下降。
-功耗和能量是两个不同的概念。能量是一段时间内的消耗，而功率是瞬时的能量。
+    <meta name="description" content="
+reference 
+https://blog.csdn.net/wudpekerlily/article/details/129494440
 
-
-SOC芯片的功耗分为：动态功耗和静态功耗
-动态功耗又分为：翻转功耗（">
+低功耗设计UPF入门数字芯片设计可以粗略分为三个部分：功能、时序、电源。PPA与三者有密切关">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -293,7 +292,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.1k
+                    2.5k
                 </div>
                 
 
@@ -318,7 +317,40 @@ SOC芯片的功耗分为：动态功耗和静态功耗
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="低功耗设计"><a href="#低功耗设计" class="headerlink" title="低功耗设计"></a>低功耗设计</h1><p>时钟频率的增加导致功耗的增加，温度升高带来大规模集成电路的散热问题，导致性能下降。</p>
+                <blockquote>
+<p>reference </p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wudpekerlily/article/details/129494440">https://blog.csdn.net/wudpekerlily/article/details/129494440</a></p>
+</blockquote>
+<h1 id="低功耗设计"><a href="#低功耗设计" class="headerlink" title="低功耗设计"></a>低功耗设计</h1><h3 id="UPF入门"><a href="#UPF入门" class="headerlink" title="UPF入门"></a>UPF入门</h3><p>数字芯片设计可以粗略分为三个部分：功能、时序、电源。PPA与三者有密切关系。</p>
+<h4 id="UPF术语-概念"><a href="#UPF术语-概念" class="headerlink" title="UPF术语&#x2F;概念"></a>UPF术语&#x2F;概念</h4><ul>
+<li><p>PD（Power Domain）</p>
+<p>共用一个电源（VDD，VSS）的一些模块。</p>
+</li>
+</ul>
+<img src="/2024/020534087/558c766706804c7399aec1f5a4cf3729.png" alt="img" style="zoom:50%;">
+
+<img src="/2024/020534087/baed7749efbd4cac8766e30d84f5a542.png" alt="img" style="zoom:50%;">
+
+<ul>
+<li>Supply Nets，Supply Ports，Power Switches</li>
+</ul>
+<p>Supply Nets：可以类比RTL里面的wire，用来定义一根电源线，而且只在声明它的PD中有效。</p>
+<p>Supply Ports：可以类比RTL里面的port，在电路中它们对应的是电源pin。</p>
+<p>Power Switches：这个没有可类比的RTL元素，它就是一个电源开关，其两端电源属于不同的Nets，控制信号来自RTL function电路。</p>
+<img src="/2024/020534087/8aa469dccb9e4283a7e4b8e62465cf35.png" alt="img" style="zoom:50%;">
+
+<ul>
+<li>isolation cell (ISO)</li>
+</ul>
+<p>在用到power switch的多电源域芯片中，ISO是必须用到的单元。原因很简单，可关电的PD的逻辑输出，在power down以后呈现X态，如果不加处理连到always on的逻辑，可能导致功能异常。ISO的功能类似AND和OR（取决于掉电后希望保持1还是0），其中ISO_EN由always on domain的信号驱动,在掉电前会先打开ISO_EN，保证掉电PD的输出都处于确定值，然后再关电；反过来，上电完成后才会关闭ISO_EN，从而保证电路的稳定。</p>
+<p>ISO放在always on电压域，不需要额外的电压线。放在power gated电压域 需要额外添加电压线，但是对于一个输出连接到多个port的情况，比较友好。</p>
+<ul>
+<li>Power State Table（PST）</li>
+</ul>
+<p>用来定义芯片低功耗模式的一张表格，包含power supplies（nets&#x2F;ports）以及它们在不同模式下的状态（on&#x2F;off）</p>
+<img src="/2024/020534087/2f9c3c7353924540847bf453732a9bdd.png" alt="img" style="zoom:50%;">
+
+<h3 id="功耗基础知识"><a href="#功耗基础知识" class="headerlink" title="功耗基础知识"></a>功耗基础知识</h3><p>时钟频率的增加导致功耗的增加，温度升高带来大规模集成电路的散热问题，导致性能下降。</p>
 <p>功耗和能量是两个不同的概念。能量是一段时间内的消耗，而功率是瞬时的能量。</p>
 <img src="/2024/020534087/v2-ea250d565bf82da5061f7cb7687b5252_1440w.webp" alt style="zoom:67%;">
 
@@ -568,13 +600,13 @@ SOC芯片的功耗分为：动态功耗和静态功耗
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2024/02077053.html">
+                <a href="/2024/020534087.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/3daf5ad37ddef9d12d8f0743a163c5d.jpg" class="responsive-img" alt="AXI协议">
+                        <img src="/medias/featureimages/6b69444e908784a7792ac9b4cf55df0.jpg" class="responsive-img" alt="低功耗设计">
                         
-                        <span class="card-title">AXI协议</span>
+                        <span class="card-title">低功耗设计</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -585,27 +617,15 @@ SOC芯片的功耗分为：动态功耗和静态功耗
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-07
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-05
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                    数字前端
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            刘瑞彪
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E6%80%BB%E7%BA%BF%E5%8D%8F%E8%AE%AE/">
-                        <span class="chip bg-color">总线协议</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -833,7 +853,7 @@ SOC芯片的功耗分为：动态功耗和静态功耗
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">46k</span>
+                        class="white-color">55.3k</span>
             
             
             

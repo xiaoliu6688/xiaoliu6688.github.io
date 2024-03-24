@@ -289,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1k
+                    1.5k
                 </div>
                 
 
@@ -357,6 +357,29 @@ ld 	  a5 595(a5)
 jalr  a5 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p><img src="/2024/021950375/image-20240220152550379.png"></p>
+<h2 id="代码调试-DiffTest"><a href="#代码调试-DiffTest" class="headerlink" title="代码调试-DiffTest"></a>代码调试-DiffTest</h2><p>思路：找一个正确的版本作为参考，自己的设计每条指令执行后的结果（寄存器堆和内存的状态）进行对比，不一致就停止执行，报告错误。为了实现Difftest，需要在DUT和REF之间定义一些接口函数。</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token comment">// 在DUT host memory的`buf`和REF guest memory的`addr`之间拷贝`n`字节,</span>
+<span class="token comment">// `direction`指定拷贝的方向, `DIFFTEST_TO_DUT`表示往DUT拷贝, `DIFFTEST_TO_REF`表示往REF拷贝</span>
+<span class="token comment">// 完成将程序的bin文件拷贝到nemu中，大块内存的拷贝</span>
+<span class="token keyword">void</span> <span class="token function">difftest_memcpy</span><span class="token punctuation">(</span><span class="token class-name">paddr_t</span> addr<span class="token punctuation">,</span> <span class="token keyword">void</span> <span class="token operator">*</span>buf<span class="token punctuation">,</span> <span class="token class-name">size_t</span> n<span class="token punctuation">,</span> bool direction<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// `direction`为`DIFFTEST_TO_DUT`时, 获取REF的寄存器状态到`dut`;</span>
+<span class="token comment">// `direction`为`DIFFTEST_TO_REF`时, 设置REF的寄存器状态为`dut`;</span>
+<span class="token comment">// dut的数据顺序 npc和nemu需要一致。</span>
+<span class="token keyword">void</span> <span class="token function">difftest_regcpy</span><span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span>dut<span class="token punctuation">,</span> bool direction<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// 让REF执行`n`条指令</span>
+<span class="token keyword">void</span> <span class="token function">difftest_exec</span><span class="token punctuation">(</span><span class="token class-name">uint64_t</span> n<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// 初始化REF的DiffTest功能</span>
+<span class="token keyword">void</span> <span class="token function">difftest_init</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在nemu中配置相关参数，生成动态库文件<code>ref_so_file</code></p>
+<p>在npc中，需要对动态库文件进行初始化。通过 <strong>动态链接对动态库中的API符号进行解析和重定位，返回他们的函数地址</strong>，调用接口函数对REF进行初始化，将DUT的内存拷贝到REF中，将DUT的寄存器状态也拷贝到REF中，保证REF和DUT处于同样的状态。</p>
+<p>在合适的位置调用REF的步进函数<code>ref_difftest_exec(1)</code>，然后将REF的寄存器堆数据传递到npc中，完成数据的对比，如果一致，则表示执行正确，否则停止执行，并打印错误的结果。</p>
+<p>上面的数据比对是在c一侧，需要将verilog声明的数组通过DPI-C传递到C侧。</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token keyword">extern</span> <span class="token string">"C"</span> <span class="token keyword">void</span> <span class="token function">set_gpr_ptr</span><span class="token punctuation">(</span><span class="token keyword">const</span> svOpenArrayHandle r<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+  cpu_gpr <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">uint64_t</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">(</span>VerilatedDpiOpenVar<span class="token operator">*</span><span class="token punctuation">)</span>r<span class="token punctuation">)</span><span class="token operator">-></span><span class="token function">datap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
 <h2 id="流水线-思考"><a href="#流水线-思考" class="headerlink" title="流水线-思考"></a>流水线-思考</h2><p>发出反压信号stall时，会让整个流水线停顿下来；<br>原因是每级流水的上下游没有握手和反压，当需要反压时，只能跨级反压，并且让所有的寄存器保持不变；</p>
 <p><strong>如果每级流水都有响应的握手信号，就可以进行逐级反压，上面流水线不一定全部停顿下来，可以进一步提高效率</strong></p>
 <h4 id="debug"><a href="#debug" class="headerlink" title="debug"></a>debug</h4><p>实现srlw指令出现的问题：</p>
@@ -743,7 +766,7 @@ jalr  a5 <span aria-hidden="true" class="line-numbers-rows"><span></span><span><
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">46k</span>
+                        class="white-color">55.3k</span>
             
             
             

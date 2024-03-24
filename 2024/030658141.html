@@ -276,7 +276,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    3.8k
+                    7.9k
                 </div>
                 
 
@@ -425,6 +425,175 @@
 <li>确保隔离单元始终处于通电状态</li>
 <li>时钟上的隔离钳位会使时钟树合成和时序收敛变得相当复杂，如果可能，请避免在电源门控模块中生成并在该模块外部使用的时钟。</li>
 </ul>
+<h3 id="5-3-状态保留和恢复的方法"><a href="#5-3-状态保留和恢复的方法" class="headerlink" title="5.3 状态保留和恢复的方法"></a>5.3 状态保留和恢复的方法</h3><p>给定电源开关结构和隔离策略，就可以对逻辑模块进行电源门控。如果不使用保留策略，断电后重新上电，所有状态信息都会丢失。要在上电时恢复其状态，该模块必须从外部源恢复其状态或从复位条件建立其状态。无论哪种情况，所需的时间和功率都可能很大。</p>
+<p>保留状态的寄存器数目，需要根据子系统的特征进行评估。</p>
+<p>多种方法可以保存和恢复电源门控模块的内部状态</p>
+<ul>
+<li>基于软件的读写寄存器</li>
+<li>使用扫描链在片外存储芯片掉电时的状态</li>
+<li>使用保留寄存器保存寄存器的状态</li>
+</ul>
+<p>采用软件方法保留和恢复状态的缺点</p>
+<ul>
+<li>总线阻塞会降低断电和上电的速度</li>
+<li>总线冲突会使得模块保存和恢复状态时间不确定。</li>
+<li>实现起来较为复杂。</li>
+</ul>
+<h4 id="5-3-2-基于扫描链保留状态"><a href="#5-3-2-基于扫描链保留状态" class="headerlink" title="5.3.2 基于扫描链保留状态"></a>5.3.2 基于扫描链保留状态</h4><p>为了DFT而设计的扫描链可以重新用关于执行状态保留，几乎不会增加多余的硬件开销。在断电期间，扫描寄存器像扫描测试一样，输出到片外或片内存储器中，如果位于片内，存储器需要时钟通电。在上电期间，扫描链从存储器加载数据。</p>
+<p>一旦状态被扫描到内存中，整个子系统的电源可以完全断电，无需为保留寄存器 保留时钟开启的电源区域。</p>
+<p>从RTL设计角度来说，存在挑战。在DC之前不会插入和连接扫描触发器，但有必要在综合之前对控制器进行仿真和调试。</p>
+<p>为了实现最快的保存和恢复时间，我们希望使用内存数据总线的所有位宽来保存数据写入内存。意味着扫描链的数量等于内存数据总线的宽度。实际上，扫描链可能太多，无法用于制造测试。但通常我们会使用至少 8 个扫描链，并且可能是 8 的倍数。对于多条的扫描链，需要平衡扫描链的长度，因为这写扫描链都是使用同一个移位使能信号。</p>
+<p>寄存器状态保存和恢复会带来较大功耗，如果使用外部存储器，则 IO 功率可能会很大，即使使用内部存储器，仅仅通过扫描链移动数据就可能需要大量的动态功率。并且可能带来不可接受的IR电压降。</p>
+<p>对于长期睡眠，通过关闭整个子系统可以节省漏电。如果可以使用扫描链恢复状态，对于功耗的节省更加显著。</p>
+<p>下面是4bit的保存数据扫描链示意图，其中一个扫描链比其他扫描链短，一旦扫描链平衡，状态就可以保存在内存中，然后从内存中恢复。</p>
+<p><img src="/2024/030658141/image-20240323200253055.png" alt="image-20240323200253055"></p>
+<p>网表实现之前（插入扫描链），对RTL级进行仿真和验证是一个挑战，但是并非不可克服。</p>
+<p>一种方法是将添加条件代码，这些代码仅在模拟基于扫描保留时才进行编译。该代码进行行为级建模，以验证控制器是否正常运行以及数据是否正确写入存储器和从存储器中读取。</p>
+<h4 id="5-3-2-保留寄存器"><a href="#5-3-2-保留寄存器" class="headerlink" title="5.3.2 保留寄存器"></a>5.3.2 保留寄存器</h4><p>保留寄存器包含一个“影子”寄存器，可以在断电期间保留寄存器状态，并在上电时恢复。与主寄存器不同，影子寄存器需要始终在通电状态。</p>
+<p>下图显示了两个保留寄存器，在每种情况下，主寄存器均有开关电源轨“VDD_SW”供电，CLK，D和RESETN引脚均在主寄存器上运行。影子寄存器始终由电源VDD供电。</p>
+<p>左图中，当SAVE有效时，主寄存器的状态将加载到影子寄存器中。当RESTORE有效时，影子寄存器的状态被加载回主寄存器。右图中，当RETAIN变高时，主寄存器状态加载到影子寄存器中，当RETAIN变低时，影子寄存器状态加载回主寄存器。RETAIN是边沿敏感信号。</p>
+<img src="/2024/030658141/image-20240323203605089.png" alt="image-20240323203605089" style="zoom:50%;">
+
+<p>物理实现中，保留寄存器会带来一定的面积开销，通常为20%或更多。一些保留寄存器包含保护带，以尽可能稳健地将保留状态与电源门控瞬态隔离。在这种情况下，面积开销可能高达 50% 或更多。在具有大量寄存器的设计中，该区域的影响可能很大。</p>
+<p>考虑替代方案。我们可以限制实现仅使用低泄漏、高 VT 寄存器，</p>
+<h4 id="5-3-3-用于保留的电源控制器设计"><a href="#5-3-3-用于保留的电源控制器设计" class="headerlink" title="5.3.3 用于保留的电源控制器设计"></a>5.3.3 用于保留的电源控制器设计</h4><p>控制器必须给出保存和恢复寄存器明确的顺序。影子寄存器可能很慢，需要保证在保存操作时，主寄存器的数据是稳定的。大多数设计人员在执行保存之前停止时钟。当然，保存操作必须在电源关闭之前完成。</p>
+<p>必须先完成恢复操作，然后才能将新值加载到主寄存器。大多数设计人员在还原操作完成之前不会重新启动时钟。</p>
+<p>虽然功率门控控制器在设计中需要一定的注意，但保留寄存器对标准触发器的实际替代可以在实现期间可以通过EDA工具自动完成。</p>
+<p>为了最小化泄漏，时钟和复位树可能在掉电期间关闭。为了防止这些浮动（模拟中的X）信号损坏保留寄存器，保留必须优先于时钟和复位在设计功率门控控制器时，重要的是要理解功率门控库中可用单元的行为，以确保影子寄存器不会因浮动时钟和复位而损坏。</p>
+<h4 id="5-3-4-部分和完全状态保留"><a href="#5-3-4-部分和完全状态保留" class="headerlink" title="5.3.4 部分和完全状态保留"></a>5.3.4 部分和完全状态保留</h4><p>在部分状态保留中，只保存和恢复“架构上可见”的状态。挑战在于非保留寄存器需要在安全、合法和可验证的状态下上电启动。非保留寄存器的典型例子：FIFO、存储器和计数器。这些器件转换成保留寄存器可能非常昂贵。</p>
+<p>深状态和浅状态的概念在确定非保留寄存器时可能有用。浅状态指的是直接控制设计逻辑的寄存器，也就是说，可以绘制为状态机图的设计部分。深状态是指状态机使用的寄存器，但其中包含大量的辅助数据，如内存，计数器和FIFO，通常不会将这些器件作为状态机的一部分。</p>
+<p>对于部分保留，合理的策略可以是保存和恢复浅状态，并且具有用于处理深状态的单独策略。重置深状态寄存器的控制器是一种可能的策略。在恢复时，需要仔细和有选择的使用复位，保证只复位非保留寄存器，不干扰保留寄存器。</p>
+<h4 id="5-3-5-系统级问题和保留"><a href="#5-3-5-系统级问题和保留" class="headerlink" title="5.3.5 系统级问题和保留"></a>5.3.5 系统级问题和保留</h4><p>构成时钟门控使能的所有状态位都需要保留或重新初始化为安全和可重启的条件，以此方式，可以干净地重新生成时钟门控单元锁存器的内容，而不需要向时钟门控单元添加保持。</p>
+<h4 id="5-3-6-状态保留的建议和陷阱"><a href="#5-3-6-状态保留的建议和陷阱" class="headerlink" title="5.3.6 状态保留的建议和陷阱"></a>5.3.6 状态保留的建议和陷阱</h4><h5 id="建议"><a href="#建议" class="headerlink" title="建议"></a>建议</h5><ul>
+<li>如果实现部分保留，则为设计的保留和非保留存储部分提供单独的重置。这允许对上电复位和恢复&#x2F;重新初始化操作进行清晰的验证。</li>
+<li>在实现部分保留时，确保状态机和定序器不依赖于非保留状态，以避免状态相关的死锁或无效状态条件。(The如果必须用非保留状态测试许多保留状态值，则要验证的状态空间可能是巨大的）。</li>
+<li>在专用保留寄存器的面积影响太高的情况下，则重用制造扫描链是一种选择。</li>
+<li>在扫描测试期间，必须使保留控制可控且可观察。</li>
+</ul>
+<h5 id="陷阱"><a href="#陷阱" class="headerlink" title="陷阱"></a>陷阱</h5><ul>
+<li>不良的浪涌电流管理或保留电源噪声可能会损坏保留寄存器，导致重启时出现不安全&#x2F;无效状态。</li>
+<li>部分保留需要更严格的重置和恢复验证，以确保保留&#x2F;恢复状态和重新初始化的非保留状态之间永远不会出现死锁情况。</li>
+<li>影响时钟门控的使能需要保存其状态，以确保接下来的行为正确。</li>
+<li>基于扫描的保存和恢复方法可能使用系统总线来向&#x2F;从存储器传输数据。该总线通常可以具有等待状态;因此，需要注意确保扫描保存&#x2F;恢复控制器可以支持等待状态而没有任何数据丢失。</li>
+</ul>
+<h3 id="5-4-电源门控控制"><a href="#5-4-电源门控控制" class="headerlink" title="5.4 电源门控控制"></a>5.4 电源门控控制</h3><p>有了电源交换结构、隔离策略和保留策略，我们现在可以设计控制掉电和上电顺序的电源控制器</p>
+<h4 id="5-4-1-电源控制时序"><a href="#5-4-1-电源控制时序" class="headerlink" title="5.4.1 电源控制时序"></a>5.4.1 电源控制时序</h4><p>不需要保存状态情况下，关闭电源进行下面操作。</p>
+<ul>
+<li>刷新正在进行的任何总线或外部操作</li>
+<li>在适当的阶段停止时钟，以最大限度地减少漏入电源门控区的电流</li>
+<li>置位隔离控制信号，将所有输出置于安全状态。</li>
+<li>对模块进行复位，使其在复位条件下上电</li>
+<li>置位电源门控控制信号，使模块掉电</li>
+</ul>
+<p>在恢复电源时，进行下面操作</p>
+<ul>
+<li>使电源门控控制信号无效，让模块上电。</li>
+<li>根据控制涌浪电流的方法和技术，选择对多个控制信号排序，分阶段上电。</li>
+<li>取消复位有效，确保门控上电后的初始化。</li>
+<li>取消隔离控制信号有效，恢复输出</li>
+<li>重新启动时钟，无毛刺且不违反最小脉宽设计约束</li>
+</ul>
+<img src="/2024/030658141/image-20240324104727581.png" alt="image-20240324104727581" style="zoom:67%;">
+
+<img src="/2024/030658141/image-20240324110003813.png" alt="image-20240324110003813" style="zoom:67%;">
+
+<h4 id="5-4-2-握手协议"><a href="#5-4-2-握手协议" class="headerlink" title="5.4.2 握手协议"></a>5.4.2 握手协议</h4><p>电源门控上电和掉电需要时间，电源门控切换结构必须限制电压尖峰（可能会破坏保留寄存器或其他上电模块），大多数设计通过在上电期间限制电流来实现这一点，从而限制电压上升到其最终值的速率。</p>
+<p>电源控制器必须适应此过程，它必须等到加电完成后才能发出restore。也就是说，它必须在通电和恢复时插入延迟。最简单的方法是在控制时序中加入一个固定延迟。计数器计数到足够周期以满足上电和掉电时间。但是，在RTL中嵌入这样的时间常数将RTL绑定到特定交换结构实现的定时。结果是IP的便携性或可重复使用性明显降低。</p>
+<p>因此，建议使用req-ack握手来控制电源切换结构。</p>
+<img src="/2024/030658141/image-20240324112423023.png" alt="image-20240324112423023" style="zoom:67%;">
+
+<p>电源控制器发出N_PWR_REQ以关闭电源交换结构。交换结构负责在电源完全关闭时返回N_PWR_ACK。上电时，控制器解除N_PWR_ACK以打开交换结构。当交换结构完全打开并且可以安全进行时，交换结构解除N_PWR_ACK。之后按照，RESET和ISO的时序发出信号。</p>
+<p>在电源控制器中，电源的ACK信号通常是异步的，需要将该信号同步到该时钟域才可以使用。</p>
+<h4 id="5-4-3-电源门控控制器的建议和缺陷"><a href="#5-4-3-电源门控控制器的建议和缺陷" class="headerlink" title="5.4.3 电源门控控制器的建议和缺陷"></a>5.4.3 电源门控控制器的建议和缺陷</h4><h5 id="建议-1"><a href="#建议-1" class="headerlink" title="建议"></a>建议</h5><ul>
+<li>设计具有用于电源门控控制的请求和确认握手的控制器</li>
+<li>需要设计同步器确保安全的唤醒时序</li>
+</ul>
+<h5 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h5><ul>
+<li>一种关键情况是，控制器在掉电后立即尝试对模块上电，而实际上掉电尚未完成。也就是说，上电序列在电源门控结构仅部分断电时开始。设计人员在设计功率控制器时需要仔细考虑这种情况。请记住，关断时间取决于半导体工艺和温度。</li>
+</ul>
+<h3 id="5-5-电源门控设计与验证-RTL仿真"><a href="#5-5-电源门控设计与验证-RTL仿真" class="headerlink" title="5.5 电源门控设计与验证-RTL仿真"></a>5.5 电源门控设计与验证-RTL仿真</h3><p>接下来我们考虑在RTL级验证电源门控电路的问题。这是一个挑战，因为硬件描述语言（HDL）不提供用于在RTL级描述电源连接的机制。为了模拟电源门控，我们需要扩展Verilog，通过修改代码或使用一组单独的命令来描述电源连接和电源开关。</p>
+<p>同一电源格式（Unified Power Format，UPF）定义了用于电源门控和仿真的语言格式和语义。UPF标准的大部分内容都涉及电源策略的实现。</p>
+<h4 id="5-5-1-推断RTL中电源门控的行为"><a href="#5-5-1-推断RTL中电源门控的行为" class="headerlink" title="5.5.1 推断RTL中电源门控的行为"></a>5.5.1 推断RTL中电源门控的行为</h4><p>第一步是模拟掉电块的影响。</p>
+<p>UPF提供了一种机制（一组tcl命令），用于定义电源域（一组Verilog模块）和电源域的一组电源（电源和接地电源网）。</p>
+<p>下图显示了要模拟设计的电源连接。Verilog模块my_module（实例U1）有一个header开关，用于控制模块中所有逻辑的电源。功率门控控制器解除断言pwr_req以使模块掉电，并且断言pwr_req以使模块上电。信号pwr_ack是表示交换机已完成上电&#x2F;掉电的确认信号。在RTL级别，它只是一个缓冲版本的req。在门级网表中，它将具有真实的延迟。具体的UPF命令如下</p>
+<img src="/2024/030658141/image-20240324172644978.png" alt="image-20240324172644978" style="zoom:67%;">
+
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">create_power_domain top <span class="token operator">-</span>include_scope
+create_power_domain top_power_domain <span class="token operator">-</span>include_scope
+
+create_supply_net VDD_SOC <span class="token operator">-</span>domain top_power_domain
+connect_supply_net VDD_SOC <span class="token operator">-</span>domain top_power_domain
+
+create_supply_net VSS_SOC <span class="token operator">-</span>domain top_power_domain
+connect_supply_net VSS_SOC <span class="token operator">-</span>domain top_power_domain
+
+set_scope U1
+create_power_domain my_power_domain <span class="token operator">-</span>include_scope
+
+create_supply_net sw_vdd <span class="token operator">-</span>domain my_power_domain
+
+set_domain_supply_net my_power_domain 
+	<span class="token operator">-</span>primary_power_net sw_vdd 
+	<span class="token operator">-</span>primary_ground_net <span class="token operator">/</span>top<span class="token operator">/</span>VSS_SOC
+	
+
+<span class="token comment">#create_power_switch block1_sw   -domain block1  </span>
+<span class="token comment">#	-input_supply_port &#123;&lt;PIN_NAME> VDD&#125; </span>
+<span class="token comment">#	-output_supply_port &#123;&lt;PIN_NAME> VDD_1&#125; </span>
+<span class="token comment">#	-control_port &#123;&lt;PIN_NAME> inst_always_on/pwr_ctrl&#125; </span>
+<span class="token comment">#	-on_state     &#123;&lt;state_name> &lt;input_pin_name> &lt;boolean_expression>&#125;</span>
+<span class="token comment">#	-off_state    &#123;&lt;state_name> &lt;boolean_expression>&#125;</span>
+                        
+create_power_switch my_power_switch 
+	<span class="token operator">-</span>domain my_power_domain
+	<span class="token operator">-</span>input_supply_port <span class="token punctuation">&#123;</span>my_sw_input_port <span class="token operator">/</span>top<span class="token operator">/</span>VDD_SOC<span class="token punctuation">&#125;</span>
+	<span class="token operator">-</span>output_supply_port <span class="token punctuation">&#123;</span>my_sw_output sw_vdd<span class="token punctuation">&#125;</span>
+	<span class="token operator">-</span>control_port <span class="token punctuation">&#123;</span>my_sw_control <span class="token operator">/</span>top<span class="token operator">/</span>pwr_req<span class="token punctuation">&#125;</span>
+	<span class="token operator">-</span>ack_port <span class="token punctuation">&#123;</span>my_ack_port <span class="token operator">/</span>top<span class="token operator">/</span>pwr_ack<span class="token punctuation">&#125;</span>
+	<span class="token operator">-</span>on_state <span class="token punctuation">&#123;</span>pwr_on_state my_input_port
+				<span class="token punctuation">&#123;</span>my_sw_control_port <span class="token operator">==</span> 1<span class="token punctuation">&#125;</span> <span class="token punctuation">&#125;</span>
+	<span class="token operator">-</span>off_state <span class="token punctuation">&#123;</span>pwr_off_state <span class="token punctuation">&#123;</span>my_sw_control <span class="token operator">==</span> 0<span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>当pwr_req拉低时（请求关断），开关会关闭所有元件的电源，也就是所有寄存器的输出为x，U1的输出为x。与此同时，pwr_ack信号拉低，通知电源控制器电源已经完全关闭。UPF支持为应答信号分配延迟，但对于RTL仿真，我们使用默认的零延迟。</p>
+<p>当pwr_req拉高时，开关将电源接通U1的所有元件，所有寄存器恢复其正常操作，与此同时，将pwr_ack设置为高，通知电源控制器电源已完全打开。</p>
+<p>对于不支持UPF的仿真器，可以使用行为级代码模拟电源门控的行为。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span> <span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+	current_state <span class="token operator">&lt;=</span> <span class="token number">4'b0101</span><span class="token punctuation">;</span>
+<span class="token keyword">else</span>
+	current_state <span class="token operator">&lt;=</span> next_state<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token constant">`ifdef</span> RTL_PG_EMULATE
+<span class="token keyword">wire</span> sw_vdd<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> sw_vdd <span class="token operator">=</span> pwr_req <span class="token operator">&amp;</span> pwr_ack<span class="token punctuation">;</span>
+<span class="token constant">`endif</span>
+<span class="token important">always @</span> <span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst
+<span class="token constant">`ifdef</span> RTL_PG_EMULATE
+	<span class="token keyword">or</span> <span class="token keyword">negedge</span> sw_vdd
+<span class="token constant">`endif</span> <span class="token punctuation">)</span> <span class="token keyword">begin</span>
+<span class="token constant">`ifdef</span> RTL_PG_EMULATE
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>sw_vdd<span class="token punctuation">)</span>
+		current_state <span class="token operator">&lt;=</span> <span class="token number">4'bXXXX</span><span class="token punctuation">;</span>
+	<span class="token keyword">else</span>
+<span class="token constant">`endif</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+		current_state <span class="token operator">&lt;=</span> <span class="token number">4'b0101</span><span class="token punctuation">;</span>
+	<span class="token keyword">else</span>
+		current_state <span class="token operator">&lt;=</span> next_state<span class="token punctuation">;</span>
+	<span class="token keyword">end</span>
+<span class="token keyword">end</span>
+<span class="token comment">// 在掉电的瞬间，current_state输出x态。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="5-5-2-推断RTL中的电源门控和保留的行为"><a href="#5-5-2-推断RTL中的电源门控和保留的行为" class="headerlink" title="5.5.2 推断RTL中的电源门控和保留的行为"></a>5.5.2 推断RTL中的电源门控和保留的行为</h4><p>对于使用保留的设计， 下一步是修改RTL建模保留状态的行为。</p>
+<ul>
+<li>在保存操作之前，保留状态变量初始化为x</li>
+<li>在SAVE操作时，采样寄存器的状态保存到 保留寄存器。</li>
+<li>电源门控时，强制所有的寄存器输出x</li>
+<li>在RESTORE操作时，从保留寄存器的值恢复到主寄存器</li>
+<li>建模时，确保电源门控、保持、复位和时钟的优先级顺序。</li>
+</ul>
+<p>UPF提供命令来指定保留寄存器的“always on”电源网络以及保存和恢复控制信号。默认情况下，set_retention命令会将电源域中的所有寄存器转换为保留寄存器。</p>
 
                 
             </div>
@@ -786,7 +955,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">46k</span>
+                        class="white-color">55.3k</span>
             
             
             
