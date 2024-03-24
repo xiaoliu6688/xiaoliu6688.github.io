@@ -5,10 +5,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="电路设计（RTL）, RayBiiao">
-    <meta name="description" content="
-课题组项目 后端指导前端 log
-在做pt eco的时候，有个模块lms_delay的路径修复好几次都不成功。report_timing发现组合逻辑的路径太长造成的。检查RTL代码确实是先进行了减法 又进行了乘法，中间没有打拍。
-采取的方">
+    <meta name="description" content="优化流水线打拍带来的功耗
+reference 
+https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.5501
+
+流水线中，需要对一些">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -291,7 +292,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2k
+                    2.3k
                 </div>
                 
 
@@ -316,7 +317,20 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <ul>
+                <h3 id="优化流水线打拍带来的功耗"><a href="#优化流水线打拍带来的功耗" class="headerlink" title="优化流水线打拍带来的功耗"></a>优化流水线打拍带来的功耗</h3><blockquote>
+<p>reference </p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.5501">https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.5501</a></p>
+</blockquote>
+<p>流水线中，需要对一些数据进行打拍子以完成数据对齐。如果打拍子的周期太多，会产生较多无用的功耗。可以采用比较巧妙的方法，将输入数据写入类似FIFO的存储器中，不让数据流水，可以大大降低功耗。如下图所示，通过采用流水方式进行打拍，以打4拍为例进行说明。</p>
+<img src="/2024/012448005/image-20240324213925897.png" alt="image-20240324213925897" style="zoom:50%;">
+
+<p>针对功耗进行优化</p>
+<img src="/2024/012448005/image-20240324214034095.png" alt="image-20240324214034095" style="zoom:50%;">
+
+<img src="/2024/012448005/image-20240324214052705.png" alt="image-20240324214052705" style="zoom:50%;">
+
+<p>其中，valid_out信号是valid_in信号打4拍得到的。通过这种方式，输入的数据不需要一级一级的流水到输出，只需要在合适的时机输出结果即可。在课题组的项目中，chirp状态机发出很多状态，很多信号需要对齐，可以使用这种方式完成。</p>
+<ul>
 <li><p>课题组项目 后端指导前端 log</p>
 <p>在做pt eco的时候，有个模块lms_delay的路径修复好几次都不成功。report_timing发现组合逻辑的路径太长造成的。检查RTL代码确实是先进行了减法 又进行了乘法，中间没有打拍。</p>
 <p>采取的方式：在减法和乘法之间，打一拍，而且没有影响功能。</p>
@@ -829,7 +843,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">53.3k</span>
+                        class="white-color">53.7k</span>
             
             
             

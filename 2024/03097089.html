@@ -278,7 +278,7 @@ set_clo">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    862
+                    1k
                 </div>
                 
 
@@ -403,6 +403,25 @@ set_multicycle_path <span class="token operator">-</span>from CLK1 <span class="
 <img src="/2024/03097089/image-20240309221510712.png" alt="image-20240309221510712" style="zoom:67%;">
 
 <p>hold time 时序很容易满足。</p>
+<h3 id="SoC时钟分频"><a href="#SoC时钟分频" class="headerlink" title="SoC时钟分频"></a>SoC时钟分频</h3><p><img src="/2024/03097089/5394e30d991b4bfeb3f61ebeee707d21.png" alt="img"></p>
+<p>首先创建时钟</p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">create_clock <span class="token operator">-</span>period 10 <span class="token punctuation">[</span>get_pins U_PLL<span class="token operator">/</span>OUT0<span class="token punctuation">]</span> <span class="token operator">-</span>name CLKa
+create_clock <span class="token operator">-</span>period 12 <span class="token punctuation">[</span>get_pins U_PLL<span class="token operator">/</span>OUT1<span class="token punctuation">]</span> <span class="token operator">-</span>name CLKb<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>产生派生时钟CLKr</p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">create_generated_clock <span class="token operator">-</span>name CLKr <span class="token punctuation">[</span>get_pins U_DIVr<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_PLL<span class="token operator">/</span>OUT0<span class="token punctuation">]</span> <span class="token operator">-</span>master_clock CLKa <span class="token operator">-</span>divide_by 4<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>产生派生时钟CLKmx</p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">create_generated_clock <span class="token operator">-</span>name CLKm0 <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_PLL<span class="token operator">/</span>OUT0<span class="token punctuation">]</span> <span class="token operator">-</span>divide_by 3 <span class="token operator">-</span>combinational <span class="token operator">-</span>master_clock CLKa <span class="token punctuation">[</span>get_pins U_MUX<span class="token operator">/</span>OUT<span class="token punctuation">]</span>
+create_generated_clock <span class="token operator">-</span>name CLKm1 <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_PLL<span class="token operator">/</span>OUT1<span class="token punctuation">]</span> <span class="token operator">-</span>divide_by 4 <span class="token operator">-</span>combinational <span class="token operator">-</span>master_clock CLKb <span class="token punctuation">[</span>get_pins U_MUX<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>add<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>产生派生时钟CLKdx （<strong>不要忘记加-add，否则覆盖上条命令</strong>）</p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">create_generated_clock <span class="token operator">-</span>name CLKd0 <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_MUX<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>divide_by 3 <span class="token operator">-</span>combinational <span class="token operator">-</span>master_clock CLKm0 <span class="token punctuation">[</span>get_pins U_DIV<span class="token operator">/</span>OUT<span class="token punctuation">]</span>
+create_generated_clock <span class="token operator">-</span>name CLKd1 <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_MUX<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>divide_by 3 <span class="token operator">-</span>combinational <span class="token operator">-</span>master_clock CLKm1 <span class="token punctuation">[</span>get_pins U_DIV<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>add<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>声明物理互斥关系</p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_group <span class="token operator">-</span>physically_exclusive <span class="token operator">-</span>group <span class="token punctuation">&#123;</span>CLKm0 CLKd0<span class="token punctuation">&#125;</span> <span class="token operator">-</span>group <span class="token punctuation">&#123;</span>CLKm1 CLKd1<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 
                 
             </div>
@@ -569,11 +588,23 @@ set_multicycle_path <span class="token operator">-</span>from CLK1 <span class="
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            刘瑞彪
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="post-category">
+                                    读书笔记
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E4%BD%8E%E5%8A%9F%E8%80%97%E5%9C%A3%E7%BB%8F/">
+                        <span class="chip bg-color">低功耗圣经</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -752,7 +783,7 @@ set_multicycle_path <span class="token operator">-</span>from CLK1 <span class="
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">53.3k</span>
+                        class="white-color">53.7k</span>
             
             
             
