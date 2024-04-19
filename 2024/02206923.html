@@ -500,11 +500,11 @@ create_clock <span class="token operator">-</span>name clk <span class="token op
 <span class="token comment">#CTS综合后的时序约束</span>
 <span class="token comment">#CTS后，时钟clock的transition上升、下降时间，内部延迟时间和skew时钟偏斜时间都已经确定</span>
 set_clock_latency <span class="token operator">-</span>source <span class="token operator">-</span>max 4 $<span class="token variable">CLOCK</span> 
-set_propagated__clock $<span class="token variable">CLOCK</span> 
+set_propagated_clock $<span class="token variable">CLOCK</span> 
 set_clock_uncertainty <span class="token operator">-</span>setup 0.2 $ CLOCK <span class="token operator">/</span><span class="token operator">/</span> jitter<span class="token operator">+</span>margin 
 
 report_clock <span class="token comment"># -skew检查时钟约束</span>
-report_port <span class="token operator">-</span>verbose  <span class="token comment"># verbose 详细的输出</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+report_clock <span class="token operator">-</span>verbose  <span class="token comment"># verbose 详细的输出</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h4 id="输入输出约束"><a href="#输入输出约束" class="headerlink" title="输入输出约束"></a>输入输出约束</h4><h5 id="约束输入-输出延迟"><a href="#约束输入-输出延迟" class="headerlink" title="约束输入&#x2F;输出延迟"></a>约束输入&#x2F;输出延迟</h5><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token comment"># 一般设置外部延迟值占周期的60%</span>
 <span class="token comment">#设置输入延迟</span>
@@ -1014,7 +1014,7 @@ synoff <span class="token comment">#取消 工艺库lib文件中显示的底色<
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">53.7k</span>
+                        class="white-color">55.3k</span>
             
             
             

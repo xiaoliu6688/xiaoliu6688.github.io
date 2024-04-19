@@ -333,7 +333,7 @@
 </ol>
 <p>​	以下的测试都是基于Verilog-XL</p>
 <ul>
-<li><h4 id="case语句和多if-else-if语句"><a href="#case语句和多if-else-if语句" class="headerlink" title="case语句和多if else if语句"></a>case语句和多if else if语句</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// case                         // if else-if                    </span>
+<li><h4 id="case语句和多if-else-if语句"><a href="#case语句和多if-else-if语句" class="headerlink" title="case语句和多if else if语句"></a>case语句和多if else if语句</h4><pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token comment">// case                         // if else-if                    </span>
 <span class="token important">always @</span>（<span class="token operator">*</span>）<span class="token keyword">begin</span>                <span class="token important">always @</span>（<span class="token operator">*</span>）<span class="token keyword">begin</span>                
     <span class="token function">case</span><span class="token punctuation">(</span>sel<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>                  <span class="token function">if</span><span class="token punctuation">(</span>sel <span class="token operator">==</span> <span class="token number">2'b00</span><span class="token punctuation">)</span>             
         <span class="token number">2'b00</span><span class="token punctuation">:</span> out <span class="token operator">=</span> a<span class="token punctuation">;</span>                 out <span class="token operator">=</span> a<span class="token punctuation">;</span>                
@@ -343,30 +343,28 @@
         <span class="token keyword">default</span> <span class="token punctuation">:</span> out <span class="token operator">=</span> a<span class="token punctuation">;</span>              out <span class="token operator">=</span> c<span class="token punctuation">;</span>                
     <span class="token keyword">endcase</span>                         <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>sel <span class="token operator">==</span> <span class="token number">2'b11</span><span class="token punctuation">)</span>             
 <span class="token keyword">end</span>                                     out <span class="token operator">=</span> d<span class="token punctuation">;</span>                
-                                   <span class="token keyword">end</span>      
-</code></pre>
+                                   <span class="token keyword">end</span>      <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p>测试案例：8选1数据选择器，</p>
 <p>仿真发现：基于case的多路选择器，CPU仿真时间更短。</p>
 </li>
-<li><h4 id="带有begin-end和不带begin-end"><a href="#带有begin-end和不带begin-end" class="headerlink" title="带有begin end和不带begin end"></a>带有begin end和不带begin end</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
+<li><h4 id="带有begin-end和不带begin-end"><a href="#带有begin-end和不带begin-end" class="headerlink" title="带有begin end和不带begin end"></a>带有begin end和不带begin end</h4><pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
 <span class="token keyword">begin</span>
-    <span class="token function">if</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span> c <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
-    <span class="token keyword">else</span>  c <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
+	<span class="token function">if</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span> c <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
+	<span class="token keyword">else</span>  c <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
-    <span class="token function">if</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span> c <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
-    <span class="token keyword">else</span>  c <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
-</code></pre>
-</li>
+	<span class="token function">if</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span> c <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
+	<span class="token keyword">else</span>  c <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
 </ul>
-<p>​		测试结果：nobegin表述的内存利用率和仿真时间要优一些。</p>
+<p>​	测试结果：nobegin表述的内存利用率和仿真时间要优一些。</p>
 <ul>
 <li><h4 id="define-和-parameters"><a href="#define-和-parameters" class="headerlink" title="&#96;define 和 parameters"></a>&#96;define 和 parameters</h4><img src="/2023/11224275/define1.jpg" alt="define&amp;parameters"></li>
 </ul>
-<p>​		parameters要更好一些。</p>
+<p>​	parameters要更好一些。</p>
 <ul>
-<li><h4 id="always-group和nogroup"><a href="#always-group和nogroup" class="headerlink" title="always group和nogroup"></a>always group和nogroup</h4><pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+<li><h4 id="always-group和nogroup"><a href="#always-group和nogroup" class="headerlink" title="always group和nogroup"></a>always group和nogroup</h4><pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> <span class="token keyword">begin</span>
         out1 <span class="token operator">&lt;=</span> a<span class="token punctuation">;</span>
         out2 <span class="token operator">&lt;=</span> b<span class="token punctuation">;</span>
@@ -385,8 +383,8 @@
 <span class="token keyword">end</span>
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span>en<span class="token punctuation">)</span> out4 <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
-<span class="token keyword">end</span>
-</code></pre>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p><img src="/2023/11224275/image-20231122100101428.png" alt="group&amp;nogroup"></p>
 <p>group的仿真时间明显缩短了。</p>
 </li>
@@ -397,18 +395,18 @@
 <ul>
 <li>DC时综合的原语</li>
 </ul>
-<pre class=" language-tcl"><code class="language-tcl"><span class="token operator">/</span><span class="token operator">/</span> synopsys translate_off
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token operator">/</span><span class="token operator">/</span> synopsys translate_off
 忽略该部分的代码，DC时不会进行转移。
 <span class="token operator">/</span><span class="token operator">/</span> synopsys translate_on
-忽略的部分在前仿时是可以发挥作用的，如果错误使用translate_off on语句，会导致前仿和后仿的结果不一致。
-</code></pre>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token comment" spellcheck="true">// 小心使用translate off on</span>
+忽略的部分在前仿时是可以发挥作用的，如果错误使用translate_off on语句，会导致前仿和后仿的结果不一致。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token comment">// 小心使用translate off on</span>
 ex<span class="token punctuation">.</span>带两个异步复位信号的D触发器
 一般的实现方式如下：
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst <span class="token keyword">or</span> <span class="token keyword">negedge</span> nset<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// asyn</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token comment">// asyn</span>
         q <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nset<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// asyn</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nset<span class="token punctuation">)</span> <span class="token comment">// asyn</span>
         q <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
     <span class="token keyword">else</span> 
         q <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
@@ -419,52 +417,54 @@ ex<span class="token punctuation">.</span>带两个异步复位信号的D触发�
     加入translate on off语句。配合<span class="token keyword">force</span> 和 relase
 正确code如下：
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst <span class="token keyword">or</span> <span class="token keyword">negedge</span> nset<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// asyn</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token comment">// asyn</span>
         q <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nset<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// asyn</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nset<span class="token punctuation">)</span> <span class="token comment">// asyn</span>
         q <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
     <span class="token keyword">else</span> 
         q <span class="token operator">&lt;=</span> d<span class="token punctuation">;</span>
 <span class="token keyword">end</span>
-<span class="token comment" spellcheck="true">// synopsys translate_off</span>
+<span class="token comment">// synopsys translate_off</span>
 <span class="token important">always @</span><span class="token punctuation">(</span>nrst <span class="token keyword">or</span> nset<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span>nrst <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>nset<span class="token punctuation">)</span>   <span class="token keyword">force</span> q <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
     <span class="token keyword">else</span>                <span class="token keyword">release</span> q<span class="token punctuation">;</span>
 <span class="token keyword">end</span>
-<span class="token comment" spellcheck="true">// synopsys translate_on</span>
+<span class="token comment">// synopsys translate_on</span>
 该代码可以保证，在nrst撤离时，nset如果为<span class="token number">0</span>，q输出结果为<span class="token number">1</span>；这是在前仿时需要加入的特殊语句，并加上原语。在实际综合过程中，不会被综合。保证了前仿和实际流片的结果完全一致。
 
-在工艺库中，有时钟，异步复位和异步置数的端口，也就是说<span class="token important">always</span>块中的敏感列表，最多可以有三个。但是不能是同时<span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> clk。一个信号不能依赖两个边沿。
-</code></pre>
+在工艺库中，有时钟，异步复位和异步置数的端口，也就是说<span class="token important">always</span>块中的敏感列表，最多可以有三个。但是不能是同时<span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> clk。一个信号不能依赖两个边沿。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
 <ul>
 <li><p>verilog调试</p>
 <p>bg：verilog中的参数可以用 &#96;define和parameter指定，这种方式必须要求我们在编译前修改好，编译后就不能再修改了。但是为了节省编译时间，可以使用 $test$plusargs和$value$plusargs来指定。</p>
 </li>
 </ul>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token constant">`timescale</span> <span class="token number">1</span>ns<span class="token operator">/</span><span class="token number">1</span>ps
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token constant">`timescale</span> <span class="token number">1</span>ns<span class="token operator">/</span><span class="token number">1</span>ps
 <span class="token keyword">module</span> tb<span class="token punctuation">;</span>
 <span class="token keyword">reg</span><span class="token punctuation">[</span><span class="token number">255</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> testname<span class="token punctuation">;</span>
 <span class="token keyword">initial</span> <span class="token keyword">begin</span>
-<span class="token property">$display</span><span class="token punctuation">(</span><span class="token string">"**********************RESULT IS BELOW*********************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token function">if</span><span class="token punctuation">(</span><span class="token property">$test</span><span class="token property">$plusargs</span><span class="token punctuation">(</span><span class="token string">"TAISHAN"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token property">$display</span><span class="token punctuation">(</span><span class="token string">"****************TAISHAN is selected******************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token kernel-function property">$display</span><span class="token punctuation">(</span><span class="token string">"**********************RESULT IS BELOW*********************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">if</span><span class="token punctuation">(</span><span class="token kernel-function property">$test</span><span class="token kernel-function property">$plusargs</span><span class="token punctuation">(</span><span class="token string">"TAISHAN"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token kernel-function property">$display</span><span class="token punctuation">(</span><span class="token string">"****************TAISHAN is selected******************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">else</span>
-<span class="token property">$display</span><span class="token punctuation">(</span><span class="token string">"**********************$test$plusargs FAIL**************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token property">$value</span><span class="token property">$plusargs</span><span class="token punctuation">(</span><span class="token string">"TESTNAME=%s"</span><span class="token punctuation">,</span> testname<span class="token punctuation">[</span><span class="token number">255</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> 
+<span class="token kernel-function property">$display</span><span class="token punctuation">(</span><span class="token string">"**********************$test$plusargs FAIL**************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token kernel-function property">$value</span><span class="token kernel-function property">$plusargs</span><span class="token punctuation">(</span><span class="token string">"TESTNAME=%s"</span><span class="token punctuation">,</span> testname<span class="token punctuation">[</span><span class="token number">255</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> 
  <span class="token keyword">begin</span> 
- <span class="token property">$display</span><span class="token punctuation">(</span><span class="token string">"*****************Running test %0s.********************"</span><span class="token punctuation">,</span> testname<span class="token punctuation">)</span><span class="token punctuation">;</span> 
+ <span class="token kernel-function property">$display</span><span class="token punctuation">(</span><span class="token string">"*****************Running test %0s.********************"</span><span class="token punctuation">,</span> testname<span class="token punctuation">)</span><span class="token punctuation">;</span> 
  <span class="token keyword">end</span>
  <span class="token keyword">else</span>
- <span class="token property">$display</span><span class="token punctuation">(</span><span class="token string">"**********************$value$plusargs FAIL**************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token property">$finish</span><span class="token punctuation">;</span>
+ <span class="token kernel-function property">$display</span><span class="token punctuation">(</span><span class="token string">"**********************$value$plusargs FAIL**************"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token kernel-function property">$finish</span><span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 <span class="token keyword">endmodule</span>
 
 使用方式：
 <span class="token number">1</span><span class="token punctuation">.</span>	simv
 <span class="token number">2</span><span class="token punctuation">.</span>	simv<span class="token operator">+</span>TATSHAN
-<span class="token number">3</span><span class="token punctuation">.</span>	simv<span class="token operator">+</span>TAISHAN<span class="token operator">+</span>TESTNAME<span class="token operator">=</span>HUASHAN
-</code></pre>
+<span class="token number">3</span><span class="token punctuation">.</span>	simv<span class="token operator">+</span>TAISHAN<span class="token operator">+</span>TESTNAME<span class="token operator">=</span>HUASHAN<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p>在仿真时，0时刻会执行一些系统函数，有些数据没有准备好，导致发生系统仿真错误，因此，可以在代码中初始化变量的值。</p>
 <p><img src="/2023/11224275/image-20240203213035815.png"></p>
 <p><img src="/2023/11224275/image-20240203213107944.png"></p>
@@ -846,7 +846,7 @@ ex<span class="token punctuation">.</span>带两个异步复位信号的D触发�
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">53.7k</span>
+                        class="white-color">55.3k</span>
             
             
             

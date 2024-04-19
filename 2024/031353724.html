@@ -5,8 +5,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="AES加解密算法IP, RayBiiao">
-    <meta name="description" content="加密算法概念一个密码系统的加密密钥和解密密钥相同，或者虽然不相同但是由其中的任意一个可以很容易地推导出另一个，则称该密码系统采用的是对称密码体制。优点是 加解密速度快，安全系数不高。AES是对称密钥体制算法。
-如果一个密码系统的加密密钥和解">
+    <meta name="description" content="
+reference
+https://www.cnblogs.com/xzj8023tp/p/12970790.html
+
+加密算法概念一个密码系统的加密密钥和解密密钥相同，或者虽然不相同但是由其中的任意一个可以很容易地推导出另一个，则称该">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -276,7 +279,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.1k
+                    1.3k
                 </div>
                 
 
@@ -301,9 +304,20 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="加密算法概念"><a href="#加密算法概念" class="headerlink" title="加密算法概念"></a>加密算法概念</h2><p>一个密码系统的加密密钥和解密密钥相同，或者虽然不相同但是由其中的任意一个可以很容易地推导出另一个，则称该密码系统采用的是对称密码体制。优点是 <strong>加解密速度快</strong>，安全系数不高。AES是对称密钥体制算法。</p>
+                <blockquote>
+<p>reference</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xzj8023tp/p/12970790.html">https://www.cnblogs.com/xzj8023tp/p/12970790.html</a></p>
+</blockquote>
+<h2 id="加密算法概念"><a href="#加密算法概念" class="headerlink" title="加密算法概念"></a>加密算法概念</h2><p>一个密码系统的加密密钥和解密密钥相同，或者虽然不相同但是由其中的任意一个可以很容易地推导出另一个，则称该密码系统采用的是对称密码体制。优点是 <strong>加解密速度快</strong>，安全系数不高。AES是对称密钥体制算法。</p>
 <p>如果一个密码系统的加密密钥和解密密钥不同，并且由加密密钥推导出解密密钥(或者由解密密钥推导出加密密钥)是计算上不可行的，则称该密码系统采用的是非对称密码体制。采用非对称密码体制的每个用户都有一对选定的密钥，其中一个是可以公开的，一个由用户自己秘密保存。RSA是非对称加密算法的一种。优点是安全系数高，可以方便、安全的实现数字签名和验证。</p>
-<h4 id="AES加密算法"><a href="#AES加密算法" class="headerlink" title="AES加密算法"></a>AES加密算法</h4><p>AES算法是作用在有限域（2^8）,该域中的元素是由8bit组成的字节。它们可以通过异或做加法运算，也可以通过某种方式做乘法运算，而且每一个字节都有逆元。</p>
+<p>AES算法在明文加密时，需要将整个明文分组，每组16个字节。</p>
+<h4 id="AES加密算法两种模式ECB和CBC"><a href="#AES加密算法两种模式ECB和CBC" class="headerlink" title="AES加密算法两种模式ECB和CBC"></a>AES加密算法两种模式ECB和CBC</h4><h5 id="ECB模式"><a href="#ECB模式" class="headerlink" title="ECB模式"></a>ECB模式</h5><p>相同的输入产生相同的输出。优点：简单，有利于并行计算，误差不会传送。缺点：可能对明文进行主动攻击。</p>
+<img src="/2024/031353724/SouthEast.jpeg" alt="img" style="zoom: 50%;">
+
+<h5 id="CBC模式"><a href="#CBC模式" class="headerlink" title="CBC模式"></a>CBC模式</h5><p>将加密的结果进行级联，第一组加密需要添加额外的数据块IV。需要将上组加密结果与当前明文异或作为第二组分组加密的输入。CBC并行度较差，每次都要等待上次结果。</p>
+<img src="/2024/031353724/SouthEast-1713508082381-3.jpeg" alt="img" style="zoom: 67%;">
+
+<h4 id="AES加密算法具体实现"><a href="#AES加密算法具体实现" class="headerlink" title="AES加密算法具体实现"></a>AES加密算法具体实现</h4><p>AES算法是作用在有限域（2^8）,该域中的元素是由8bit组成的字节。它们可以通过异或做加法运算，也可以通过某种方式做乘法运算，而且每一个字节都有逆元。</p>
 <p>密钥长度为128比特。字节（8bits）是AES算法中数据运算的基本单位。AES加密算法由三部分组成：初始密钥加、Nr-1轮循环加密和最后一轮加密。每一轮都有一个由初始密钥生成的轮密钥。</p>
 <ul>
 <li><p>有限域中的加法运算<br>相当于对两个字节做按位异或。</p>
@@ -712,7 +726,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">53.7k</span>
+                        class="white-color">55.3k</span>
             
             
             

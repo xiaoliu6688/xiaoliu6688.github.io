@@ -5,8 +5,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="AXI协议, RayBiiao">
-    <meta name="description" content="AXI协议AXI3和AXI4的区别1. BurstAXI4对burst length进行了扩展AXI4支持最大256 beats，AxLEN位宽为8；AXI3最大支持burst 16 beats，AxLEN位宽为4；
-只有INCR burs">
+    <meta name="description" content="总线性能指标决定总线接口性能的两个主要特征是 带宽和延迟。
+带宽是总线的位宽，延迟是指事务启动和完成的延迟，在突发传输中，延迟通常指第一次transfer传输完成。
+AXI的读写地址和通道分离，可以有效提高总线带宽。
+乱序ID给定ID事务的">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -289,7 +291,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    815
+                    1k
                 </div>
                 
 
@@ -314,7 +316,13 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="AXI协议"><a href="#AXI协议" class="headerlink" title="AXI协议"></a>AXI协议</h3><h4 id="AXI3和AXI4的区别"><a href="#AXI3和AXI4的区别" class="headerlink" title="AXI3和AXI4的区别"></a>AXI3和AXI4的区别</h4><h5 id="1-Burst"><a href="#1-Burst" class="headerlink" title="1. Burst"></a>1. Burst</h5><p>AXI4对burst length进行了扩展<br>AXI4支持最大256 beats，AxLEN位宽为8；AXI3最大支持burst 16 beats，AxLEN位宽为4；</p>
+                <h4 id="总线性能指标"><a href="#总线性能指标" class="headerlink" title="总线性能指标"></a>总线性能指标</h4><p>决定总线接口性能的两个主要特征是 带宽和延迟。</p>
+<p>带宽是总线的位宽，延迟是指事务启动和完成的延迟，在突发传输中，延迟通常指第一次transfer传输完成。</p>
+<p>AXI的读写地址和通道分离，可以有效提高总线带宽。</p>
+<h4 id="乱序ID"><a href="#乱序ID" class="headerlink" title="乱序ID"></a>乱序ID</h4><p>给定ID事务的所有transfer需要进行排序，而不同ID事务的transfer没有顺序限制。</p>
+<p>同一个事务的AWID、WID和BID是一样的，ARID和RID是一样的。</p>
+<p>不同的transition可以有相同的ID，在执行时必须顺序返回。</p>
+<h3 id="AXI协议"><a href="#AXI协议" class="headerlink" title="AXI协议"></a>AXI协议</h3><h4 id="AXI3和AXI4的区别"><a href="#AXI3和AXI4的区别" class="headerlink" title="AXI3和AXI4的区别"></a>AXI3和AXI4的区别</h4><h5 id="1-Burst"><a href="#1-Burst" class="headerlink" title="1. Burst"></a>1. Burst</h5><p>AXI4对burst length进行了扩展<br>AXI4支持最大256 beats，AxLEN位宽为8；AXI3最大支持burst 16 beats，AxLEN位宽为4；</p>
 <p>只有INCR burst类型，才支持burst 超过16 beats</p>
 <p><img src="/2024/02077053/image-20240207000854573.png"></p>
 <p>实际使用中，很少使用burst超过16 beats的操作，因为长时间占用总线会影响系统性能。而且burst 一旦开始，无法停止。</p>
@@ -333,8 +341,11 @@
 
 <p>​	Locked access作用的对象是总线，一旦发生Locked access，那么其他的master都不能使用总线了，在一个复杂的SOC系统中，Locked access对系统的影响就太大了，万一发生Locked access的master出点啥问题，整个系统就挂死了</p>
 <p>​	Exclusive access 作用的对象是对应的Slave，支持Exclusive access的Slave会在slave中实现一个Exclusive access monitor，如果monitor记录了能够访问的master，那么对应的master就能通过Exclusive access来访问，其他的未记录的Exclusive access就都不能访问。Exclusive access对总线系统是没有要求的，只是对slave做了特殊要求，即使出错也不会影响系统其他部分，最多访问失败而已。</p>
+<h4 id="大小端问题"><a href="#大小端问题" class="headerlink" title="大小端问题"></a>大小端问题</h4><p>小端对齐：低字节在低地址；<br>大端对齐：低字节在高地址；</p>
+<p><img src="/2024/02077053/image-20240327100544616.png" alt="image-20240327100544616"></p>
 <h4 id="窄传输"><a href="#窄传输" class="headerlink" title="窄传输"></a>窄传输</h4><p>当数据传输的位宽小于数据总线的位宽时，称为窄位宽传输。通常通过wstrb来控制哪些字节有效。<br>当从机自身限制或者其他客观条件时，比如从机每次只能接收1个字节数据，且不能缓冲多字节数据，<strong>主机就要进行窄传输。</strong>可以将传输数据都放在数据总线上，每次传输只需要改变wstrb即可。</p>
 <p>32位数据总线，wstrb为4bit；64位数据总线，wstrb是8bit。</p>
+<h4 id="信号说明"><a href="#信号说明" class="headerlink" title="信号说明"></a>信号说明</h4><p>size[2:0]：</p>
 <p>AXI-Lite协议<br>    不支持突发传输，且每次传输一个数据，没有last信号；<br>    支持多master，多slave</p>
 <ul>
 <li><p>AXI和AHB传输对比：</p>
@@ -718,7 +729,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">53.7k</span>
+                        class="white-color">55.3k</span>
             
             
             

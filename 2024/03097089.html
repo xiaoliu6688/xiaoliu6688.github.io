@@ -5,10 +5,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="DC_FLOW（二）, RayBiiao">
-    <meta name="description" content="异步时钟相关设置set_group_path用来声明不同clock组之间的关系，比如两个异步时钟不需要做时序分析，需要-asynchronous指定。不同于set_group_path，它是对于所有的path做一个分组。
+    <meta name="description" content="异步时钟相关设置set_clk_group用来声明不同clock组之间的关系，比如两个异步时钟不需要做时序分析，需要-asynchronous指定。不同于set_group_path，它是对于所有的path做一个分组。
 
 
-set_clo">
+set_cloc">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -303,7 +303,7 @@ set_clo">
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="异步时钟相关设置"><a href="#异步时钟相关设置" class="headerlink" title="异步时钟相关设置"></a>异步时钟相关设置</h3><h4 id="set-group-path"><a href="#set-group-path" class="headerlink" title="set_group_path"></a>set_group_path</h4><p>用来声明不同clock组之间的关系，比如两个异步时钟不需要做时序分析，需要<code>-asynchronous</code>指定。不同于<code>set_group_path</code>，它是对于所有的path做一个分组。</p>
+                <h3 id="异步时钟相关设置"><a href="#异步时钟相关设置" class="headerlink" title="异步时钟相关设置"></a>异步时钟相关设置</h3><h4 id="set-clk-group"><a href="#set-clk-group" class="headerlink" title="set_clk_group"></a>set_clk_group</h4><p>用来声明不同clock组之间的关系，比如两个异步时钟不需要做时序分析，需要<code>-asynchronous</code>指定。不同于<code>set_group_path</code>，它是对于所有的path做一个分组。</p>
 <img src="/2024/03097089/image-20240309163503401.png" alt="image-20240309163503401" style="zoom: 67%;">
 
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_group <span class="token operator">-</span>asynchronous <span class="token operator">-</span>group C1 <span class="token operator">-</span>group C2<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
@@ -331,7 +331,7 @@ set_clock_group <span class="token operator">-</span>physically_exclusive <span 
 <ul>
 <li>总结</li>
 </ul>
-<p>如果两个时钟经过一个mux输出，对这两个输入时钟需要声明<code>logically exclusive</code>。输出的时钟在物理上是唯一的，需要声明<code>physically exclusive</code>。</p>
+<p>如果两个时钟经过一个mux输出，对这两个输入时钟需要声明<code>logically exclusive</code>。针对某个pin或者net，输出的时钟在物理上是唯一的，需要声明<code>physically exclusive</code>。</p>
 <img src="/2024/03097089/image-20240309172447158.png" alt="image-20240309172447158" style="zoom: 33%;">
 
 <h4 id="create-generated-clock"><a href="#create-generated-clock" class="headerlink" title="create generated clock"></a>create generated clock</h4><p>明确generated clock和master clock的关系，</p>
@@ -422,7 +422,7 @@ create_generated_clock <span class="token operator">-</span>name CLKd1 <span cla
 <p>声明物理互斥关系</p>
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_group <span class="token operator">-</span>physically_exclusive <span class="token operator">-</span>group <span class="token punctuation">&#123;</span>CLKm0 CLKd0<span class="token punctuation">&#125;</span> <span class="token operator">-</span>group <span class="token punctuation">&#123;</span>CLKm1 CLKd1<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-
+<h3 id><a href="#" class="headerlink" title></a></h3>
                 
             </div>
             <hr/>
@@ -783,7 +783,7 @@ create_generated_clock <span class="token operator">-</span>name CLKd1 <span cla
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">53.7k</span>
+                        class="white-color">55.3k</span>
             
             
             

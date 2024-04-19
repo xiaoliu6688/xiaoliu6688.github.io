@@ -289,7 +289,7 @@ Rule：s">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2k
+                    2.7k
                 </div>
                 
 
@@ -317,10 +317,10 @@ Rule：s">
                 <h3 id="SPYGLASS"><a href="#SPYGLASS" class="headerlink" title="SPYGLASS"></a>SPYGLASS</h3><p>主要用于检查设计中的跨时钟域CDC问题，包含五大模块：lint，CDC（跨时钟域检查），LP（低功耗），Constraint（约束），DFT（可测性）。类似pt，属于静态验证工具，不需要编写testbench。</p>
 <p>Rule：spyglass进行RTL分析的最小单位.<br>Goal：是一系列相关rule的集合，组合起来完成RTL的某个特定任务，user可以用guidewave定义好的goal，也可以自定义，可以指定规则的顺序。<br>Sub-Methodology：一系列Goal的集合，用以达成某方面特定目标。</p>
 <p>SGDC：Constraints文件，包含clock和reset等约束信息</p>
-<pre class=" language-sdc"><code class="language-sdc">current_design "key_top"
+<pre class="line-numbers language-sdc" data-language="sdc"><code class="language-sdc">current_design &quot;key_top&quot;
 clock -name clk -period 10 -edge 0 5
-reset -name rstn -value 0
-</code></pre>
+reset -name rstn -value 0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
 <p>Waiver：用以过滤一些结果的文件</p>
 <p>CDC：检查异步信号有没有同步处理就使用，组合逻辑是否有毛刺。</p>
 <p>parameter：可以在进行RTL分析之前设定某些参数，对检查过程进行一些约束。</p>
@@ -354,22 +354,23 @@ reset -name rstn -value 0
 </ol>
 </li>
 </ul>
-<pre class=" language-tcl"><code class="language-tcl"><span class="token comment" spellcheck="true"># tcl 命令</span>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token comment"># tcl 命令</span>
 read_file <span class="token operator">-</span>type verilog  xx.v
 read_file <span class="token operator">-</span>type sourcelist filelist.f
 read_file <span class="token operator">-</span>type sgdc xxx.sgdc
-<span class="token comment" spellcheck="true"># common settings</span>
+<span class="token comment"># common settings</span>
 set_option top xxx
 set_option enableSV yes
-<span class="token comment" spellcheck="true"># SDC文件可以直接被spyglass读取，自动转换成SGDC，需要进行以下设置</span>
+<span class="token comment"># SDC文件可以直接被spyglass读取，自动转换成SGDC，需要进行以下设置</span>
 set_option sdc2sgdc yes
 
 current_design xxx
 sdc_data <span class="token operator">-</span>file ssss_src.sdc
 
-<span class="token comment" spellcheck="true">#设置异步复位的值</span>
+<span class="token comment">#设置异步复位的值</span>
 reset <span class="token operator">-</span>name <span class="token string">"xxx.xx.Z"</span> <span class="token operator">-</span>async <span class="token operator">-</span>value 0
-</code></pre>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <ul>
 <li>约束文件 .sgdc</li>
 </ul>
@@ -383,9 +384,11 @@ reset <span class="token operator">-</span>name <span class="token string">"xxx.
 </li>
 </ul>
 <p>手动添加waiver放弃对一些电路的检查。</p>
-<h6 id="生成报告"><a href="#生成报告" class="headerlink" title="生成报告"></a>生成报告</h6><pre><code>write_aggregate_report datasheet 
-write_aggregate_report dashboard
-</code></pre>
+<h6 id="生成报告"><a href="#生成报告" class="headerlink" title="生成报告"></a>生成报告</h6><pre class="line-numbers language-none"><code class="language-none">write_aggregate_report datasheet 
+write_aggregate_report dashboard<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_21842097/article/details/122538986?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2~default~CTRLIST~Rate-1-122538986-blog-122534341.235%5Ev38%5Epc_relevant_sort_base3&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2~default~CTRLIST~Rate-1-122538986-blog-122534341.235%5Ev38%5Epc_relevant_sort_base3&utm_relevant_index=1">https://blog.csdn.net/qq_21842097/article/details/122538986?spm=1001.2101.3001.6661.1&amp;utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-122538986-blog-122534341.235%5Ev38%5Epc_relevant_sort_base3&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-122538986-blog-122534341.235%5Ev38%5Epc_relevant_sort_base3&amp;utm_relevant_index=1</a></p>
 <ul>
 <li><p>时钟和复位</p>
@@ -393,22 +396,22 @@ write_aggregate_report dashboard
 <ul>
 <li><p>clock_info1</p>
 <p>Primary Clocks: 普通输入时钟<br>Black box clocks：黑盒或工艺库单元输出的时钟<br>Derived：寄存器或工艺库单元输出的时钟<br>Undrived Clocks：悬空的线或者门控锁存器输出的时钟<br>Gated clocks：组合逻辑输出的时钟</p>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">top</span><span class="token punctuation">(</span>
-    <span class="token keyword">input</span> 		 clk1<span class="token punctuation">,</span>
-    <span class="token keyword">input</span> 		 rstn<span class="token punctuation">,</span>
-    <span class="token keyword">input</span>  <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> d<span class="token punctuation">,</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">top</span><span class="token punctuation">(</span>
+	<span class="token keyword">input</span> 		 clk1<span class="token punctuation">,</span>
+	<span class="token keyword">input</span> 		 rstn<span class="token punctuation">,</span>
+	<span class="token keyword">input</span>  <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> d<span class="token punctuation">,</span>
     <span class="token keyword">output</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> q
 <span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">wire</span> clk3<span class="token punctuation">,</span> clk4<span class="token punctuation">;</span>
 <span class="token keyword">reg</span> clk2<span class="token punctuation">;</span>
 <span class="token function">BB</span><span class="token punctuation">(</span>clk1<span class="token punctuation">,</span> clk3<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk1 <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span>
-    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span> clk2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> clk2 <span class="token operator">&lt;=</span> <span class="token operator">~</span>clk2<span class="token punctuation">;</span>
+	<span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span> clk2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	<span class="token keyword">else</span> clk2 <span class="token operator">&lt;=</span> <span class="token operator">~</span>clk2<span class="token punctuation">;</span>
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk4 <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
 <span class="token keyword">end</span>
-<span class="token keyword">endmodule</span>
-</code></pre>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p>clk1是primary clock，clk2是Derived clock，clk3是Black box clocks，clk4是Undrived Clocks</p>
 </li>
 <li><p>Reset_info1</p>
@@ -455,19 +458,22 @@ write_aggregate_report dashboard
 </li>
 <li><p>clock_info05a&#x2F;b</p>
 <p>在设计如果有clock的mux选择输出，需要指定set_case_analysis命令来约束。</p>
-<pre><code>
-</code></pre>
+<pre class="line-numbers language-none"><code class="language-none">input ports: clk1, clk2
+  output port: clkout
+  enable port: in1
+  assign clkout &#x3D; in1 ? clk1 : clk2;
+  在sgdc文件中：
+  current_design test
+  clock -name clk1 
+  clock -name clk2
+  这样报违例。需要进行下面的配置
+  set_case_analysis -name in1 -value 0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+</li>
+<li><p>clock_info18</p>
+<p>报告设计中未约束的引脚<br>sgdc中一定要约束所有的输入、输出引脚，时钟引脚以及BLACKBOX的引脚。</p>
+<p>包括：input，output，clock，reset，set_case_analysis，abstract_port</p>
 </li>
 </ul>
-<p>input ports: clk1, clk2<br>  output port: clkout<br>  enable port: in1<br>  assign clkout &#x3D; in1 ? clk1 : clk2;<br>  在sgdc文件中：<br>  current_design test<br>  clock -name clk1<br>  clock -name clk2<br>  这样报违例。需要进行下面的配置<br>  set_case_analysis -name in1 -value 0</p>
-<pre><code>
-- clock_info18
-
-报告设计中未约束的引脚
-sgdc中一定要约束所有的输入、输出引脚，时钟引脚以及BLACKBOX的引脚。
-
-包括：input，output，clock，reset，set_case_analysis，abstract_port
-</code></pre>
 </li>
 <li><p>CDC_verify_struct</p>
 <p>​	主要检查设计中是否有 未同步的信号，是否有毛刺。</p>
@@ -524,6 +530,78 @@ sgdc中一定要约束所有的输入、输出引脚，时钟引脚以及BLACKBO
 <p>01检查req-&gt;ack信号是否满足四相握手协议。REQ拉高-&gt;ACK拉高-&gt;REQ拉低-&gt;ACK拉低</p>
 <p><img src="/2023/112431792/290753-20220707155544879-178987688.png"></p>
 <p>02检查是否会有数据丢失</p>
+<h3 id="项目中出现的问题"><a href="#项目中出现的问题" class="headerlink" title="项目中出现的问题"></a>项目中出现的问题</h3><h4 id="LINT检查误报生成锁存器"><a href="#LINT检查误报生成锁存器" class="headerlink" title="LINT检查误报生成锁存器"></a>LINT检查误报生成锁存器</h4><p>code如下</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        <span class="token function">for</span><span class="token punctuation">(</span>i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>i<span class="token operator">&lt;</span>W_LORA_MEM<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">;</span>i<span class="token operator">=</span>i<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span>
+            Avg_Mem_c_sum<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> 
+    <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>save_avg_data_en<span class="token punctuation">)</span> <span class="token keyword">begin</span> 
+        <span class="token function">if</span><span class="token punctuation">(</span>up_endpoint_en<span class="token punctuation">)</span>
+            Avg_Mem_c_sum<span class="token punctuation">[</span>save_data_counter<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> c_sum <span class="token operator">+</span> Mem<span class="token punctuation">[</span>acc_cnt<span class="token punctuation">]</span><span class="token punctuation">;</span> 
+        <span class="token keyword">else</span> 
+            Avg_Mem_c_sum<span class="token punctuation">[</span>save_data_counter<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> c_sum<span class="token punctuation">;</span> 
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/2023/112431792/image-20240325162129005.png" alt="image-20240325162129005"></p>
+<p>通过代码看出，Avg_Mem_c_sum[0]不会生成锁存器，但是报出来会生成。因此写出完整的代码如下，就可以解决这个问题。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        <span class="token function">for</span><span class="token punctuation">(</span>i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>i<span class="token operator">&lt;</span>W_LORA_MEM<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">;</span>i<span class="token operator">=</span>i<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span>
+            Avg_Mem_c_sum<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> 
+    <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>save_avg_data_en<span class="token punctuation">)</span> <span class="token keyword">begin</span> 
+        <span class="token function">if</span><span class="token punctuation">(</span>up_endpoint_en<span class="token punctuation">)</span>
+            Avg_Mem_c_sum<span class="token punctuation">[</span>save_data_counter<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> c_sum <span class="token operator">+</span> Mem<span class="token punctuation">[</span>acc_cnt<span class="token punctuation">]</span><span class="token punctuation">;</span> 
+        <span class="token keyword">else</span> 
+            Avg_Mem_c_sum<span class="token punctuation">[</span>save_data_counter<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> c_sum<span class="token punctuation">;</span> 
+    <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+        <span class="token function">for</span><span class="token punctuation">(</span>i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>i<span class="token operator">&lt;</span>W_LORA_MEM<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">;</span>i<span class="token operator">=</span>i<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span>
+            Avg_Mem_c_sum<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">&lt;=</span> Avg_Mem_c_sum<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span> 
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="违例：异步复位信号作为其他寄存器的同步处理"><a href="#违例：异步复位信号作为其他寄存器的同步处理" class="headerlink" title="违例：异步复位信号作为其他寄存器的同步处理"></a>违例：异步复位信号作为其他寄存器的同步处理</h4><p>nrst一般只作为异步复位信号，如果nrst作为其他寄存器的同步信号，就会报违例。</p>
+<p>当异步复位&#x2F;置位信号作为非复位或者同步复位时，报告违例。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	<span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+		out1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	<span class="token keyword">else</span> 
+		out1 <span class="token operator">&lt;=</span> in<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	out2 <span class="token operator">&lt;=</span> nrst<span class="token punctuation">;</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>其中，nrst本身是异步复位信号，但nrst作为了out2寄存器的输入信号，相当于跨时钟域的信号，直接接入到同步电路中，并没有经过降低亚稳态的处理，所以静态时序分析很困难。</p>
+<p>如果同步复位和异步复位混用，同样会报该违例。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span>posedeg clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	<span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+		out <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	<span class="token keyword">else</span>
+		out <span class="token operator">&lt;=</span> in<span class="token punctuation">;</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>生成的类似电路图如下，异步复位参与了同步信号运算作为输入给到寄存器。nrst需要满足setup和recovery时间</p>
+<img src="/2023/112431792/image-20240325235809883.png" alt="image-20240325235809883" style="zoom: 33%;">
+
+<p>在带有使能功能的RTL设计中，如果在敏感列表中引入了negedge nrst，在always里面没有进行复位，此时，nrst会作为参与同步使能信号（做与运算）进行综合电路。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span>posedeg clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	<span class="token function">if</span><span class="token punctuation">(</span>load_en<span class="token punctuation">)</span>
+		out <span class="token operator">&lt;=</span> in<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token comment">// 报错，无法推断哪个是时钟信号。有两个时钟信号控制输出。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+		out1 <span class="token operator">&lt;=</span> in1<span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果nrst信号忘记写，nrst会被当做同步使能信号。该代码综合出来的结果如下图所示。</p>
+<p><img src="/2023/112431792/image-20240326003348858.png" alt="image-20240326003348858"></p>
+<p>tips：在设计中，一般只使用一种复位方案，同步或者异步复位。混合使用这两种方案可能会导致系统部分复位，并且可能不符合 SoC 的设计意图。此外，可能会对 STA 产生影响，对于异步重置，需要满足恢复时间（取消断言）。对于同步复位，需要满足setup建立时间。</p>
+<p>敏感列表中的信号，在always块中必须有作用才行，否则不知道时序电路的时钟信号是哪个。</p>
 
                 
             </div>
@@ -901,7 +979,7 @@ sgdc中一定要约束所有的输入、输出引脚，时钟引脚以及BLACKBO
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">53.7k</span>
+                        class="white-color">55.3k</span>
             
             
             

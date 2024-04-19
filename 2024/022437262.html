@@ -291,7 +291,7 @@ HADDR：地址总线HTRANS[1:0]：传输类型，00：IDLE，01：BUSY，10：NO
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.5k
+                    1.6k
                 </div>
                 
 
@@ -389,6 +389,11 @@ HADDR：地址总线HTRANS[1:0]：传输类型，00：IDLE，01：BUSY，10：NO
 <p>​	ERROR传输的两个周期中，第一个周期的hready是拉低的。</p>
 <p>​	ERROR的第二个周期，htrans是IDLE的，这种打断在AHB协议上是可以的，但是axi不支持</p>
 <p>​	ERROR传输的应用场景：译码错误，当master访问slave不存在的地址时。</p>
+<ul>
+<li>突发传输终止</li>
+</ul>
+<p>​	AHB允许打断突发传输，场景：在传输过程中，仲裁器改变了HGRANT信号，或者slave在传输过程中发出ERROR的响应。</p>
+<p>​	AXI中不允许打断突发传输，需要等待传输完成。</p>
 
                 
             </div>
@@ -766,7 +771,7 @@ HADDR：地址总线HTRANS[1:0]：传输类型，00：IDLE，01：BUSY，10：NO
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">53.7k</span>
+                        class="white-color">55.3k</span>
             
             
             

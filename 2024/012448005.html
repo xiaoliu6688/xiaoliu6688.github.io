@@ -292,7 +292,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.3k
+                    2.5k
                 </div>
                 
 
@@ -374,7 +374,9 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 <p>eg. 对于16进制数据0x12345678在内存中的保存方式</p>
 <p><img src="/2024/012448005/image-20240221225921219.png"></p>
 <p>优点：大端模式，很容易通过访问最低位地址，判断数值的正负。</p>
-<h3 id="亚稳态问题"><a href="#亚稳态问题" class="headerlink" title="亚稳态问题"></a>亚稳态问题</h3><p>当数据不满足建立setup和保持hold时间时，会出现亚稳态问题。<br>解决办法（单bit）：1. 多级同步器 2. 时钟倍频电路的多级同步器<br>方法1需要较长时间去响应异步输入，解决办法：使用倍频时钟作为两个同步器的时钟输入。（Altera的FPGA中具有这项称为时钟倍频的技术，减小异步信号输入的延迟）</p>
+<h3 id="亚稳态问题"><a href="#亚稳态问题" class="headerlink" title="亚稳态问题"></a>亚稳态问题</h3><p>为了降低亚稳态，<strong>使用同步器的目的是 让下级寄存器在采样时，保证采样的数据是一个稳定的0或者1</strong>。否则，亚稳态会继续传播，有可能导致电路功能失效。同步器的每一级相当于对异步输入数据的判决，进而降低亚稳态，并不能消除亚稳态。</p>
+<p>建立时间setup和保持时间hold time决定了亚稳态窗口的大小。</p>
+<p>当数据不满足建立setup和保持hold时间时，会出现亚稳态问题。<br>解决办法（单bit）：1. 多级同步器 2. 时钟倍频电路的多级同步器<br>方法1需要较长时间去响应异步输入，解决办法：使用倍频时钟作为两个同步器的时钟输入。（Altera的FPGA中具有这项称为时钟倍频的技术，减小异步信号输入的延迟）</p>
 <img src="/2024/012448005/image-20240219205135401.png" alt="时钟倍频电路的多级同步器" style="zoom:50%;">
 
 
@@ -393,7 +395,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
   	b <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
   	a <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
   <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
-  	b <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  	b <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
   <span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
 </ul>
 <img src="/2024/012448005/image-20240219225204769.png" alt style="zoom:50%;">
@@ -466,6 +468,9 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 <img src="/2024/012448005/v2-2772ae215d02b5d0255fc3c006232290_720w.png" alt="img" style="zoom:50%;">
 
 <img src="/2024/012448005/v2-b0c72bd63377feb2c33966f7a7878fc1_720w.png" alt="img" style="zoom:50%;">
+
+<p>在SV中，函数function可以调用task（调用的task不能有消耗时间和延迟的语句），但是verilog中不可以。</p>
+<p>在verilog中，函数必须声明返回值类型，即使没有返回值也要声明为void类型，而在SystemVerilog中则没有这个限制。</p>
 
                 
             </div>
@@ -843,7 +848,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">53.7k</span>
+                        class="white-color">55.3k</span>
             
             
             
