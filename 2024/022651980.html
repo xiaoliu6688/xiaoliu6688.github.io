@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="keywords" content="一生一芯-异常处理设计, RayBiiao">
     <meta name="description" content="异常处理ecall自陷指令发生异常ecall时，处理器需要完成的操作：
-PC &gt;= csr[mepc]
+PC =&gt; csr[mepc]
 causeid =&gt; mcause
 csr[mtvec] =&gt; PC
 // 在WB阶段，硬件自动完成
@@ -320,7 +320,7 @@ csr[mtvec] =&gt; PC
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><h3 id="ecall自陷指令"><a href="#ecall自陷指令" class="headerlink" title="ecall自陷指令"></a>ecall自陷指令</h3><p>发生异常ecall时，处理器需要完成的操作：</p>
-<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog">PC <span class="token operator">>=</span> csr<span class="token punctuation">[</span>mepc<span class="token punctuation">]</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog">PC <span class="token operator">=></span> csr<span class="token punctuation">[</span>mepc<span class="token punctuation">]</span>
 causeid <span class="token operator">=></span> mcause
 csr<span class="token punctuation">[</span>mtvec<span class="token punctuation">]</span> <span class="token operator">=></span> PC
 <span class="token comment">// 在WB阶段，硬件自动完成</span>
@@ -746,7 +746,7 @@ csr<span class="token punctuation">[</span>mtvec<span class="token punctuation">
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">55.3k</span>
+                        class="white-color">55.2k</span>
             
             
             

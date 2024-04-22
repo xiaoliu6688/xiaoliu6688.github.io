@@ -900,7 +900,7 @@ set_cloc
                         <div class="summary block-with-text">
                             
                                 异常处理ecall自陷指令发生异常ecall时，处理器需要完成的操作：
-PC >= csr[mepc]
+PC => csr[mepc]
 causeid => mcause
 csr[mtvec] => PC
 // 在WB阶段，硬件自动完成
@@ -1040,7 +1040,7 @@ csr[mtvec] => PC
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">55.3k</span>
+                        class="white-color">55.2k</span>
             
             
             

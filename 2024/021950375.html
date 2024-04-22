@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="keywords" content="一生一芯-CPU流水线设计（一）, RayBiiao">
     <meta name="description" content="将整个结构划分为五级，相比于单周期的CPU，在流水线设计过程中主要解决数据冒险和结构冒险。
-数据冒险将数据旁路模块bypass放在译码阶段（id），与教材中放在执行阶段不同，原因是可以减少寄存器堆的一个读端口。（译码to执行阶段 写寄存器的">
+数据冒险将数据旁路模块bypass放在译码阶段（id），与教材中放在执行阶段不同，原因是可以减少寄存器堆的一个读端口（译码to执行阶段 写寄存器的时">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -315,7 +315,7 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p>将整个结构划分为五级，相比于单周期的CPU，在流水线设计过程中主要解决数据冒险和结构冒险。</p>
-<h2 id="数据冒险"><a href="#数据冒险" class="headerlink" title="数据冒险"></a>数据冒险</h2><p>将数据旁路模块bypass放在译码阶段（id），与教材中放在执行阶段不同，原因是可以减少寄存器堆的一个读端口。（译码to执行阶段 写寄存器的时候，Write back阶段已经将数据写入到寄存器堆中，所以要单独设置一个读端口读取写入寄存器堆的数据）。</p>
+<h2 id="数据冒险"><a href="#数据冒险" class="headerlink" title="数据冒险"></a>数据冒险</h2><p>将数据旁路模块bypass放在译码阶段（id），与教材中放在执行阶段不同，原因是可以减少寄存器堆的一个读端口（译码to执行阶段 写寄存器的时候，Write back阶段已经将数据写入到寄存器堆中，所以要单独设置一个读端口读取写入寄存器堆的数据）</p>
 <p>数据旁路的数据来源有四个：</p>
 <ol>
 <li>id译码阶段的寄存器堆输出 </li>
@@ -325,7 +325,7 @@
 </ol>
 <img src="/2024/021950375/image-20240220111048796.png" alt style="zoom: 33%;">
 
-<p>​	判断条件:  </p>
+<p>判断条件:  </p>
 <pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token function">if</span><span class="token punctuation">(</span> <span class="token punctuation">(</span>rs1_id <span class="token operator">==</span> xx_rdid<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>xx_rdwen<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>rs1_id <span class="token operator">!=</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
 	发生数据旁路
 <span class="token keyword">else</span> 
@@ -766,7 +766,7 @@ jalr  a5 <span aria-hidden="true" class="line-numbers-rows"><span></span><span><
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">55.3k</span>
+                        class="white-color">55.2k</span>
             
             
             

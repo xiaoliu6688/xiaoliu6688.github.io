@@ -323,7 +323,7 @@
 <p>​	case的分支中，如果缺省，不进行其他操作，dc综合的时候<strong>会生成锁存器latch</strong></p>
 <p>​	这个时候如果添加原语 <strong>&#x2F;&#x2F;synopsys full_case</strong> ，目的是让综合器DC知道所有情况都已经列全了，不会生成latch。</p>
 <ul>
-<li><p>full case</p>
+<li><p>full case	</p>
 <p>每个可能的case expression的取值，都有与之相对应的分支。都列全了，即使没有default，也是full case</p>
 <p>synopsys的dc_shell把full_case解释为：如果case不是full，对于没有出现的分支条件，输出就当成“不关心”处理，在综合的时候，对于没有出现的分支，会根据逻辑优化赋个常数。<strong>这样会导致前仿和后仿的结果不一致，所以需要注意这个地方</strong>，如果case中有default，case_full会被忽略。</p>
 </li>
@@ -714,7 +714,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">55.3k</span>
+                        class="white-color">55.2k</span>
             
             
             

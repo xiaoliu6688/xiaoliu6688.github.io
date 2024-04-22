@@ -293,7 +293,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.8k
+                    1.9k
                 </div>
                 
 
@@ -446,6 +446,9 @@ open_mw_cell FMCW_DCORE_TOP<span aria-hidden="true" class="line-numbers-rows"><s
 <li><p>后仿的各种组合情况</p>
 <p>PVT_corner + fast&#x2F;typical&#x2F;slow SDF</p>
 </li>
+</ul>
+<h4 id="后仿debug"><a href="#后仿debug" class="headerlink" title="后仿debug"></a>后仿debug</h4><p><code>2024/4/20 </code><br>现象：仿真开始没有x态，经过一次chirp后出现x态。<br>原因：在tb中，异步复位信号是直接给进去的，复位信号在释放时导致亚稳态的产生(上升沿和异步复位释放在同一时刻)，将该亚稳态传播下去，在某些特定条件下触发。<br>解决办法：<strong>同步复位，异步释放。</strong></p>
+<ul>
 <li><p>ECO</p>
 <p>在芯片设计完成后，用于修复出现的问题。分为两个阶段：pre-mask ECO和post-mask ECO；</p>
 </li>
@@ -829,7 +832,7 @@ open_mw_cell FMCW_DCORE_TOP<span aria-hidden="true" class="line-numbers-rows"><s
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">55.3k</span>
+                        class="white-color">55.2k</span>
             
             
             
