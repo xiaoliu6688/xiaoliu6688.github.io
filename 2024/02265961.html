@@ -276,7 +276,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.6k
+                    2.9k
                 </div>
                 
 
@@ -303,6 +303,8 @@
             <div id="articleContent">
                 <h2 id="握手与反压"><a href="#握手与反压" class="headerlink" title="握手与反压"></a>握手与反压</h2><blockquote>
 <p>部分内容参考以下博客<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_57502075/article/details/127137378">https://blog.csdn.net/qq_57502075/article/details/127137378</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/359330607">https://zhuanlan.zhihu.com/p/359330607</a><br><a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv11100841/">https://www.bilibili.com/read/cv11100841/</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/532012806">芯片设计-skid buffer(ready打断) - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/503806430">芯片设计-握手与反压(valid&amp;ready) - 知乎 (zhihu.com)</a></p>
 </blockquote>
 <h3 id="握手协议"><a href="#握手协议" class="headerlink" title="握手协议"></a>握手协议</h3><p>主要有三种握手场景</p>
 <ul>
@@ -420,7 +422,7 @@
 <li>入口流量大于出口流量，即多对一。</li>
 <li>在流水线中，后级还没有准备好，前级对后级进行数据冲刷，所以需要反压让前级数据保持不变；</li>
 </ol>
-<p><strong>在实际设计中遇到的情况：</strong>第一个对应的仲裁器，在icache和dcache同时读取SRAM数据时，需要以dcache优先，保证取数据优先，这时就要反压icache的访问内存行为，即拉低arready和rvalid；第二个对应在CPU五级流水线设计过程中，如果访存阶段通过axi协议读写内存数据时，需要将流水线停顿下来，发出反压信号stall，让前级流水线的寄存器保持不变。</p>
+<p><strong>在实际设计中遇到的情况：</strong>第一个对应的仲裁器，在icache和dcache同时读取SRAM数据时，需要以dcache优先，保证取数据优先，这时就要反压icache的访问内存行为，即拉低arready和rvalid；第二个对应在CPU五级流水线设计过程中，如果访存阶段通过axi协议读写内存数据时，需要将流水线停顿下来，发出反压信号stall，让前级流水线的寄存器保持不变（跨级反压）。</p>
 <hr>
 <p>不同场景的反压方法</p>
 <ul>
@@ -677,6 +679,172 @@
 
 <p>​	逐级反压：module3达到水线反压module2；module2达到水线反压module1；module1达到水线反压上游接口；<strong>每级都有握手信号需要处理</strong></p>
 <p>​	跨级反压：module3的存储体深度 &#x3D; waterlie3 + 在途1 + waterline1 + 在途2 + waterline2 + 在途3；<strong>只需要处理上游模块和module3的握手信号</strong></p>
+<h4 id="流水线反压总结"><a href="#流水线反压总结" class="headerlink" title="流水线反压总结"></a>流水线反压总结</h4><p><img src="/2024/02265961/v2-1c0c8c051a559d8d5b31ec8200dccfbd_1440w.webp" alt="img"></p>
+<p>当data_o_ready拉低时，流水线如何处理。</p>
+<ol>
+<li>方案一<br>立即通知sender，拉低data_i_ready。由于流水线中还有数据在流动，需要保存流水线的输出。添加深度为3的FIFO。如下图所示</li>
+</ol>
+<p><img src="/2024/02265961/v2-546249278af92d7c8f71f0157bc2ca8a_1440w.webp" alt="img"></p>
+<ol start="2">
+<li>方案二<br>跨级反压，将所有部件停顿下来。流水线中不会有数据流动，不需要添加fifo，但是这种对硬件的利用率较低，如下图所示。</li>
+</ol>
+<img src="/2024/02265961/v2-9a383d9371f7ed3be8a67cb408447996_1440w.webp" alt="img" style="zoom:67%;">
+
+<ol start="3">
+<li>方案三<br>为了挤出气泡，不能data_o_ready拉低，流水线就停顿。需要判断流水线中是否可以继续流动，添加计数器，如果大于3，即使data_o_ready拉低，也是可以流动的。通过入口data_i_ready&amp;data_i_valid握手，将计数值累加，出口dat_o_ready&amp;data_o_valid握手，将计数值累减。计数值大于3时，需要判断data_o_ready是否为1，决定流水线是否流动。如下图所示。</li>
+</ol>
+<img src="/2024/02265961/v2-976c9d96166e7f0c402af59ddf6dbe8c_1440w.webp" alt="img" style="zoom:67%;">
+
+<ol start="4">
+<li>方案四<br>逐级反压。流水线的每一级都需要握手，只要后级准备好或者当前级空闲，即可流动数据给当前级。如下图</li>
+</ol>
+<img src="/2024/02265961/v2-ee5103b023a19f0eb8738bc4fc6215da_1440w.webp" alt="img" style="zoom:67%;">
+
+<h4 id="skid-buffer（打断ready信号）"><a href="#skid-buffer（打断ready信号）" class="headerlink" title="skid buffer（打断ready信号）"></a>skid buffer（打断ready信号）</h4><p>在上面的第四个方案中，每一级的ready信号都依赖于receiver的data_o_ready信号。当流水线的级数较多时，ready信号需要较长的延迟。因此，需要对下级返回的ready信号打一拍。</p>
+<p>但是一旦打一拍，反压能力就会延迟一拍。出现的问题如下图所示。</p>
+<img src="/2024/02265961/v2-c80b0fb9691569a3bf28ecd9edc864cd_720w.webp" alt="img" style="zoom:67%;">
+
+<ol>
+<li>data_i_ready是延迟一拍后的信号，在data_i为3时，不应该采样数据了，data_o的数据2应保持不变，导致数据2丢失。</li>
+<li>在data_o_ready拉高时，输出数据3，data_o的数据并没有变化，在data_i_ready拉高时，data_o的数据还是3，导致重复输出数据3。</li>
+</ol>
+<h5 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h5><ol>
+<li><p>添加buffer<br>这个buffer叫做skid buffer，在data_o_ready拉低时，如果下拍的data_i_valid仍然拉高，需要将data_o的数据保存在buffer中，并将data_i_ready拉低（表示buffer中有数据）</p>
+<p>在data_o_ready拉高时，如果data_i_ready为0，则输出buffer的数据，data_o_valid为~data_i_ready；实现方式如下：</p>
+</li>
+</ol>
+<img src="/2024/02265961/v2-63df5862e126a354239d88825c820fa4_720w.webp" alt="img" style="zoom:67%;">
+
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token comment">// ports</span>
+<span class="token keyword">output</span> <span class="token keyword">reg</span>     data_i_ready<span class="token punctuation">;</span>
+<span class="token keyword">input</span>          data_i_valid<span class="token punctuation">;</span>
+<span class="token keyword">input</span> <span class="token punctuation">[</span>DW<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_i<span class="token punctuation">;</span>
+
+<span class="token keyword">input</span>           data_o_ready<span class="token punctuation">;</span>
+<span class="token keyword">output</span>          data_o_valid<span class="token punctuation">;</span>
+<span class="token keyword">output</span> <span class="token punctuation">[</span>DW<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_o<span class="token punctuation">;</span>
+
+<span class="token comment">// signals</span>
+<span class="token keyword">wire</span>          buf_valid<span class="token punctuation">;</span>
+<span class="token keyword">reg</span>  <span class="token punctuation">[</span>DW<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> buf_data<span class="token punctuation">;</span>
+
+<span class="token comment">// data_i_ready由组合逻辑改为时序逻辑</span>
+<span class="token important">always @</span> <span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rst_n<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rst_n<span class="token punctuation">)</span>
+        data_i_ready <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment">//有个buf放在那，因此复位后至少可以收一个数据。</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_o_ready<span class="token punctuation">)</span>
+        data_i_ready <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_i_valid<span class="token punctuation">)</span>  <span class="token comment">//在data_o_ready拉低后的那一个周期，如果没有数据过来，表明buf为空，可以进数据，data_i_ready保持为1</span>
+        data_i_ready <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment">//如果有数据过来，buf被占，则不允许再进数据了，data_i_ready拉低。</span>
+<span class="token keyword">end</span>
+
+<span class="token comment">// 所有输入端口的数据都会进入buf，但其实只有(!data_o_ready &amp;&amp; data_i_valid &amp;&amp; data_i_ready)时刻进去才会发挥作用</span>
+<span class="token important">always @</span> <span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rst_n<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rst_n<span class="token punctuation">)</span> <span class="token comment">//可能有些控制信号通过本模块的data端口进行传输，因此有必要进行复位。</span>
+        buf_data <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_i_ready<span class="token punctuation">)</span> <span class="token comment">//不挑时刻，所有数据都进，但是真正有效的还是(!data_o_ready &amp;&amp; data_i_valid &amp;&amp; data_i_ready)时刻的数据</span>
+        buf_data <span class="token operator">&lt;=</span> data_i<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">assign</span> buf_valid <span class="token operator">=</span> <span class="token operator">~</span>data_i_ready<span class="token punctuation">;</span>
+
+<span class="token comment">// out，如果buf中有数据，优先读走buf中的数据</span>
+<span class="token keyword">assign</span> data_o_valid <span class="token operator">=</span> buf_valid <span class="token operator">?</span> buf_valid <span class="token punctuation">:</span> data_i_valid<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> data_o       <span class="token operator">=</span> buf_valid <span class="token operator">?</span> buf_data <span class="token punctuation">:</span> data_i <span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ol start="2">
+<li><p>添加fifo</p>
+<p>暴力解决，实现简单。要求fifo深度至少为2.</p>
+</li>
+</ol>
+<p><img src="/2024/02265961/v2-395baf053020b99d04c92ec07c9873e6_720w.webp" alt="img"></p>
+<h3 id="CDC中握手案例"><a href="#CDC中握手案例" class="headerlink" title="CDC中握手案例"></a>CDC中握手案例</h3><p>通过req和ack握手，来传输数据，保证采样的数据是稳定的。本质是传输1bit的使能信号。</p>
+<p>tx：数据有效时发出req信号和数据信号，这俩信号需要保证是一致的，即req为1时，数据稳定。输入信号为ack信号，来自接收方，需要打两拍才能使用，ack_r2&amp;req时，拉低req信号。</p>
+<p>rx：输入信号req为异步，需要在当前时钟域打两拍，如果req_r2 &amp;&amp; !ack为1，将数据保存下来。然后拉高ack信号给发送方，用于拉低req信号。</p>
+<p>具体参考代码如下</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token comment">// tx</span>
+<span class="token keyword">module</span> cdc_tx <span class="token punctuation">(</span>
+    <span class="token keyword">input</span>           clk1<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>           rstn1<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>           valid<span class="token punctuation">,</span>
+    <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>     data_in<span class="token punctuation">,</span>
+
+    <span class="token keyword">input</span>           ack<span class="token punctuation">,</span>
+    <span class="token keyword">output</span>          ready<span class="token punctuation">,</span>
+    <span class="token keyword">output</span> <span class="token keyword">reg</span>      req<span class="token punctuation">,</span>
+    <span class="token keyword">output</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>    data_o
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">reg</span>    ack_r<span class="token punctuation">,</span> ack_rr<span class="token punctuation">;</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk1 <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn1<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn1<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        ack_r  <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+        ack_rr <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+    <span class="token keyword">else</span> <span class="token keyword">begin</span>
+        ack_r  <span class="token operator">&lt;=</span> ack<span class="token punctuation">;</span>
+        ack_rr <span class="token operator">&lt;=</span> ack_r<span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">assign</span> ready <span class="token operator">=</span> req <span class="token operator">==</span> ack_rr<span class="token punctuation">;</span>
+
+<span class="token keyword">assign</span> data_o <span class="token operator">=</span> valid <span class="token operator">?</span> data_in <span class="token punctuation">:</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk1 <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn1<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn1<span class="token punctuation">)</span>
+        req <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>ack_rr<span class="token punctuation">)</span>
+        req <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>valid <span class="token operator">&amp;</span> ready<span class="token punctuation">)</span>
+        req <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">endmodule</span> <span class="token comment">//</span>
+
+<span class="token comment">// rx</span>
+<span class="token keyword">module</span> cdc_rx <span class="token punctuation">(</span>
+    <span class="token keyword">input</span>               clk2<span class="token punctuation">,</span>
+    <span class="token keyword">input</span>               rstn2<span class="token punctuation">,</span>
+
+    <span class="token keyword">input</span>               req<span class="token punctuation">,</span> 
+    <span class="token keyword">input</span>   <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>       data_i<span class="token punctuation">,</span>
+    <span class="token keyword">output</span>  <span class="token keyword">reg</span>         ack
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_reg<span class="token punctuation">;</span>
+<span class="token keyword">reg</span> req_r<span class="token punctuation">,</span> req_rr<span class="token punctuation">;</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk2 <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn2<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn2<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        req_r  <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+        req_rr <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+        req_r  <span class="token operator">&lt;=</span> req<span class="token punctuation">;</span>
+        req_rr <span class="token operator">&lt;=</span> req_r<span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk2 <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn2<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn2<span class="token punctuation">)</span> 
+        ack <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>req_rr<span class="token punctuation">)</span>
+        ack <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span>
+        ack <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk2 <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn2<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn2<span class="token punctuation">)</span> 
+        data_reg <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>req_rr <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>ack<span class="token punctuation">)</span>
+        data_reg <span class="token operator">&lt;=</span> data_i<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token keyword">endmodule</span> <span class="token comment">//</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -1038,7 +1206,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">55.2k</span>
+                        class="white-color">59.1k</span>
             
             
             

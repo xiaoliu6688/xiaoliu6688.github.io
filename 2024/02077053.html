@@ -291,7 +291,7 @@ AXI的读写地址和通道分离，可以有效提高总线带宽。
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1k
+                    1.2k
                 </div>
                 
 
@@ -341,6 +341,13 @@ AXI的读写地址和通道分离，可以有效提高总线带宽。
 
 <p>​	Locked access作用的对象是总线，一旦发生Locked access，那么其他的master都不能使用总线了，在一个复杂的SOC系统中，Locked access对系统的影响就太大了，万一发生Locked access的master出点啥问题，整个系统就挂死了</p>
 <p>​	Exclusive access 作用的对象是对应的Slave，支持Exclusive access的Slave会在slave中实现一个Exclusive access monitor，如果monitor记录了能够访问的master，那么对应的master就能通过Exclusive access来访问，其他的未记录的Exclusive access就都不能访问。Exclusive access对总线系统是没有要求的，只是对slave做了特殊要求，即使出错也不会影响系统其他部分，最多访问失败而已。</p>
+<p>独占访问的过程</p>
+<ol>
+<li>主机对slave的一个地址进行独占读操作，从机记录该事务的arid和地址</li>
+<li>一段时间后，对相同地址进行写操作。</li>
+<li>slave将awid和arid进行比较，如果一致，说明该地址没有被其他主机访问，返回EXOKAY，否则返回OKAY，独占访问失败。</li>
+</ol>
+<p>独占读添加一个slave的表项，独占写查表判断是否hit，hit返回exokay，否则返回okay。</p>
 <h4 id="大小端问题"><a href="#大小端问题" class="headerlink" title="大小端问题"></a>大小端问题</h4><p>小端对齐：低字节在低地址；<br>大端对齐：低字节在高地址；</p>
 <p><img src="/2024/02077053/image-20240327100544616.png" alt="image-20240327100544616"></p>
 <h4 id="窄传输"><a href="#窄传输" class="headerlink" title="窄传输"></a>窄传输</h4><p>当数据传输的位宽小于数据总线的位宽时，称为窄位宽传输。通常通过wstrb来控制哪些字节有效。<br>当从机自身限制或者其他客观条件时，比如从机每次只能接收1个字节数据，且不能缓冲多字节数据，<strong>主机就要进行窄传输。</strong>可以将传输数据都放在数据总线上，每次传输只需要改变wstrb即可。</p>
@@ -352,6 +359,9 @@ AXI的读写地址和通道分离，可以有效提高总线带宽。
 <p>AHB突发传输的 每次传输都需要发送地址；并且每次传输都是先发地址，再传输数据；<br>AXI突发传输，只要第一次传输地址即可，后续的地址都是计算出来的；地址和数据可以乱序，提供总线效率</p>
 </li>
 </ul>
+<h5 id="4K边界问题"><a href="#4K边界问题" class="headerlink" title="4K边界问题"></a>4K边界问题</h5><p>在划分slave地址范围时，划分的最小单位是4K字节的地址范围。为了防止在传输过程中，出现访问slave跨界问题，需要针对跨越4k边界的传输进行处理：1. 超过4k边界的地址直接舍弃 2. 分成两次传输</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog">addr<span class="token punctuation">[</span><span class="token number">11</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=></span> <span class="token number">2</span><span class="token operator">^</span><span class="token function">12</span><span class="token punctuation">(</span><span class="token number">4</span>K<span class="token punctuation">)</span> <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 
                 
             </div>
@@ -729,7 +739,7 @@ AXI的读写地址和通道分离，可以有效提高总线带宽。
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">55.2k</span>
+                        class="white-color">59.1k</span>
             
             
             

@@ -292,7 +292,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.8k
+                    2.5k
                 </div>
                 
 
@@ -729,6 +729,290 @@ data_in <span class="token operator">&amp;</span> <span class="token operator">~
 
 <span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
+<h2 id="跨时钟域传输"><a href="#跨时钟域传输" class="headerlink" title="跨时钟域传输"></a>跨时钟域传输</h2><p>已知data a为a时钟域0-15范围内的顺序数，现需要将它的值传递至b时钟域(设b的时钟频率高于a)，请便用verilog设计合适的跨时钟域处理逻辑、模块端口定义如下:</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">data_sync</span><span class="token punctuation">(</span>
+  <span class="token keyword">input</span>         nrst<span class="token punctuation">,</span>
+  <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   data_a<span class="token punctuation">,</span>
+  <span class="token keyword">input</span>         aclk<span class="token punctuation">,</span>
+
+  <span class="token keyword">output</span>        bclk<span class="token punctuation">,</span>
+  <span class="token keyword">output</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>  data_b
+<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">data_sync</span><span class="token punctuation">(</span>
+  <span class="token keyword">input</span>         nrst<span class="token punctuation">,</span>
+  <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   data_a<span class="token punctuation">,</span>
+  <span class="token keyword">input</span>         aclk<span class="token punctuation">,</span>
+
+  <span class="token keyword">output</span>        bclk<span class="token punctuation">,</span>
+  <span class="token keyword">output</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>  data_b
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">reg</span> valid_a<span class="token punctuation">;</span>
+<span class="token keyword">wire</span> ready_b<span class="token punctuation">;</span>
+<span class="token keyword">reg</span> valid_a_r1<span class="token punctuation">,</span> valid_a_r2<span class="token punctuation">;</span>
+<span class="token keyword">reg</span> ready_b_r1<span class="token punctuation">,</span> ready_b_r2<span class="token punctuation">;</span>
+<span class="token important">always@</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> aclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    valid_a <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>ready_b_r2 <span class="token operator">&amp;&amp;</span> valid_a<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    valid_a <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+    valid_a <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always@</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> aclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    ready_b_r1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    ready_b_r2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+    ready_b_r1 <span class="token operator">&lt;=</span> ready_b<span class="token punctuation">;</span>
+    ready_b_r2 <span class="token operator">&lt;=</span> ready_b_r1<span class="token punctuation">;</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">assign</span> ready_b <span class="token operator">=</span> valid_a_r2<span class="token punctuation">;</span>
+
+<span class="token important">always@</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> bclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    valid_a_r1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    valid_a_r2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+    valid_a_r1 <span class="token operator">&lt;=</span> valid_a<span class="token punctuation">;</span>
+    valid_a_r2 <span class="token operator">&lt;=</span> valid_a_r1<span class="token punctuation">;</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always@</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> bclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    data_b <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>ready_b<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    data_b <span class="token operator">&lt;=</span> data_a<span class="token punctuation">;</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>采用握手协议，将有效信号valid和反馈信号ready都要打两拍再使用。</p>
+<p>由于计数值是连续变化的，也可以采用格雷码实现。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">data_sync</span><span class="token punctuation">(</span>
+  <span class="token keyword">input</span>         nrst<span class="token punctuation">,</span>
+  <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   data_a<span class="token punctuation">,</span>
+  <span class="token keyword">input</span>         aclk<span class="token punctuation">,</span>
+
+  <span class="token keyword">output</span>        bclk<span class="token punctuation">,</span>
+  <span class="token keyword">output</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>  data_b
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">wire</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_a_gray<span class="token punctuation">;</span> 
+<span class="token keyword">reg</span>  <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_a_gray_r<span class="token punctuation">;</span> 
+
+<span class="token keyword">assign</span> data_a_gray <span class="token operator">=</span> data_a <span class="token operator">^</span> <span class="token punctuation">(</span>data_a <span class="token operator">>></span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> aclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+    data_a_gray_r <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span>
+    data_a_gray_r <span class="token operator">&lt;=</span> data_a_gray<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> bclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    data_b_gray <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+    data_b_gray_r <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+    data_b_gray <span class="token operator">&lt;=</span> data_a_gray<span class="token punctuation">;</span>
+    data_b_gray_r <span class="token operator">&lt;=</span> data_b_gray<span class="token punctuation">;</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">assign</span> data_b<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_b_gray_r<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> data_b<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_b_gray_r<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">^</span> data_b<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> data_b<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_b_gray_r<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">^</span> data_b<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> data_b<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> data_b_gray_r<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">^</span> data_b<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h1 id="模3-模7检测器"><a href="#模3-模7检测器" class="headerlink" title="模3 模7检测器"></a>模3 模7检测器</h1><p>使用verilog代码，设计电路，判断输入序列能否被三整除，能的时候输出1，不能的时候输出0</p>
+<p>思路：本质是一个序列检测器，通过现态和输入决定输出和下一个状态。余数只有三种可能，00,01,10。输入从右面进，之前的状态需要向左移1比特。状态机如下。</p>
+<table>
+<thead>
+<tr>
+<th align="center">当前态余数</th>
+<th align="center">输入</th>
+<th align="center">次态余数</th>
+<th align="center">输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">2</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">mod3</span><span class="token punctuation">(</span>
+  <span class="token keyword">input</span>       clk<span class="token punctuation">,</span>
+  <span class="token keyword">input</span>       nrst<span class="token punctuation">,</span>
+  <span class="token keyword">input</span>       data_in<span class="token punctuation">,</span>
+
+  <span class="token keyword">output</span> <span class="token keyword">reg</span>  data_out
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">parameter</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> S0 <span class="token operator">=</span> <span class="token number">2'b00</span><span class="token punctuation">,</span>
+                S1 <span class="token operator">=</span> <span class="token number">2'b01</span><span class="token punctuation">,</span>
+                S2 <span class="token operator">=</span> <span class="token number">2'b10</span><span class="token punctuation">;</span>
+<span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> state<span class="token punctuation">,</span> next_state<span class="token punctuation">;</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+      state <span class="token operator">&lt;=</span> S0<span class="token punctuation">;</span>
+  <span class="token keyword">end</span>
+      state <span class="token operator">&lt;=</span> next_state<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">case</span><span class="token punctuation">(</span>state<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    S0<span class="token punctuation">:</span> <span class="token function">if</span><span class="token punctuation">(</span>data_in<span class="token punctuation">)</span> next_state <span class="token operator">=</span> S1<span class="token punctuation">;</span> <span class="token keyword">else</span> next_state <span class="token operator">=</span> S0<span class="token punctuation">;</span>
+    S1<span class="token punctuation">:</span> <span class="token function">if</span><span class="token punctuation">(</span>data_in<span class="token punctuation">)</span> next_state <span class="token operator">=</span> S0<span class="token punctuation">;</span> <span class="token keyword">else</span> next_state <span class="token operator">=</span> S2<span class="token punctuation">;</span>
+    S2<span class="token punctuation">:</span> <span class="token function">if</span><span class="token punctuation">(</span>data_in<span class="token punctuation">)</span> next_state <span class="token operator">=</span> S2<span class="token punctuation">;</span> <span class="token keyword">else</span> next_state <span class="token operator">=</span> S1<span class="token punctuation">;</span>
+    <span class="token keyword">default</span><span class="token punctuation">:</span> next_state <span class="token operator">=</span> S0<span class="token punctuation">;</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">(</span>state <span class="token operator">==</span> S0<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span><span class="token operator">!</span>data_in<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>state <span class="token operator">==</span> S1<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>data_in<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    data_out <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> 
+    data_out <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>模7检测器是同样的道理。状态跳转如下表所示</p>
+<table>
+<thead>
+<tr>
+<th align="center">当前态余数</th>
+<th align="center">输入</th>
+<th align="center">次态余数</th>
+<th align="center">输出</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">2</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">3</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">4</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">5</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td align="center">0</td>
+<td align="center">6</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">0</td>
+<td align="center">3</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">4</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">0</td>
+<td align="center">5</td>
+<td align="center">0</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">6</td>
+<td align="center">0</td>
+</tr>
+</tbody></table>
 
                 
             </div>
@@ -1106,7 +1390,7 @@ data_in <span class="token operator">&amp;</span> <span class="token operator">~
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">55.2k</span>
+                        class="white-color">59.1k</span>
             
             
             
