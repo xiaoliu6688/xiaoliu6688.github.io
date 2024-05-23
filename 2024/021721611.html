@@ -296,7 +296,7 @@ EN">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    436
+                    1.4k
                 </div>
                 
 
@@ -386,6 +386,71 @@ FS的优先级大于-F指定的
 多分支：
 	<span class="token function-name function">if</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token function-name function">if</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span> <span class="token keyword">else</span> <span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
+<h3 id="Sed处理文本数据"><a href="#Sed处理文本数据" class="headerlink" title="Sed处理文本数据"></a><strong>Sed处理文本数据</strong></h3><p>非交互式的，流编译器sed。</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sed</span> <span class="token punctuation">[</span>options<span class="token punctuation">]</span> <span class="token string">"command"</span> files<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>sed和grep不同，不管是否找到匹配的模式，退出都返回0.只有命令存在语法错误时返回1.<br>sed在文件查找模式中时，也可以使用正则表达式RE和各种元字符。正则表达式在斜杠&#x2F;&#x2F;之间。</p>
+<p>扩展元字符集： ？，+，{}，|，()</p>
+<img src="/2024/021721611/image-20240521094609655.png" alt="image-20240521094609655" style="zoom:50%;">
+
+<h6 id="选项"><a href="#选项" class="headerlink" title="选项"></a>选项</h6><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>-r<span class="token punctuation">]</span> 支持扩展元字符
+<span class="token punctuation">[</span>-i<span class="token punctuation">]</span> 修改源文件
+<span class="token punctuation">[</span>-n<span class="token punctuation">]</span> 取消默认输出<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h5><h6 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h6><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"3&#123;d;&#125;"</span> filename 				<span class="token comment"># ;用来隔开命令 </span>
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"/root/&#123;n;d&#125;"</span> filename			<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h6 id="替换"><a href="#替换" class="headerlink" title="替换"></a>替换</h6><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"s/root/alice/gi"</span> filename		<span class="token comment"># g:global, i:ingore 大小写</span>
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"s/[0-9]\&#123;2\&#125;$/#&amp;/"</span> filename		<span class="token comment"># &amp;表示查找串中匹配到的内容  </span>
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"s/root/&amp;LIU/g"</span>	filename		<span class="token comment"># 在root后面加LIU</span>
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"s/^/#/"</span>	filename 				<span class="token comment"># 在开头加 #</span>
+
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"/root/&#123;n;s/bin/uuu/g&#125;"</span> filename <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h6 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h6><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"/root/d"</span> filename		<span class="token comment">#d 删除</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h6 id="追加"><a href="#追加" class="headerlink" title="追加"></a>追加</h6><pre class="line-numbers language-none"><code class="language-none">sed -r &quot;2a111111&quot; filename 		#第二行后面追加111111 
+sed -r &quot;2i111111&quot; filename 		#第二行前面追加111111 
+sed -r &quot;2c111111&quot; filename 		#第二行替换·111111 
+sed -r &quot;2a111111\
+		111111&quot;					#第二行追加多行<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h6 id="反向选择"><a href="#反向选择" class="headerlink" title="反向选择"></a>反向选择</h6><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"3d"</span> filename 
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"3!d"</span> filename <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h6 id="修改文件"><a href="#修改文件" class="headerlink" title="修改文件"></a>修改文件</h6><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sed</span> <span class="token parameter variable">-ri</span> <span class="token string">"<span class="token variable">$a123456789</span>"</span> filename	
+<span class="token function">sed</span> <span class="token parameter variable">-ri</span> <span class="token string">"/^SELINUX=/cSELINUX=disaled"</span> filename  	<span class="token comment">#查找SELINUX开头的行，并替换</span>
+
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"2,6s/.*/#$/"</span> filename	 添加注释
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"2,6s/(.*)/#<span class="token entity" title="\1">\1</span>/"</span> filename 添加注释
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"1,5s/^#*/#/"</span> filename	 添加注释<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h5><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">决定对哪些行处理
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"/root/,5d"</span> filename		<span class="token comment">#root后，删除到第5行 </span>
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"/root/,+5d"</span> filename  	<span class="token comment">#root后，删除5行</span>
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"/root/!5d"</span> filename  	<span class="token comment">#取反删除</span>
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"1,4d"</span> filename
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"1~2d"</span> filename 			<span class="token comment">#删除奇数行</span>
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"0~2d"</span> filename 			<span class="token comment">#删除偶数行	以0行开始，间隔2行删除。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="模式空间和暂存空间"><a href="#模式空间和暂存空间" class="headerlink" title="模式空间和暂存空间"></a>模式空间和暂存空间</h4><p><img src="/2024/021721611/image-20240521135320324.png" alt="image-20240521135320324"></p>
+<p>小写g和h是覆盖。小写G和H是追加。  	暂存空间只有一个。</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"1h;<span class="token variable">$G</span>"</span> filename
+<span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"1h;2,<span class="token variable">$g</span>"</span> filename <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h3 id="正则表达式RE"><a href="#正则表达式RE" class="headerlink" title="正则表达式RE"></a>正则表达式RE</h3><p>处理文本，做匹配。正则表达式放在两个双斜杠之间<code>//</code></p>
+<h4 id="元字符"><a href="#元字符" class="headerlink" title="元字符"></a>元字符</h4><p>^ ：匹配行开头<br>[0-9]：匹配数字<br>+：至少一个<br>$：匹配行结尾<br>. ：匹配任意单个字符<br>*：前导符出现0次或多次，*b &#x3D;&gt;    b, bb<br>.*：任意多个字符<br>[]：匹配指定范围内的一个字符，[Aa]<br>[ - ]：匹配指定范围内的一个字符，[a-z]<br>[ ^ ]：匹配不在指定范围内的一个字符，[^a-z]<br>\：转义元字符<br>\&lt;：词首定位符<br>\&gt;：词尾定位符<br>x\{m\}：字符重复出现m次   o\{5\}<br>x\{m,\}：字符重复出现m次以上<br>x\{m,n\}：字符重复出现（m,n）次<br>\(..\) ：后面匹配时所用到的标签 	%s#\(10.2\).3#\1.4# </p>
+<p>扩展正则表达式元字符</p>
+<p>+：匹配一个或者多个前导字符<br>？：匹配零个或一个前导字符<br>a|b：匹配a或b<br>()：组字符 </p>
+<img src="/2024/021721611/image-20240520220050065.png" alt="image-20240520220050065" style="zoom:33%;">
+
+<p>shell中的通配符 * ：任意多个字符，由shell来解析；shell中的<code>.</code>相当于正则中的<code>?</code>，匹配单个字符。<br>正则表达式元字符：由各种模式匹配操作的程序来解析，比如grep，sed，awk</p>
+<p>grep中，匹配模式在“ ”之间指出，可以匹配多个文件。</p>
+<h3 id="grep-文本处理"><a href="#grep-文本处理" class="headerlink" title="grep 文本处理"></a>grep 文本处理</h3><p>grep [选项] PATTERN filename1 filename2		grep “\-v” filename<br>打印出匹配模式的行</p>
+<p>返回值：0表示找到，1表示没找到，2表示找不到指定的文件</p>
+<p>ps aux| grep “sshd”</p>
+<p>\w  所有字母和数字 [0-9a-zA-Z]<br>\W 所有字母和数字之外的字符，非字符<br>\b  词边界		\&lt;  &#x3D;&gt; \b</p>
+<p>[-v] 取反<br>[-q] 静默<br>[-i]   忽略大小写<br>[-r]  递归文件夹的文件<br>[-o]  只显示匹配的内容<br>[-c]  匹配的上下文两行<br>[-a]  匹配的后两行<br>[-b]  匹配的前两行</p>
 
                 
             </div>
@@ -763,7 +828,7 @@ FS的优先级大于-F指定的
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">59.1k</span>
+                        class="white-color">63.2k</span>
             
             
             

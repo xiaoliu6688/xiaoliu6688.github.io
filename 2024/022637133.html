@@ -292,7 +292,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.5k
+                    2.3k
                 </div>
                 
 
@@ -739,63 +739,7 @@ data_in <span class="token operator">&amp;</span> <span class="token operator">~
   <span class="token keyword">output</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>  data_b
 <span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">data_sync</span><span class="token punctuation">(</span>
-  <span class="token keyword">input</span>         nrst<span class="token punctuation">,</span>
-  <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   data_a<span class="token punctuation">,</span>
-  <span class="token keyword">input</span>         aclk<span class="token punctuation">,</span>
-
-  <span class="token keyword">output</span>        bclk<span class="token punctuation">,</span>
-  <span class="token keyword">output</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>  data_b
-<span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-<span class="token keyword">reg</span> valid_a<span class="token punctuation">;</span>
-<span class="token keyword">wire</span> ready_b<span class="token punctuation">;</span>
-<span class="token keyword">reg</span> valid_a_r1<span class="token punctuation">,</span> valid_a_r2<span class="token punctuation">;</span>
-<span class="token keyword">reg</span> ready_b_r1<span class="token punctuation">,</span> ready_b_r2<span class="token punctuation">;</span>
-<span class="token important">always@</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> aclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    valid_a <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>ready_b_r2 <span class="token operator">&amp;&amp;</span> valid_a<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    valid_a <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
-    valid_a <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-  <span class="token keyword">end</span>
-<span class="token keyword">end</span>
-
-<span class="token important">always@</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> aclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    ready_b_r1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    ready_b_r2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
-    ready_b_r1 <span class="token operator">&lt;=</span> ready_b<span class="token punctuation">;</span>
-    ready_b_r2 <span class="token operator">&lt;=</span> ready_b_r1<span class="token punctuation">;</span>
-  <span class="token keyword">end</span>
-<span class="token keyword">end</span>
-
-<span class="token keyword">assign</span> ready_b <span class="token operator">=</span> valid_a_r2<span class="token punctuation">;</span>
-
-<span class="token important">always@</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> bclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    valid_a_r1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    valid_a_r2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
-    valid_a_r1 <span class="token operator">&lt;=</span> valid_a<span class="token punctuation">;</span>
-    valid_a_r2 <span class="token operator">&lt;=</span> valid_a_r1<span class="token punctuation">;</span>
-  <span class="token keyword">end</span>
-<span class="token keyword">end</span>
-
-<span class="token important">always@</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> bclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    data_b <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
-  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>ready_b<span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    data_b <span class="token operator">&lt;=</span> data_a<span class="token punctuation">;</span>
-  <span class="token keyword">end</span>
-<span class="token keyword">end</span>
-
-<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>采用握手协议，将有效信号valid和反馈信号ready都要打两拍再使用。</p>
-<p>由于计数值是连续变化的，也可以采用格雷码实现。</p>
+<p>由于计数值是连续变化的，采用格雷码实现。</p>
 <pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">data_sync</span><span class="token punctuation">(</span>
   <span class="token keyword">input</span>         nrst<span class="token punctuation">,</span>
   <span class="token keyword">input</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span>   data_a<span class="token punctuation">,</span>
@@ -1390,7 +1334,7 @@ data_in <span class="token operator">&amp;</span> <span class="token operator">~
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">59.1k</span>
+                        class="white-color">63.2k</span>
             
             
             

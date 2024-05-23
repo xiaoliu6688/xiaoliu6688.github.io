@@ -292,7 +292,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    3.3k
+                    4.7k
                 </div>
                 
 
@@ -330,6 +330,8 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 <img src="/2024/012448005/image-20240324214052705.png" alt="image-20240324214052705" style="zoom:50%;">
 
 <p>其中，valid_out信号是valid_in信号打4拍得到的。通过这种方式，输入的数据不需要一级一级的流水到输出，只需要在合适的时机输出结果即可。在课题组的项目中，chirp状态机发出很多状态，很多信号需要对齐，可以使用这种方式完成。</p>
+<img src="/2024/012448005/640.png" alt="图片" style="zoom:67%;">
+
 <ul>
 <li><p>课题组项目 后端指导前端 log</p>
 <p>在做pt eco的时候，有个模块lms_delay的路径修复好几次都不成功。report_timing发现组合逻辑的路径太长造成的。检查RTL代码确实是先进行了减法 又进行了乘法，中间没有打拍。</p>
@@ -371,7 +373,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 <p>eg. 对于16进制数据0x12345678在内存中的保存方式</p>
 <p><img src="/2024/012448005/image-20240221225921219.png"></p>
 <p>优点：大端模式，很容易通过访问最低位地址，判断数值的正负。</p>
-<h3 id="亚稳态问题"><a href="#亚稳态问题" class="headerlink" title="亚稳态问题"></a>亚稳态问题</h3><p>为了降低亚稳态，<strong>使用同步器的目的是 让下级寄存器在采样时，保证采样的数据是一个稳定的0或者1</strong>。否则，亚稳态会继续传播，有可能导致电路功能失效。同步器的每一级相当于对异步输入数据的判决，进而降低亚稳态，并不能消除亚稳态。</p>
+<h3 id="亚稳态问题"><a href="#亚稳态问题" class="headerlink" title="亚稳态问题"></a>亚稳态问题</h3><p>为了降低亚稳态，<strong>使用同步器的目的是 让下级寄存器在采样时，保证采样的数据是一个稳定的0或者1</strong>。否则，亚稳态会继续传播，有可能导致电路功能失效。同步器的每一级相当于对异步输入数据的判决，进而降低亚稳态，并不能消除亚稳态。本质是降低亚稳态的传播，否则传给其他的逻辑门，造成连锁反应，使得数字系统不稳定。</p>
 <p>亚稳态失误概率</p>
 <img src="/2024/012448005/image-20240507104333543.png" alt="image-20240507104333543" style="zoom: 67%;">
 
@@ -437,7 +439,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 <li><p>常值的乘除法都可以进行优化；</p>
 <p>除以一个数等于乘这个数的倒数；<br>一个数乘480 &#x3D;》 x*(512-32)</p>
 </li>
-<li><p>锁存器容易产生毛刺glitch</p>
+<li><p>锁存器容易产生毛刺glitch，不能异步复位，上电后出去不确定的状态。STA非常复杂。</p>
 </li>
 <li><p>摩尔状态机输出只与当前状态有关，米利状态机不仅与当前状态有关，还取决于输入；<br>因为输入的组合逻辑，所以米利状态机要比摩尔状态机输出快一个周期。</p>
 </li>
@@ -447,6 +449,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 <p>在SV中，函数function可以调用task（调用的task不能有消耗时间和延迟的语句），但是verilog中不可以。</p>
 <p>function可以使用外部的变量，但是最好定义一下输入，类似形参的方式传递到function中。</p>
 <p>状态机FSM最好采用摩尔型的，保证输出只与当前状态有关，而且状态是寄存器输出的，可以降低产生毛刺的概率。缺点是，输出的结果相比于米利可能会延迟一个周期。</p>
+<p>在一个时钟上升沿，如果同时存在非阻塞和阻塞语句，执行顺序：先依次执行阻塞（&#x3D;），再同时执行非阻塞（&lt;&#x3D;）。</p>
 <h3 id="乒乓操作"><a href="#乒乓操作" class="headerlink" title="乒乓操作"></a>乒乓操作</h3><img src="/2024/012448005/image-20240303220028047.png" alt="image-20240303220028047" style="zoom: 33%;">
 
 <p>输入数据通过输入选择单元和输出选择单元，有节拍的切换数据流，形成流水线的操作。</p>
@@ -497,6 +500,56 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 </ul>
 <p>有必要，以满信号生成为例，读地址传递过来时必须是格雷码才可以，不能是二进制数据直接采样。如果是采样二进制数据，多bit数据翻转，数据稳定的时间相比于单bit要长很多，产生毛刺的概率也很大。</p>
 <p>使用格雷码的优点：计数值递增时，单比特数据发生变化，通过打两拍的方式跨时钟域传递即可。跳变时，数据稳定的时间也很短，产生毛刺的概率小。如果不使用格雷码，存在数据一致性问题，多比特数据跳变，数据稳定的时间也很长。</p>
+<h2 id="数字前端优化"><a href="#数字前端优化" class="headerlink" title="数字前端优化"></a>数字前端优化</h2><p>比较运算的优化</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">assign</span> max_data <span class="token operator">=</span> a <span class="token operator">></span> b <span class="token operator">?</span> a <span class="token punctuation">:</span> b<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> min_data <span class="token operator">=</span> a <span class="token operator">></span> b <span class="token operator">?</span> b <span class="token punctuation">:</span> a<span class="token punctuation">;</span>
+<span class="token operator">=></span>  通过比较符号位，得到最大和最小值
+<span class="token keyword">assign</span> c <span class="token operator">=</span> a <span class="token operator">-</span> b<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> max_data <span class="token operator">=</span> c<span class="token punctuation">[</span>MAX<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">?</span> b <span class="token punctuation">:</span> a<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> min_data <span class="token operator">=</span> c<span class="token punctuation">[</span>MAX<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">?</span> a <span class="token punctuation">:</span> b<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在逻辑综合后的门级网表中，有大量的与非门和或非门，因为采用CMOS工艺实现的，相比于与门和或门，具有更高的速度。</p>
+<h2 id="脚本辅助设计"><a href="#脚本辅助设计" class="headerlink" title="脚本辅助设计"></a>脚本辅助设计</h2><p>使用Python生成规律的代码，比如case语句中的赋值。</p>
+<p>a[15:0]和数组b[255:0], 当输入cnt为0时，a &#x3D; b[15:0];cnt为1时，a&#x3D;b[31:16];</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"case(cnt)"</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">16</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    s <span class="token operator">=</span> <span class="token string">'   4\'d'</span><span class="token operator">+</span><span class="token builtin">str</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token operator">+</span><span class="token string">': begin\n'</span>
+    s <span class="token operator">=</span> s <span class="token operator">+</span> <span class="token string">'           a = b['</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>i<span class="token operator">*</span><span class="token number">16</span><span class="token operator">+</span><span class="token number">15</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">':'</span> <span class="token operator">+</span> <span class="token builtin">str</span><span class="token punctuation">(</span>i<span class="token operator">*</span><span class="token number">16</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">'];\n'</span>
+    s <span class="token operator">=</span> s <span class="token operator">+</span> <span class="token string">'         end'</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"endcase"</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="verilog高级数字系统设计技术与案例分析"><a href="#verilog高级数字系统设计技术与案例分析" class="headerlink" title="verilog高级数字系统设计技术与案例分析"></a>verilog高级数字系统设计技术与案例分析</h2><p>在ECO阶段，需要使用替补元件对电路进行修正，使用MUX很方便。很多其他逻辑都可以用MUX来实现。在ECO阶段可以使用与非门可以生成与门、或门和反相器，实现修改逻辑的目的。</p>
+<h5 id="伪随机数生成器-LFSR"><a href="#伪随机数生成器-LFSR" class="headerlink" title="伪随机数生成器 LFSR"></a>伪随机数生成器 LFSR</h5><p>可以用来做扰码器和解扰器，A ^ B &#x3D; C, C ^ B &#x3D; A；A是原文信息。</p>
+<img src="/2024/012448005/image-20240522232907153.png" alt="image-20240522232907153" style="zoom:33%;">
+
+<p>两种LFSR类型：悲波那契LFSR是多对一型，多个触发器的输出经过异或给到输入。<br>伽罗瓦LFSR是一对多型，寄存器输出可以接到多个寄存器的输入端（需要经过异或逻辑），伽罗瓦LFSR更快，因为两个触发器之间最多有一个异或门，应用在高速场景下。</p>
+<img src="/2024/012448005/image-20240523000324582.png" alt="image-20240523000324582" style="zoom:50%;">
+
+<img src="/2024/012448005/image-20240523000338539.png" alt="image-20240523000338539" style="zoom:50%;">
+
+<p>跨时钟域传输多比特数据时，如果传输数据较少，可以采用握手机制。对于慢时钟域到快时钟域的数据传输，可以采用半握手方式。对于快时钟到慢时钟域的数据传输需要使用全握手方式。</p>
+<h5 id="源同步时钟"><a href="#源同步时钟" class="headerlink" title="源同步时钟"></a>源同步时钟</h5><p>芯片间传递数据的同时还传送数据同步的时钟，时钟上升沿对准数据的中间位置。在接收端用提供的时钟将数据恢复之后，接收端可以使用一个异步fifo将恢复的数据同步到本地时钟域。</p>
+<p>在一些应用中，采用两个时钟（strobe、！strobe），数据速率是时钟速率的两倍，称为DDR，用于DDR存储器中。</p>
+<img src="/2024/012448005/image-20240523111612438.png" alt="image-20240523111612438" style="zoom:50%;">
+
+<h5 id="嵌入式时钟"><a href="#嵌入式时钟" class="headerlink" title="嵌入式时钟"></a>嵌入式时钟</h5><p>源同步时钟应用于短距离和并行数据传输，对于高速和长距离传输，数据与时钟之间的相位差异会更加难以控制。在嵌入式时钟机制中，没有与数据同时传输的时钟。数据本身具有足够多的 高到低和低到高的转换，接收端利用这种转换使用PLL来提取时钟，之后使用该时钟同步接收的数据。例如PCIe，USB等，数据速率可以达到几Gbps</p>
+<h5 id="提高吞吐率"><a href="#提高吞吐率" class="headerlink" title="提高吞吐率"></a>提高吞吐率</h5><ol>
+<li>提高时钟频率：增加功耗。当前处理器设计趋势不仅仅提高时钟主频，而是采用其他技术提高数据处理能力，比如多核，多通道存储器等。</li>
+<li>更宽的数据通道：增加数据位宽，会使得硬件成本增加，增加了设计难度，以及高频信号中常出现的电磁兼容和SI信号传输质量问题。</li>
+<li>流水线</li>
+<li>并行处理</li>
+<li>乱序执行</li>
+<li>高速缓存cache</li>
+<li>预读取：在缓存区存入比当前需求更多的数据。</li>
+</ol>
+<h5 id="FIFO深度处理"><a href="#FIFO深度处理" class="headerlink" title="FIFO深度处理"></a>FIFO深度处理</h5><p>在异步fifo的深度选择时，考虑到格雷码翻转的规则，需要设计成2的整数次幂，比如2,4,8,16…..<br>如果需要深度为300的FIFO，按照一般的处理规则，需要设置深度为512。这种处理方案<strong>会造成很大的资源浪费</strong>。可以采用以下两种处理方式：</p>
+<ol>
+<li>使用两个FIFO，<strong>一个深度为300的同步FIFO，一个深度很小的（8）的异步FIFO</strong>，异步FIFO用来做跨时钟域的处理和速率匹配。</li>
+<li>修改格雷码，因为格雷码是对称的。将计数值的中间值设置在512的中间(256)，上下截取150，这样可以保证相邻格雷码跳变时，只有1bit变化。（106，405），然后修改指针106的位置对应的FIFO第一个存储位置，指针405的位置对应FIFO的第300个存储位置。<br>(2^n&#x2F;2 - fifo_depth&#x2F;2) ~ (2^n&#x2F;2 + fifo_depth&#x2F;2)</li>
+</ol>
+<h6 id="基于触发器或者SRAM的FIFO"><a href="#基于触发器或者SRAM的FIFO" class="headerlink" title="基于触发器或者SRAM的FIFO"></a>基于触发器或者SRAM的FIFO</h6><p>根据经验，如果存储器容量小于1K位，使用触发器作为存储更合适。如果大于1K位，使用SRAM作为存储单元更合适。</p>
+<p>当FIFO容量很小时，4*16，最好使用基于触发器的FIFO。如果FIFO容量为1K*32，使用触发器实现，需要的触发器个数是巨大的，FIFO的面积远大于使用SRAM的方案。另一个方面需要考虑的是FIFO的位宽和深度比值，如果存储器深度&#x2F;宽度过大或者过窄，SRAM都不是最好的选择。</p>
 
                 
             </div>
@@ -874,7 +927,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">59.1k</span>
+                        class="white-color">63.2k</span>
             
             
             

@@ -289,7 +289,7 @@ Rule：s">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.7k
+                    3.2k
                 </div>
                 
 
@@ -602,6 +602,47 @@ write_aggregate_report dashboard<span aria-hidden="true" class="line-numbers-row
 <p><img src="/2023/112431792/image-20240326003348858.png" alt="image-20240326003348858"></p>
 <p>tips：在设计中，一般只使用一种复位方案，同步或者异步复位。混合使用这两种方案可能会导致系统部分复位，并且可能不符合 SoC 的设计意图。此外，可能会对 STA 产生影响，对于异步重置，需要满足恢复时间（取消断言）。对于同步复位，需要满足setup建立时间。</p>
 <p>敏感列表中的信号，在always块中必须有作用才行，否则不知道时序电路的时钟信号是哪个。</p>
+<h4 id="违例：同步FIFO中有组合逻辑环"><a href="#违例：同步FIFO中有组合逻辑环" class="headerlink" title="违例：同步FIFO中有组合逻辑环"></a>违例：同步FIFO中有组合逻辑环</h4><pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>  <span class="token comment">// comb logic</span>
+  <span class="token function">if</span><span class="token punctuation">(</span>rd_en <span class="token operator">&amp;</span> <span class="token operator">!</span>fifo_empty<span class="token punctuation">)</span>
+    rd_data <span class="token operator">=</span> ram<span class="token punctuation">[</span>rd_ptr<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span>
+    rd_data <span class="token operator">=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token comment">// 在FIFO输出rdata时，需要组合逻辑输出。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>按照上面的逻辑，rdata输出和rd_en有关，rd_en是输入的控制信号，如果rdata影响rd_en，rd_en也会影响rdata，两者形成了组合逻辑环。在spyglass中会报错。（取决于rden和rdata是否有组合逻辑的关联，在AXI4交叉矩阵设计的项目中确实存在组合逻辑的关联）</p>
+<p>在spyglass检查组合逻辑环是静态检查，如果是下面的代码</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>  <span class="token comment">// comb logic</span>
+  <span class="token function">if</span><span class="token punctuation">(</span>rd_en <span class="token operator">&amp;</span> <span class="token operator">!</span>fifo_empty<span class="token punctuation">)</span>
+    rd_data <span class="token operator">=</span> ram<span class="token punctuation">[</span>rd_ptr<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span>
+    rd_data <span class="token operator">=</span> ram<span class="token punctuation">[</span>rd_ptr<span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>无论rd_en为1还是0，rdata输出都是一样的，rd_ptr也是时序逻辑输出，所以并不存在组合逻辑环的情况。但是spyglass会报出组合逻辑环的违例。这是因为rdata影响了rd_en，rd_en会影响rdata。rdata的输出是取决于rd_en的，但是rdata无论是1还是0，输出一样，spyglass并不会检查输出值是否一样，而是检测是否存在分支，只要有分支，就存在组合逻辑环的潜在危险。</p>
+<p>正确逻辑的代码如下</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>  <span class="token comment">// comb logic</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>fifo_empty<span class="token punctuation">)</span>
+    rd_data <span class="token operator">=</span> ram<span class="token punctuation">[</span>rd_ptr<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span>
+    rd_data <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>将rdata输出与rd_en解耦，不让他存在回环的可能性。且rdata的输出只与时序逻辑有关，fifo_empty是取决于时序逻辑cnt和rd_ptr的。</p>
+<p><strong>总结：spyglass报出组合逻辑环违例，并不会真正的发生组合逻辑回环。但是代码一定有问题，需要自己斟酌。</strong></p>
+<h5 id="组合逻辑环verilog-bug"><a href="#组合逻辑环verilog-bug" class="headerlink" title="组合逻辑环verilog bug"></a>组合逻辑环verilog bug</h5><p>参考网上博客 <a target="_blank" rel="noopener" href="https://blog.csdn.net/kuan__/article/details/138872121">https://blog.csdn.net/kuan__/article/details/138872121</a></p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">test</span><span class="token punctuation">(</span>
+	<span class="token keyword">input</span> b<span class="token punctuation">;</span>
+	<span class="token keyword">output</span> a0<span class="token punctuation">;</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> a  <span class="token operator">=</span> <span class="token operator">!</span>b <span class="token operator">?</span> a0 <span class="token punctuation">:</span> <span class="token number">1'b1</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> a0 <span class="token operator">=</span> <span class="token operator">!</span>b <span class="token operator">?</span> <span class="token number">1'b0</span> <span class="token punctuation">:</span> a<span class="token punctuation">;</span>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>按照逻辑来说，b无论是0还是1，a0都是确定的，且没有组合逻辑环。但是如果b给到a和a0的mux有延迟。就可能存在组合逻辑环。</p>
+<img src="/2023/112431792/59b0aca63ec84c72ad065f91f39a7e89.png" alt="请添加图片描述" style="zoom: 50%;">
+
+<p>从上面的代码也可以看出，a0和a之间存在组合逻辑环的潜在危险。a0和a有关，a和a0有关。</p>
 
                 
             </div>
@@ -979,7 +1020,7 @@ write_aggregate_report dashboard<span aria-hidden="true" class="line-numbers-row
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">59.1k</span>
+                        class="white-color">63.2k</span>
             
             
             

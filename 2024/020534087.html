@@ -9,10 +9,7 @@
 reference 
 https://blog.csdn.net/wudpekerlily/article/details/129494440
 
-低功耗设计为什么提出？为了降低芯片功耗，且RTL代码无法进行电源分析。
-解决办法
-门控时钟
-">
+低功耗设计是一套完整的理论体系，从原理、代码、UPF、综合、版图等等，每个步骤的一点点提高，">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -295,7 +292,7 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.7k
+                    3.3k
                 </div>
                 
 
@@ -324,6 +321,7 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
 <p>reference </p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wudpekerlily/article/details/129494440">https://blog.csdn.net/wudpekerlily/article/details/129494440</a></p>
 </blockquote>
+<p>低功耗设计是一套完整的理论体系，从原理、代码、UPF、综合、版图等等，每个步骤的一点点提高，都会带来不同程度的优化，勿以优化小而不为，点点滴滴的进步就会造就更加节能的芯片实现。</p>
 <h1 id="低功耗设计"><a href="#低功耗设计" class="headerlink" title="低功耗设计"></a>低功耗设计</h1><h3 id="为什么提出？"><a href="#为什么提出？" class="headerlink" title="为什么提出？"></a>为什么提出？</h3><p>为了降低芯片功耗，且RTL代码无法进行电源分析。</p>
 <h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><ol>
 <li>门控时钟</li>
@@ -512,6 +510,49 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 </li>
 </ol>
 <p>​	（可以按照上面不同层次来回答如何降低功耗）</p>
+<ol start="2">
+<li>在逻辑综合时，计算功耗的方式：标准单元库中有功耗的查找表，依赖的条件是 <strong>输入转换时间和输出负载</strong>，和计算时序延迟一样。</li>
+</ol>
+<h1 id="Power-Intent-and-Low-Power-Methodology"><a href="#Power-Intent-and-Low-Power-Methodology" class="headerlink" title="Power Intent and Low Power Methodology"></a>Power Intent and Low Power Methodology</h1><h2 id="标准低功耗方法"><a href="#标准低功耗方法" class="headerlink" title="标准低功耗方法"></a>标准低功耗方法</h2><p><img src="/2024/020534087/image-20240514142904152.png" alt="image-20240514142904152"></p>
+<p><img src="/2024/020534087/image-20240514143009199.png" alt="image-20240514143009199"></p>
+<p><img src="/2024/020534087/image-20240514143057267.png" alt="image-20240514143057267"></p>
+<p><img src="/2024/020534087/image-20240514143123466.png" alt="image-20240514143123466"></p>
+<p><img src="/2024/020534087/image-20240514144847825.png" alt="image-20240514144847825"></p>
+<p>当模块处于idle时，通过电源门控实现降低功耗。PMOS传输低电平时有电压损失，所以需要ISO CELL隔离输出。</p>
+<p>在电源上添加门控逻辑，导致IR Drop，进入真正的组合逻辑时电压会降低，所以需要增加电源门控的晶体管尺寸，减小这一影响。经常性的电源门控管理会带来动态功耗，因此电源门控通常用在长时间睡眠的模块中。</p>
+<h2 id="MSV多电源电压"><a href="#MSV多电源电压" class="headerlink" title="MSV多电源电压"></a>MSV多电源电压</h2><p><img src="/2024/020534087/image-20240514150712336.png" alt="image-20240514150712336"></p>
+<p>静态电压技术、多电压调节技术、动态电压和频率调节技术、自适应电压调节技术</p>
+<p><img src="/2024/020534087/image-20240514150848034.png" alt="image-20240514150848034"></p>
+<p><img src="/2024/020534087/image-20240514152613213.png" alt="image-20240514152613213"></p>
+<p>不同电压域转换需要不同的电平移位器，STA分析复杂，需要对跨多电压域模型进行建模表征时序参数。</p>
+<p><img src="/2024/020534087/image-20240514153334774.png" alt="image-20240514153334774"></p>
+<p>H2L移位器通常需要一个或者两个反相器。将H2L移位器放在低电压域。</p>
+<p><img src="/2024/020534087/image-20240514154339175.png" alt="image-20240514154339175"></p>
+<p>L2H移位器放在目标电压域，因为输出需要更大的驱动电流。距离较远可能需要在中间添加缓冲器。</p>
+<p><img src="/2024/020534087/image-20240514154643558.png" alt="image-20240514154643558"></p>
+<p><img src="/2024/020534087/image-20240514155742347.png" alt="image-20240514155742347"></p>
+<p>在RTL或者floorplan时可添加level shifter。</p>
+<p><img src="/2024/020534087/image-20240514160244299.png" alt="image-20240514160244299"></p>
+<h2 id="电源门控"><a href="#电源门控" class="headerlink" title="电源门控"></a>电源门控</h2><p><img src="/2024/020534087/image-20240514160915201.png" alt="image-20240514160915201"></p>
+<p>时钟门控降低动态功耗是立即的，电源门控不仅可以降低动态，还可以降低漏电功耗，但是需要一定时间。<br>在电源门控时，需要考虑 1.可以降低的漏电功耗。2. 关闭电源和开启电源花费的时间 3. 关闭&#x2F;开启电源所需的功耗 4. 睡眠时间和活动时间的比例</p>
+<p><img src="/2024/020534087/image-20240514162738877.png" alt="image-20240514162738877"></p>
+<p><img src="/2024/020534087/image-20240514163047798.png" alt="image-20240514163047798"></p>
+<p><img src="/2024/020534087/image-20240514163720794.png" alt="image-20240514163720794"></p>
+<p>一个简易的电源门控的SOC包括VDD（受电源切换网络控制）、VSS、电源切换网络、隔离单元ISO和保留寄存器</p>
+<p><img src="/2024/020534087/image-20240514165031809.png" alt="image-20240514165031809"></p>
+<p><img src="/2024/020534087/image-20240514165434886.png" alt="image-20240514165434886"></p>
+<p><img src="/2024/020534087/image-20240514171225772.png" alt="image-20240514171225772"></p>
+<p><img src="/2024/020534087/image-20240514171440703.png" alt="image-20240514171440703"></p>
+<p><img src="/2024/020534087/image-20240514171633152.png" alt="image-20240514171633152"></p>
+<p><img src="/2024/020534087/image-20240514172709864.png" alt="image-20240514172709864"></p>
+<p><img src="/2024/020534087/image-20240514172822048.png" alt="image-20240514172822048"></p>
+<p><img src="/2024/020534087/image-20240514173040988.png" alt="image-20240514173040988"></p>
+<p><img src="/2024/020534087/image-20240514173755147.png" alt="image-20240514173755147"></p>
+<p><img src="/2024/020534087/image-20240514173839046.png" alt="image-20240514173839046"></p>
+<p><img src="/2024/020534087/image-20240514213540388.png" alt="image-20240514213540388"></p>
+<p><img src="/2024/020534087/image-20240514230106167.png" alt="image-20240514230106167"></p>
+<p><img src="/2024/020534087/image-20240514230134817.png" alt="image-20240514230134817"></p>
+<p><img src="/2024/020534087/image-20240514230147567.png" alt="image-20240514230147567"></p>
 
                 
             </div>
@@ -889,7 +930,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">59.1k</span>
+                        class="white-color">63.2k</span>
             
             
             

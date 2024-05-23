@@ -288,7 +288,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    329
+                    380
                 </div>
                 
 
@@ -317,9 +317,9 @@
 <ul>
 <li>LHS</li>
 </ul>
-<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>	<span class="token comment" spellcheck="true">//LHS 		always @(a) // RHS</span>
-  <span class="token number">#5</span> y <span class="token operator">=</span> <span class="token operator">~</span>a<span class="token punctuation">;</span>			  y <span class="token operator">=</span> <span class="token number">#5</span> <span class="token operator">~</span>a<span class="token punctuation">;</span>
-</code></pre>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>	<span class="token comment">//LHS 		always @(a) // RHS</span>
+  <span class="token number">#5</span> y <span class="token operator">=</span> <span class="token operator">~</span>a<span class="token punctuation">;</span>			  y <span class="token operator">=</span> <span class="token number">#5</span> <span class="token operator">~</span>a<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
 <img src="/2023/112317390/image-20231123170149369.png" alt="LHS in always" style="zoom: 67%;">
 
 <img src="/2023/112317390/image-20231123170340908.png" alt="always 阻塞 LHS" style="zoom: 67%;">
@@ -353,6 +353,7 @@
 <img src="/2023/112317390/image-20231123213918097.png" alt="assign delay wave" style="zoom: 50%;">
 
 <h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><strong>只有always块的RHS才可以准确描述组合逻辑的延迟。</strong></p>
+<h4 id="Bug"><a href="#Bug" class="headerlink" title="Bug"></a>Bug</h4><p>在tb测试时，如果输入信号是通过@(posedge clk)给出的，一定要 <strong>使用&lt;&#x3D;非阻塞赋值</strong>。否则，会导致，在上升沿时阻塞和非阻塞赋值冲突。</p>
 
                 
             </div>
@@ -730,7 +731,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">59.1k</span>
+                        class="white-color">63.2k</span>
             
             
             

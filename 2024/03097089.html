@@ -278,7 +278,7 @@ set_cloc">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1k
+                    1.4k
                 </div>
                 
 
@@ -422,7 +422,30 @@ create_generated_clock <span class="token operator">-</span>name CLKd1 <span cla
 <p>声明物理互斥关系</p>
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_group <span class="token operator">-</span>physically_exclusive <span class="token operator">-</span>group <span class="token punctuation">&#123;</span>CLKm0 CLKd0<span class="token punctuation">&#125;</span> <span class="token operator">-</span>group <span class="token punctuation">&#123;</span>CLKm1 CLKd1<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-<h3 id><a href="#" class="headerlink" title></a></h3>
+<h3 id="巧用RTL原语实现MUX门级映射"><a href="#巧用RTL原语实现MUX门级映射" class="headerlink" title="巧用RTL原语实现MUX门级映射"></a>巧用RTL原语实现MUX门级映射</h3><p>在DC综合阶段，会将case语句的描述处理成SELECT_OP类型，将电平&#x2F;边沿触发的时序逻辑处理成SEQGEN类型。</p>
+<p>在综合时，compile会将SELECT_OP类型实现为一个与或非逻辑或者MUX逻辑，相对于RTL中例化一个MUX而言，会带来不确定性。使用verilog的原语操作，可将case语句综合时实现为MUX逻辑。具体如下</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">case</span><span class="token punctuation">(</span>sel<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span>  <span class="token comment">// synopsys infer_mux</span>
+		<span class="token number">2'b00</span><span class="token punctuation">:</span> out <span class="token operator">=</span> in1<span class="token punctuation">;</span>
+		<span class="token number">2'b01</span><span class="token punctuation">:</span> out <span class="token operator">=</span> in2<span class="token punctuation">;</span>
+		<span class="token number">2'b10</span><span class="token punctuation">:</span> out <span class="token operator">=</span> in3<span class="token punctuation">;</span>
+		<span class="token number">2'b11</span><span class="token punctuation">:</span> out <span class="token operator">=</span> in4<span class="token punctuation">;</span>
+		<span class="token keyword">default</span><span class="token punctuation">:</span> out <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	<span class="token keyword">endcase</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>infer_mux在DC中可以指导将case语句综合成MUX结构的逻辑。</p>
+<p>compile综合的结果如下（对比是否使用原语infer_mux）</p>
+<p><img src="/2024/03097089/5f73583fdd794e7cbb11a34ce9ab0e60.png" alt="在这里插入图片描述"></p>
+<ul>
+<li>dout[0]上的MUX4面积： <strong>98.76</strong></li>
+<li>dout[1]的与或非逻辑面积：<strong>70.092</strong></li>
+</ul>
+<p>在原语的控制下，DC强制使用了MUX，对于dout1的面积，实际上是做了面积的优化。相比于与非门实现的方式，面积增加了，优点在哪里？可以映射到工艺库中的标准MUX中，因为std cell的mux的精心设计过的，PPA更好一些。</p>
+<p>对于八选一的MUX，使用了infer_mux原语，DC工具会自动扩展，灵活构建MUX Tree满足8选1的需求。如果工艺库中只有4选1的MUX，compile后的结果如下</p>
+<p><img src="/2024/03097089/b593e35e30f240b892c59612701218a1.png" alt="在这里插入图片描述"></p>
+<p>使用RTL原语的方法，对于设计人员的工作量大为减少，并且可以不依赖工艺库，DC工具甚至可以自动构建MUX tree，达到了事半功倍的效果。</p>
+
                 
             </div>
             <hr/>
@@ -783,7 +806,7 @@ create_generated_clock <span class="token operator">-</span>name CLKd1 <span cla
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">59.1k</span>
+                        class="white-color">63.2k</span>
             
             
             

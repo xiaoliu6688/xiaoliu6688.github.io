@@ -289,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.1k
+                    1.4k
                 </div>
                 
 
@@ -317,7 +317,9 @@
                 <blockquote>
 <p>主要参考博客如下<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/Ocean_Yv/article/details/126496121">https://blog.csdn.net/Ocean_Yv/article/details/126496121</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43698385/article/details/126112076">https://blog.csdn.net/weixin_43698385/article/details/126112076</a></p>
 </blockquote>
-<h2 id="总线仲裁算法"><a href="#总线仲裁算法" class="headerlink" title="总线仲裁算法"></a>总线仲裁算法</h2><h3 id="固定优先级算法"><a href="#固定优先级算法" class="headerlink" title="固定优先级算法"></a>固定优先级算法</h3><p>采用固定的优先级，不同请求信号req完成仲裁后，下次请求信号到来时，仲裁机制按照一样的优先级顺序仲裁，纯组合逻辑就可以完成。可以用优先级或者补码特性来判断 </p>
+<h2 id="总线仲裁算法"><a href="#总线仲裁算法" class="headerlink" title="总线仲裁算法"></a>总线仲裁算法</h2><p>固定优先级算法的弊端：如果两个请求同时且一直有效，会导致无法响应优先级低的请求，一直处于饥饿状态。<br>改进措施：使用轮询优先级仲裁算法，完成此次请求后，改变当前仲裁优先级。</p>
+<p>在AHB总线中，在多对多的拓扑结构中，仲裁器采用的是固定优先级算法，如果一个master一直占领总线但是迟迟得不到响应，会导致总线挂死，其他master也无法进行数据传输。<br>解决措施：将固定优先级算法改为轮询优先级算法，并且如果一个master长时间没有得到响应，就需要舍弃此次仲裁的结果，并改变优先级，让其他的master先传输。<br>AXI协议不会出现上述这种问题，因为AXI采用的交叉矩阵结构，不同master使用的不是同一个总线，master1到slave1占领的总线，不影响其他master向其他slave传输数据。</p>
+<h3 id="固定优先级算法"><a href="#固定优先级算法" class="headerlink" title="固定优先级算法"></a>固定优先级算法</h3><p>采用固定的优先级，不同请求信号req完成仲裁后，下次请求信号到来时，仲裁机制按照一样的优先级顺序仲裁，纯组合逻辑就可以完成。可以用优先级或者补码特性来判断。</p>
 <h4 id="if-elseif-case"><a href="#if-elseif-case" class="headerlink" title="if elseif &#x2F; case"></a>if elseif &#x2F; case</h4><p>通常使用有优先级的if elseif else或者带优先级的case完成固定优先级算法的仲裁。</p>
 <pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token comment">// first way : if elseif else</span>
 <span class="token keyword">module</span> <span class="token function">arbiter_fixed</span><span class="token punctuation">(</span>
@@ -792,7 +794,7 @@ mastera<span class="token punctuation">:</span>
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">59.1k</span>
+                        class="white-color">63.2k</span>
             
             
             
