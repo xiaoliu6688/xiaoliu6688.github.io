@@ -4,8 +4,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="Innovus学习, RayBiiao">
-    <meta name="description" content="Innovus导入设计">
+    <meta name="keywords" content="低功耗方法学（三）, RayBiiao">
+    <meta name="description" content="6 电源门控的架构问题这章讨论一些有关植入电源门控的架构问题，特别的，它解决了分区、层次结构和多个电源门控域。
+6.1 垂直结构和电源门控为了支持这种可移植性，必须在电源域级别强制设置模块边界。也就是说，给定的模块应该属于单个电压域，而不是">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -17,7 +18,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>Innovus学习 | RayBiiao</title>
+    <title>低功耗方法学（三） | RayBiiao</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -225,12 +226,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/13d5b7a520cc017922ba658a6977db7.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/5067e3399413253dc8e9ac38758dd1b.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">Innovus学习</h1>
+                    <h1 class="description center-align post-title">低功耗方法学（三）</h1>
                 </div>
             </div>
         </div>
@@ -252,12 +253,25 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/%E4%BD%8E%E5%8A%9F%E8%80%97%E5%9C%A3%E7%BB%8F/">
+                                <span class="chip bg-color">低功耗圣经</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="post-category">
+                                读书笔记
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -266,7 +280,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2024-05-23
+                    2024-04-25
                 </div>
                 
 
@@ -275,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    5
+                    1.2k
                 </div>
                 
 
@@ -300,7 +314,69 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="Innovus导入设计"><a href="#Innovus导入设计" class="headerlink" title="Innovus导入设计"></a>Innovus导入设计</h3>
+                <h2 id="6-电源门控的架构问题"><a href="#6-电源门控的架构问题" class="headerlink" title="6 电源门控的架构问题"></a>6 电源门控的架构问题</h2><p>这章讨论一些有关植入电源门控的架构问题，特别的，它解决了分区、层次结构和多个电源门控域。</p>
+<h3 id="6-1-垂直结构和电源门控"><a href="#6-1-垂直结构和电源门控" class="headerlink" title="6.1 垂直结构和电源门控"></a>6.1 垂直结构和电源门控</h3><p>为了支持这种可移植性，必须在电源域级别强制设置模块边界。也就是说，给定的模块应该属于单个电压域，而不是跨多个域。一些工具和流程通过RTL流程分配到不同的电压域，但是会导致分析和实现困难。</p>
+<p>电源门控会增加IR drop，导致性能下降，级联多个电压降可能呢过导致延迟增加到不可接受的程度。</p>
+<p>扁平化的电源门控交换网络如下图所示</p>
+<img src="/2024/042561284/image-20240426102400513.png" alt="image-20240426102400513" style="zoom:67%;">
+
+<img src="/2024/042561284/image-20240426102417327.png" alt="image-20240426102417327" style="zoom: 67%;">
+
+<h5 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h5><ul>
+<li>映射电源门控区域到模块的边界。</li>
+<li>当划分分层电源门控设计时，确保电源门控可以映射到扁平化的交换结构。</li>
+</ul>
+<h5 id="陷阱"><a href="#陷阱" class="headerlink" title="陷阱"></a>陷阱</h5><ul>
+<li>避免控制信号通过电源门控或者断电区域</li>
+<li>避免使用超过一级或者两级的电源门控系统</li>
+</ul>
+<h3 id="6-2-电源网络及其控制"><a href="#6-2-电源网络及其控制" class="headerlink" title="6.2 电源网络及其控制"></a>6.2 电源网络及其控制</h3><p>在基于处理器的SoC设计中，CPU系统很可能引入很多电源网络。</p>
+<ul>
+<li>CPU子系统具有独立的电源轨道，允许CPU完全关闭以实现长期睡眠操作模式。</li>
+<li>CPU逻辑的门控电源支持短期泄露节省模式，其中高速缓存可以保留，但所有泄漏的标准单元逻辑都在本地关闭。</li>
+<li>始终开启的电源为隔离单元供电。</li>
+<li>SoC级别的常开电源，用于控制外部电源轨开关和电源的握手</li>
+<li>一些常开保留电源供电来自于非电源门控轨道，这需要工艺库中具有带有状态保留的寄存器单元。</li>
+</ul>
+<p>电源网络控制如下图所示，具有独立的VDDCPU和常开的VDDOSC，他们有一个共同的VSS地。电源门控控制单元区域具有非门控状态保持电源</p>
+<img src="/2024/042561284/image-20240426111009781.png" alt="image-20240426111009781" style="zoom:67%;">
+
+<h4 id="6-2-1-外部电源开关"><a href="#6-2-1-外部电源开关" class="headerlink" title="6.2.1 外部电源开关"></a>6.2.1 外部电源开关</h4><p>外部电源轨开关可提供最佳的长期泄漏节省，但是会引入显著的开启延迟。</p>
+<p>通常只有少数的电压轨可以进行外部切换，每个电源都会需要稳压器和电路板成本。每个电源轨都需要片上电源分配，使得电源规划和物理布局规则变得很复杂。大多数soc至少具有三个电源轨：</p>
+<ul>
+<li>IO电源（至少1.8&#x2F;2.5&#x2F;3.3V）</li>
+<li>常开的SOC电源轨道</li>
+<li>干净的模拟电源给PLL</li>
+<li>一个可选的保持活动的电压供电给到实时时钟</li>
+</ul>
+<p>添加两个或三个以上的外部开关电源轨会显著增加最终产品的复杂性和成本。通常，芯片和电路板的共享接地&#x2F;VSS连接方法最适合外部电源轨切换。</p>
+<img src="/2024/042561284/image-20240426133612114.png" alt="image-20240426133612114" style="zoom:50%;">
+
+<p>外部电源轨切换会导致唤醒事件出现显著的延迟（几十us到几ms级别），在RTL级别量化这些延时是很困难的，通常，应该抑制时钟，直到开关电源轨稳定在允许的误差内。对于在几百MHz的时钟域中，相当于几万个时钟周期。当引入动态电压调节时，单独的电源轨成为必要。通常希望为大型存储器提供自己的电源。</p>
+<h5 id="推荐-1"><a href="#推荐-1" class="headerlink" title="推荐"></a>推荐</h5><ul>
+<li><p>最大限度的减小外部开关电源轨的数目（考虑到相关额外的电源空间成本和片上配电）</p>
+</li>
+<li><p>外部切换电源轨，最好使用同一个公共地</p>
+</li>
+<li><p>在实现电压缩放的系统重，必须为每个电压缩放的区域提供独立的电源轨</p>
+</li>
+</ul>
+<h5 id="陷阱-1"><a href="#陷阱-1" class="headerlink" title="陷阱"></a>陷阱</h5><ul>
+<li><p>针对重要的外部电源轨切换时间进行设计：唤醒中必须考虑数万或数十万个时钟周期延迟</p>
+</li>
+<li><p>尽管从系统设计的角度来看，多轨看起来很优雅，但它们在生产中带来了验证和部署挑战。</p>
+</li>
+</ul>
+<h4 id="6-2-2-片上电源门控"><a href="#6-2-2-片上电源门控" class="headerlink" title="6.2.2 片上电源门控"></a>6.2.2 片上电源门控</h4><p>片上电源门控比片外电源轨门控快得多。对于非常小的区域，电源门控需要几个甚至几百个时钟周期。</p>
+<h3 id="6-3-电源状态表和常开寄存器"><a href="#6-3-电源状态表和常开寄存器" class="headerlink" title="6.3 电源状态表和常开寄存器"></a>6.3 电源状态表和常开寄存器</h3><p>当处理多个电源门控电源域时，电源布线可能会变得复杂，下图显示了三个电源域，每个域都有电源门控。</p>
+<img src="/2024/042561284/image-20240426141349369.png" alt="image-20240426141349369" style="zoom:50%;">
+
+
+
+<p>&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</p>
+<p>||       未完待续~       ||</p>
+<p>&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</p>
+
                 
             </div>
             <hr/>
@@ -326,7 +402,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://xiaoliu6688.github.io/2024/052315634.html">https://xiaoliu6688.github.io/2024/052315634.html</a>
+                    <a href="https://xiaoliu6688.github.io/2024/042561284.html">https://xiaoliu6688.github.io/2024/042561284.html</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -363,7 +439,11 @@
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
+                            
+                                <a href="/tags/%E4%BD%8E%E5%8A%9F%E8%80%97%E5%9C%A3%E7%BB%8F/">
+                                    <span class="chip bg-color">低功耗圣经</span>
+                                </a>
+                            
                         </div>
                     
                 </div>
@@ -404,48 +484,9 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
-            <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
-            <div class="card">
-                <a href="/2024/052315634.html">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/13d5b7a520cc017922ba658a6977db7.jpg" class="responsive-img" alt="Innovus学习">
-                        
-                        <span class="card-title">Innovus学习</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-05-23
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            刘瑞彪
-                            
-                        </span>
-                    </div>
-                </div>
-
-                
-            </div>
-        </div>
-        
-        
         <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
                 <a href="/2024/050742599.html">
                     <div class="card-image">
@@ -463,9 +504,9 @@
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-05-07
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-05-07
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -485,6 +526,43 @@
                         <span class="chip bg-color">基础知识</span>
                     </a>
                     
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/04057752.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/a7a2a865ee49e6a3e0a1efc96dd23fb.jpg" class="responsive-img" alt="杂七杂八">
+                        
+                        <span class="card-title">杂七杂八</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-04-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            刘瑞彪
+                            
+                        </span>
+                    </div>
                 </div>
                 
             </div>
@@ -663,7 +741,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">66.7k</span>
+                        class="white-color">67.9k</span>
             
             
             
