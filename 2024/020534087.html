@@ -9,7 +9,7 @@
 reference 
 https://blog.csdn.net/wudpekerlily/article/details/129494440
 
-低功耗设计是一套完整的理论体系，从原理、代码、UPF、综合、版图等等，每个步骤的一点点提高，">
+概述低功耗设计是一套完整的理论体系，从原理、代码、UPF、综合、版图等等，每个步骤的一点点提">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -292,7 +292,7 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    3.3k
+                    5.8k
                 </div>
                 
 
@@ -321,7 +321,38 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
 <p>reference </p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wudpekerlily/article/details/129494440">https://blog.csdn.net/wudpekerlily/article/details/129494440</a></p>
 </blockquote>
-<p>低功耗设计是一套完整的理论体系，从原理、代码、UPF、综合、版图等等，每个步骤的一点点提高，都会带来不同程度的优化，勿以优化小而不为，点点滴滴的进步就会造就更加节能的芯片实现。</p>
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>低功耗设计是一套完整的理论体系，从原理、代码、UPF、综合、版图等等，每个步骤的一点点提高，都会带来不同程度的优化，勿以优化小而不为，点点滴滴的进步就会造就更加节能的芯片实现。</p>
+<p>Leakage power指漏电功耗<br>Output charging power指电容充放电功耗<br>Internal switching power指短路电流功耗<br>input pin power：输入引脚功耗，输入状态的变化不一定会导致输出切换，当CMOS逻辑门的输入切换时，任然会消耗少量功耗，并且不会导致输出切换。</p>
+<h3 id="标准单元库中组合逻辑单元的功耗"><a href="#标准单元库中组合逻辑单元的功耗" class="headerlink" title="标准单元库中组合逻辑单元的功耗"></a>标准单元库中组合逻辑单元的功耗</h3><p>下表描述的是内部输入引脚到输出引脚转换的内部功耗，对应短路电流功耗，采用二维查找变的方式实现。</p>
+<img src="/2024/020534087/image-20240527150153558.png" alt="image-20240527150153558" style="zoom:50%;">
+
+<img src="/2024/020534087/image-20240527150728150.png" alt="image-20240527150728150" style="zoom:50%;">
+
+<p>由不导致输出转换的输入转换所消耗的内部功耗在标准单元库中的输入引脚部分单独指定。比如两输入的与非门，当一个引脚为0时，另外一个引脚转换，输出不会发生转变，但是内部电容会有充放电，产生内部功耗。】</p>
+<img src="/2024/020534087/image-20240527151521908.png" alt="image-20240527151521908" style="zoom:50%;">
+
+<h3 id="标准单元库中时序逻辑单元的功耗"><a href="#标准单元库中时序逻辑单元的功耗" class="headerlink" title="标准单元库中时序逻辑单元的功耗"></a>标准单元库中时序逻辑单元的功耗</h3><p>相比于组合逻辑电路，时序电路输出有Q和Q反。内部功耗相当于一个三维查找表：输入转换时间、输出Q负载，输出Q反 负载。</p>
+<img src="/2024/020534087/image-20240527154328287.png" alt="image-20240527154328287" style="zoom:50%;">
+
+<p>时序逻辑同样也有输入改变，输出不变的情况，产生了内部功耗，在标准单元库中单独指定。</p>
+<h3 id="漏电功耗"><a href="#漏电功耗" class="headerlink" title="漏电功耗"></a>漏电功耗</h3><p>漏电功耗取决于单元的状态，在工艺库中，使用when指定与状态相关的漏电值。</p>
+<img src="/2024/020534087/image-20240527155952177.png" alt="image-20240527155952177" style="zoom:50%;">
+
+<p>漏电功耗取决于设计中单元的状态（逻辑0还是1），动态功耗取决于设计中的开关活动。</p>
+<h2 id="ASIC中的功耗分析"><a href="#ASIC中的功耗分析" class="headerlink" title="ASIC中的功耗分析"></a>ASIC中的功耗分析</h2><p>功率计算的关键是每个网络的切换活动，切换网络由两个参数组成：静态概率和转换速率。</p>
+<p>静态概率：信号的预期状态。静态概率为0.2，表示信号20%的时间处于逻辑1,80%的时间处于逻辑0。<br>转换速率：单位时间的切换次数。对于周期性信号，切换速率是信号频率的2倍。因为切换包括上升和下降。</p>
+<p>对于组合逻辑单元功耗的计算，需要以下参数。其中，静态概率用来计算漏电功耗（输出的静态概率是通过输入引脚的静态概率得到的），切换速率和查找表用来计算短路电流功耗。负载和电源电压用来计算电容充放电功耗。</p>
+<img src="/2024/020534087/image-20240527225547934.png" alt="image-20240527225547934" style="zoom:50%;">
+
+<p>对于时序逻辑单元功耗的计算：需要以下参数。漏电功耗和电容充放电功耗与上述一致。</p>
+<img src="/2024/020534087/image-20240527232409922.png" alt="image-20240527232409922" style="zoom:50%;">
+
+<h3 id="VCD和SAIF文件"><a href="#VCD和SAIF文件" class="headerlink" title="VCD和SAIF文件"></a>VCD和SAIF文件</h3><p>VCD文件是一种二进制波形文件，记载了信号在不同时间节点的值。就功耗分析而言，VCD文件很大，可以将VCD输出转换成开关活动交换格式文件（SAIF），SAIF是一个可以描述设计中开关活动信息的文件。</p>
+<p>功耗分析工具使用SAIF中的时序和切换属性来获取每个信号的切换信息：静态概率和切换速率。</p>
+<p>SAIF文件生成</p>
+<img src="/2024/020534087/image-20240528000657364.png" alt="image-20240528000657364" style="zoom: 50%;">
+
+<p>功耗不仅与开关活动有关，还和外部环境有关（PVT，ff，高电压和高温度corner功耗大）</p>
 <h1 id="低功耗设计"><a href="#低功耗设计" class="headerlink" title="低功耗设计"></a>低功耗设计</h1><h3 id="为什么提出？"><a href="#为什么提出？" class="headerlink" title="为什么提出？"></a>为什么提出？</h3><p>为了降低芯片功耗，且RTL代码无法进行电源分析。</p>
 <h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><ol>
 <li>门控时钟</li>
@@ -402,6 +433,10 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 <p>原则：<strong>在满足系统性能(频率)要求的基础上，采用最低电压</strong></p>
 <p>缺点：需要不同的电源电压供电，以及不同电压域的level shifter，增加了设计的复杂度</p>
 </li>
+<li><p>动态电压缩放技术DVS：根据某些条件动态调整电压。</p>
+</li>
+<li><p>动态频率缩放技术DFS：根据某些条件，动态调整工作频率。</p>
+</li>
 <li><p>动态电压频率缩放技术 DVFS：Dynamic Voltage and Frequency Scaling</p>
 <p>根据芯片所运行的应用程序对计算能力的不同需要，监控芯片的工作负载，动态调节芯片的运行频率和电压。在保证性能的同时，降低电压，实现减少功耗的目的。</p>
 <p><img src="/2024/020534087/v2-013caae8290aa4e7e666a3366f4924b2_1440w.webp"></p>
@@ -418,7 +453,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 </ul>
 <h4 id="ASIC-低功耗中常使用的特殊单元"><a href="#ASIC-低功耗中常使用的特殊单元" class="headerlink" title="ASIC 低功耗中常使用的特殊单元"></a>ASIC 低功耗中常使用的特殊单元</h4><ol>
 <li><p>Isolation cell</p>
-<p>隔离单元，某个电压域关闭时，可以保持输出或者输入为常数。</p>
+<p>隔离单元，某个电压域关闭时，可以保持输出或者输入为常数。<br>在全定制数字设计或使用非标准CMOS逻辑的情况下，关断域的输入可能需要隔离单元。</p>
 <p>两个原因：1. 防止虚假信号传播到未关闭电压的域，导致逻辑错误。2. 防止产生瞬态电路，带来功耗。</p>
 <img src="/2024/020534087/v2-1f2eefb144af1ca428447621fa7e8812_1440w.webp" alt style="zoom:67%;"></li>
 </ol>
@@ -435,20 +470,35 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 <img src="/2024/020534087/v2-554cee9ed18ce8e73c597e165d274a39_1440w.webp" alt style="zoom:50%;">
 
 <p>​	通常LS和ISO会一起用，所以会把两个cell合成一个，叫做enable level shifter (ELS)</p>
-<img src="/2024/020534087/v2-59fb4635fb7452017136fd232fb5efa2_1440w.webp" alt style="zoom:50%;">
+<img src="/2024/020534087/image-20240528141627916.png" alt="image-20240528141627916" style="zoom:50%;">
 
 <ol start="3">
 <li>Power Switches</li>
 </ol>
 <p>​	电源开关单元提供了关闭逻辑域电源的能力。电源门控单元。</p>
+<img src="/2024/020534087/image-20240528142819046.png" alt="image-20240528142819046" style="zoom:50%;">
+
+<p>VDDG是主电源，VDD为受控输出的电源。NSLEEPIN控制电源开关，可以提供延迟确认信号NSLEEPOUT。</p>
+<img src="/2024/020534087/image-20240528142845331.png" alt="image-20240528142845331" style="zoom:50%;">
+
 <ol start="4">
 <li>Always-on Cells</li>
 </ol>
-<p>​	电源管理单元需要保持激活，即使这些单元周围的逻辑已经被关闭，这就行需要用到Always-on cells，它的供电来自于不会被关断的电源域(always-on domain), 但是被摆放在可以被关断的电源域。控制信号一定要用AO</p>
+<p>​	电源管理单元需要保持激活，即使这些单元周围的逻辑已经被关闭，电源管理单元的控制信号也需要保持有效，这就需要用到Always-on cells，它的供电来自于不会被关断的电源域(always-on domain), 但是被摆放在可以被关断的电源域。控制信号一定要用AO单元，始终开启的单元由有效电源控制（常开）。</p>
+<p>常开单元可以缓冲控制信号在电压关断域。</p>
+<img src="/2024/020534087/image-20240528150203882.png" alt="image-20240528150203882" style="zoom:50%;">
+
+<p>跨越关断电压域时需要常开单元。</p>
+<img src="/2024/020534087/image-20240528151955574.png" alt="image-20240528151955574" style="zoom: 50%;">
+
 <ol start="5">
 <li>Retention Cells</li>
 </ol>
-<p>​	Retention cell: 保留单元，一种能够在电源关闭的情况下，能保持内部状态的特殊单元。需要两个电源供电。有save和restore的功能。</p>
+<p>​	Retention cell: 保留单元，一种能够在电源关闭的情况下，能保持内部状态的特殊单元。需要两个电源供电。有save和restore的功能。保留寄存器使用HVt管，保证待机时漏电低。</p>
+<img src="/2024/020534087/image-20240528153049851.png" alt="image-20240528153049851" style="zoom: 50%;">
+
+<img src="/2024/020534087/image-20240528154615222.png" alt="image-20240528154615222" style="zoom:50%;">
+
 <img src="/2024/020534087/image-20240426150631581.png" alt="image-20240426150631581" style="zoom:67%;">
 
 <h4 id="在各设计抽象层次降低功耗"><a href="#在各设计抽象层次降低功耗" class="headerlink" title="在各设计抽象层次降低功耗"></a>在各设计抽象层次降低功耗</h4><p>层次越高对功耗降低越有效。</p>
@@ -553,7 +603,76 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 <p><img src="/2024/020534087/image-20240514230106167.png" alt="image-20240514230106167"></p>
 <p><img src="/2024/020534087/image-20240514230134817.png" alt="image-20240514230134817"></p>
 <p><img src="/2024/020534087/image-20240514230147567.png" alt="image-20240514230147567"></p>
+<h1 id="An-ASIC-Low-Power-Primer-Analysis-Techniques-and-Specification"><a href="#An-ASIC-Low-Power-Primer-Analysis-Techniques-and-Specification" class="headerlink" title="An ASIC Low Power Primer - Analysis, Techniques and Specification"></a>An ASIC Low Power Primer - Analysis, Techniques and Specification</h1><h2 id="1-低功耗架构技术"><a href="#1-低功耗架构技术" class="headerlink" title="1 低功耗架构技术"></a>1 低功耗架构技术</h2><h3 id="1-1-总体目标"><a href="#1-1-总体目标" class="headerlink" title="1.1 总体目标"></a>1.1 总体目标</h3><p>设计者需要考虑降低功耗的目标是最小化功耗还是总能量。如果最小化功率，目标是最小化平均功率还是最小化峰值功率，选择不同的优化目标，可以考虑以下因素。</p>
+<ol>
+<li>减少功率或能量。总能量和平均功率以及实时性之间的折中。</li>
+<li>降低峰值功耗。这取决于系统或者IP的温度，如果峰值功耗较高，导致局部过热。峰值功耗还和IR drop有关，防止峰值功耗过大导致工作电压无法满足要求。</li>
+<li>降低功能模式功耗或者待机功耗。长时间待机，可以优化待机功耗。</li>
+</ol>
+<h3 id="1-2-影响功耗的参数"><a href="#1-2-影响功耗的参数" class="headerlink" title="1.2 影响功耗的参数"></a>1.2 影响功耗的参数</h3><p>动态功耗与电源电压、负载和时钟频率有关。可以一些措施降低上述参数带来的功耗，比如逻辑重组、尺寸调整、降低VDD、静态多电压技术、时钟门控、动态电压频率缩放技术、面积缩减和门级逻辑优化技术。</p>
+<p>静态功耗与电源电压、设计中标准单元的数量、强度以及阈值电压有关。为了降低静态功耗，可以降低电源电压，减少设计中的单元数目和使用高VT单元。可以使用的技术：多VT、多VDD和电源门控。</p>
+<p>在不同工作模式下使用不同频率的时钟或者关闭时钟。</p>
+<img src="/2024/020534087/image-20240528194931615.png" alt="image-20240528194931615" style="zoom:50%;">
 
+<h3 id="1-3-动态电压缩放"><a href="#1-3-动态电压缩放" class="headerlink" title="1.3 动态电压缩放"></a>1.3 动态电压缩放</h3><p>设计人员需要保证最慢的组合逻辑在最低电压下满足目标频率。芯片的监视器向片外电压调节器提供反馈以改变芯片电压。片上放置一个速度监视器，以提供有关器件特定工作条件下可达到的速度的反馈。速度监视器可以是环形振荡器，振荡频率取决于PVT。自适应调节电源电压，满足目标速度的要求。</p>
+<img src="/2024/020534087/image-20240528200448487.png" alt="image-20240528200448487" style="zoom: 50%;">
+
+<h3 id="1-4-动态电压和频率调节"><a href="#1-4-动态电压和频率调节" class="headerlink" title="1.4 动态电压和频率调节"></a>1.4 动态电压和频率调节</h3><p>片上监视器根据性能要求调整电压和频率。速度下降或者降低频率，允许施加较低电压实现低功耗。当时速度上升或者增加频率时，需要增加电压满足性能要求。</p>
+<p>设计通常具有多种功能模式-高速和低速模式。在设计未以全部性能运行时，电源电压降低以应对性能下降的情况</p>
+<p>这种方式可以显著节省功耗，但是架构设计、验证和实现方面成本较高。</p>
+<h3 id="1-5-降低VDD"><a href="#1-5-降低VDD" class="headerlink" title="1.5 降低VDD"></a>1.5 降低VDD</h3><p>不同模块根据性能要求采用不同电压，电压值可以是静态的，即静态多电压技术。</p>
+<h3 id="1-6-时钟门控"><a href="#1-6-时钟门控" class="headerlink" title="1.6 时钟门控"></a>1.6 时钟门控</h3><p>此类时钟门由设计者显式实例化，可运行于模块级，每个模块分配一个时钟门控，可在不需要时关闭模块的时钟。</p>
+<img src="/2024/020534087/image-20240528203516380.png" alt="image-20240528203516380" style="zoom: 50%;">
+
+<img src="/2024/020534087/image-20240528203943961.png" alt="image-20240528203943961" style="zoom:50%;">
+
+<p>架构时钟门控器不会对时序产生任何影响，并且是节省功耗最有效的方法之一。架构时钟器会使得时钟树综合变得负责，如果不仔细处理和实现，会导致较大的时钟偏差。</p>
+<p>架构时钟门控有时也称为粗粒度时钟门控。细粒度时钟门控指的是时钟门控的自动推理，自动插入的。</p>
+<h3 id="1-7-电源门控"><a href="#1-7-电源门控" class="headerlink" title="1.7 电源门控"></a>1.7 电源门控</h3><p>通过关闭未使用模块的电压来降低功耗，可以使用头部单元断开VDD，或者使用尾部单元断开VSS。</p>
+<p>当ASIC中包括可以关闭的模块和始终打开的模块时，需要注意以下事项</p>
+<ol>
+<li>生成用于控制各个模块的电源门控控制信号时钟打开</li>
+<li>隔离单元放置在可以关闭的模块输出处，以便向其他模块提供有效的控制信号。</li>
+</ol>
+<h4 id="状态保留"><a href="#状态保留" class="headerlink" title="状态保留"></a>状态保留</h4><p>将系统断电时的状态保存在保留寄存器中，在重新启动时可以快速恢复，减小了复位延迟和相应的功耗。</p>
+<img src="/2024/020534087/image-20240528210747997.png" alt="image-20240528210747997" style="zoom:50%;">
+
+<p>状态保留方式：软件保存、通过扫描链将状态保存在外部存储器、内部的保留寄存器和存储器保存。</p>
+<p>电源门控方式可以最大程度降低功耗，但是在架构、验证和实现级别较为复杂。</p>
+<h3 id="1-8-操作数隔离"><a href="#1-8-操作数隔离" class="headerlink" title="1.8 操作数隔离"></a>1.8 操作数隔离</h3><p>数据路径切换会带来很大的功耗，比如乘法和加法操作。在不使用乘法和加法结果时，可以将输入进行门控为0，禁止其内部节点网络翻转。该技术可以用于多路选择器的组合逻辑数据路径上。</p>
+<img src="/2024/020534087/image-20240528212534897.png" alt="image-20240528212534897" style="zoom:50%;">
+
+<h3 id="1-9-设计运行模式"><a href="#1-9-设计运行模式" class="headerlink" title="1.9 设计运行模式"></a>1.9 设计运行模式</h3><p>一种设计可以在多种模式下运行，其中许多模式可以节省功耗。可以通过功能对设计进行分区来节省功耗，仅打开所需功能，而关闭其余功能。</p>
+<p>降低模块的功耗可以采用 电源门控和时钟门控，或者降低时钟频率以降低功耗。</p>
+<p>设计还可以进入睡眠模式，所有的时钟都关闭，以等待中断唤醒信号。</p>
+<p>在电源门控时，需要进行状态保留和恢复，增加了时间的开销。</p>
+<h3 id="1-10-RTL-技巧"><a href="#1-10-RTL-技巧" class="headerlink" title="1.10 RTL 技巧"></a>1.10 RTL 技巧</h3><h4 id="减少没必要的信号翻转"><a href="#减少没必要的信号翻转" class="headerlink" title="减少没必要的信号翻转"></a>减少没必要的信号翻转</h4><pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span> <span class="token keyword">posedge</span> reset <span class="token keyword">or</span> <span class="token keyword">negedge</span> ahb_clk<span class="token punctuation">)</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>reset<span class="token punctuation">)</span>
+	ahb_dbus <span class="token operator">&lt;=</span> <span class="token number">32</span>b’<span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">else</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>bus_ready<span class="token punctuation">)</span>
+	ahb_dbus <span class="token operator">&lt;=</span> read_dbus<span class="token punctuation">;</span>
+<span class="token keyword">else</span>
+	ahb_dbus <span class="token operator">&lt;=</span> <span class="token number">32</span>b’<span class="token number">0</span><span class="token punctuation">;</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span> <span class="token keyword">posedge</span> reset <span class="token keyword">or</span> <span class="token keyword">negedge</span> ahb_clk<span class="token punctuation">)</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>reset<span class="token punctuation">)</span>
+	ahb_dbus <span class="token operator">&lt;=</span> <span class="token number">32</span>b’<span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>bus_ready<span class="token punctuation">)</span>
+	ahb_dbus <span class="token operator">&lt;=</span> read_dbus<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="资源共享-先选后加，先选后乘"><a href="#资源共享-先选后加，先选后乘" class="headerlink" title="资源共享-先选后加，先选后乘"></a>资源共享-先选后加，先选后乘</h4><pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span>a <span class="token keyword">or</span> b <span class="token keyword">or</span> c <span class="token keyword">or</span> d <span class="token keyword">or</span> sel<span class="token punctuation">)</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>sel<span class="token punctuation">)</span>
+	result <span class="token operator">=</span> a <span class="token operator">*</span> b<span class="token punctuation">;</span>
+<span class="token keyword">else</span>
+	result <span class="token operator">=</span> c <span class="token operator">*</span> d<span class="token punctuation">;</span>
+<span class="token operator">=></span>
+<span class="token keyword">assign</span> op1 <span class="token operator">=</span> sel<span class="token operator">?</span> a <span class="token punctuation">:</span> c<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> op2 <span class="token operator">=</span> sel<span class="token operator">?</span> b <span class="token punctuation">:</span> d<span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span>
+	result <span class="token operator">=</span> op1 <span class="token operator">*</span> op2<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="1-11-其他"><a href="#1-11-其他" class="headerlink" title="1.11 其他"></a>1.11 其他</h3><h4 id="消除冗余逻辑，优化逻辑"><a href="#消除冗余逻辑，优化逻辑" class="headerlink" title="消除冗余逻辑，优化逻辑"></a>消除冗余逻辑，优化逻辑</h4><h4 id="状态机编码使用格雷码或者独热码"><a href="#状态机编码使用格雷码或者独热码" class="headerlink" title="状态机编码使用格雷码或者独热码"></a>状态机编码使用格雷码或者独热码</h4><h4 id="避免自由运行的计数器，限制计数器的边界"><a href="#避免自由运行的计数器，限制计数器的边界" class="headerlink" title="避免自由运行的计数器，限制计数器的边界"></a>避免自由运行的计数器，限制计数器的边界</h4><h4 id><a href="#" class="headerlink" title></a></h4>
                 
             </div>
             <hr/>
@@ -930,7 +1049,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">63.2k</span>
+                        class="white-color">66.7k</span>
             
             
             

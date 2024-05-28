@@ -292,7 +292,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    4.7k
+                    5.4k
                 </div>
                 
 
@@ -550,6 +550,34 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 </ol>
 <h6 id="基于触发器或者SRAM的FIFO"><a href="#基于触发器或者SRAM的FIFO" class="headerlink" title="基于触发器或者SRAM的FIFO"></a>基于触发器或者SRAM的FIFO</h6><p>根据经验，如果存储器容量小于1K位，使用触发器作为存储更合适。如果大于1K位，使用SRAM作为存储单元更合适。</p>
 <p>当FIFO容量很小时，4*16，最好使用基于触发器的FIFO。如果FIFO容量为1K*32，使用触发器实现，需要的触发器个数是巨大的，FIFO的面积远大于使用SRAM的方案。另一个方面需要考虑的是FIFO的位宽和深度比值，如果存储器深度&#x2F;宽度过大或者过窄，SRAM都不是最好的选择。</p>
+<h4 id="设计经验"><a href="#设计经验" class="headerlink" title="设计经验"></a>设计经验</h4><p>“<strong>除非你知道自己想去的地方，否则你不可能到达那里</strong>“</p>
+<p>描述组合逻辑的方式有两种，wire和reg，两者综合后的门电路是一样的，需要根据实际情况来选择。</p>
+<p>尽量使用寄存器输出，因为设计电路是层次化结构的，输出有时通过较长的路径到达另一个模块，导致互联延迟增加，采用寄存器输出，可以为后续电路留下相对宽裕的布线延迟和输入组合逻辑延迟。</p>
+<p>尽可能使用状态机实现控制功能，可以有效减少设计差错。</p>
+<p><strong>先选后加，先选后乘。</strong>尽可能共享电路。</p>
+<p>采用寄存器输出的方式可以有效减少产生组合逻辑环的可能性。</p>
+<h5 id="初步完成代码后"><a href="#初步完成代码后" class="headerlink" title="初步完成代码后"></a>初步完成代码后</h5><ol>
+<li>无论编写代码时有多么仔细，代码都会有bug，应在完成代码编写后趁热打铁，趁着熟悉即使查找问题，不要留在后面解决。</li>
+<li>目测RTL代码：发现简单的问题，比如代码缩进、空格和对齐等</li>
+<li>对发现bug感到惊喜</li>
+</ol>
+<h5 id="设计面向未来使用需求"><a href="#设计面向未来使用需求" class="headerlink" title="设计面向未来使用需求"></a>设计面向未来使用需求</h5><ol>
+<li>易于实现的存储器结构：寄存器定义时，将功能相同的bit位放在一起编址</li>
+<li>考虑将来需求：设计一定的冗余度；确保重要的比特位可以被软件访问到</li>
+</ol>
+<h4 id="高速设计"><a href="#高速设计" class="headerlink" title="高速设计"></a>高速设计</h4><ol>
+<li>使用独热码进行状态编码：每次状态跳变，只有2个bit翻转，数据稳定时间短，组合逻辑延迟小。</li>
+<li>使用互斥的数据选择器而不是优先级编码器：具有优先级的编码器组合逻辑延迟较大，不利于提高电路的工作速度。</li>
+<li>避免大量杂乱的组合逻辑电路：使用流水线进行切分</li>
+<li>将后到的信号尽可能经过最小数量的逻辑门，靠近输出。</li>
+<li>使用同步复位时要小心：复位信号会参与数据路径的运算，可能会带来延迟的增加。</li>
+</ol>
+<h4 id="SoC设计经验"><a href="#SoC设计经验" class="headerlink" title="SoC设计经验"></a>SoC设计经验</h4><h5 id="使用双触发器同步电路"><a href="#使用双触发器同步电路" class="headerlink" title="使用双触发器同步电路"></a>使用双触发器同步电路</h5><p>单比特信号跨时钟域时经常用到双触发器同步电路，建议</p>
+<ol>
+<li>将双触发器同步电路作为基本模块加入单元库中，在RTL时直接例化。</li>
+<li>同步器模块的命名应易于识别</li>
+<li>将所有的同步器放置在顶层的一个或两个模块内。</li>
+</ol>
 
                 
             </div>
@@ -927,7 +955,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">63.2k</span>
+                        class="white-color">66.7k</span>
             
             
             

@@ -294,7 +294,7 @@ INVX1,2,4,8,1">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    5k
+                    5.1k
                 </div>
                 
 
@@ -627,6 +627,7 @@ set_output_delay <span class="token operator">-</span>clock clk_100 <span class=
 <blockquote>
 <p>基础：set_max&#x2F;min_delay这两种约束，一般用于异步时钟的数据约束上。set clock group -asynchronous或者set false path设置 对这两个时钟域数据不进行时序检查，但是一般需要保证跨时钟传递的数据要满足最大最小延迟，而不会高的离谱。比如异步fifo读写指针的格雷码，如果延迟时间太长，目的时钟域周期太短，会导致传输路径延迟超过两个周期。</p>
 </blockquote>
+<p>采用单握手机制进行跨时钟域数据传输。原因是SPI和数字CORE部分时钟速率差较大，单握手适用于慢时钟域到快时钟域的数据传输。</p>
 <h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><h4 id="dc-shell中执行bash命令"><a href="#dc-shell中执行bash命令" class="headerlink" title="dc_shell中执行bash命令"></a>dc_shell中执行bash命令</h4><p>​	前面加shell &#x2F; sh，比如 <code>shell gvim</code></p>
 <p>​	-tee 读取标准输入数据到文件    -i 忽略中断信号</p>
 <p>​	| 管道命令</p>
@@ -1014,7 +1015,7 @@ synoff <span class="token comment">#取消 工艺库lib文件中显示的底色<
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">63.2k</span>
+                        class="white-color">66.7k</span>
             
             
             

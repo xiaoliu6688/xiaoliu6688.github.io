@@ -296,7 +296,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.2k
+                    1.5k
                 </div>
                 
 
@@ -423,6 +423,13 @@
 
 <span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
+<p>还有第二种方式实现占空比为50%的奇分频，N为奇数</p>
+<ol>
+<li>设计一个计数器，计数0 - N-1</li>
+<li>设计两个使能信号，ttf1_en：当counter计数到0时拉高。ttf2_en：当counter计数到 N&#x2F;2时拉高。</li>
+<li>时钟正沿控制div1的输出，当ttf1_en拉高时，div1翻转。时钟负沿控制div2输出，当ttf2_en拉高时，div2翻转</li>
+<li>最终取div1和div2的异或结果，作为输出。</li>
+</ol>
 <h3 id="4-半整数（x-5）分频（非50-占空比）"><a href="#4-半整数（x-5）分频（非50-占空比）" class="headerlink" title="4. 半整数（x.5）分频（非50%占空比）"></a>4. 半整数（x.5）分频（非50%占空比）</h3><p>假设实现3.5分频，正沿计数器循环计数到7，分别交替产生分频比为4和3的时钟信号，平均下来得到的时钟信号为（4+3）&#x2F; 2 &#x3D; 3.5分频。但是每个分频时钟不是严格的3.5分频。<strong>因此，需要对不均匀的分频比进行调整，采用负沿计数器计数到7，分别交替产生分频比为3和4的时钟信号</strong>，将正沿和负沿产的时钟信号做 <strong>与</strong>操作，得到均匀的3.5分频的时钟信号。（注意，保证正沿计数器先产生分频比为4的信号）</p>
 <img src="/2024/022118538/image-20240221164423487.png" alt style="zoom:67%;">
 
@@ -504,6 +511,13 @@
 
 <span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
+<p>半整数分频还有另外一种实现方式，以4.5分频为例，步骤如下</p>
+<ol>
+<li>设计一个9bit的移位寄存器，初始值为9’b0000_00001，每个时钟上升沿右移1位。</li>
+<li>生成第一个时钟脉冲，将移位寄存器的第一位右移半个周期（采用下降沿触发的寄存器产生），将该信号与移位寄存器的第一位和第二位进行”或”操作</li>
+<li>生成第二个时钟脉冲，将移位寄存器的第五、六位右移半个周期（下降沿寄存器产生），将该信号与移位寄存器的第六位进行”或”操作。</li>
+</ol>
+<p><img src="/2024/022118538/image-20240527093457853.png" alt="image-20240527093457853"></p>
 <h3 id="5-任意小数分频（非50-占空比）"><a href="#5-任意小数分频（非50-占空比）" class="headerlink" title="5. 任意小数分频（非50%占空比）"></a>5. 任意小数分频（非50%占空比）</h3><p>同样不能做到50%的占空比。基于可变分频和平均分频得到，在长时间内，得到小数分频比。<br>比如7.6分频，保证76个源时钟周期时间内，目的时钟经过10个周期的时间。即对源时钟进行 <strong>6次8分频，4次7分频（6*8+4*7&#x3D;76）。</strong>5.76分频，对源时钟进行 <strong>76次6分频，24次5分频</strong></p>
 <p>以 7.6 倍分频为例，7 分频和 8 分频的实现顺序一般有以下 4 种：</p>
 <p>(1) 先进行 4 次 7 分频，再进行 6 次 8 分频；<br>(2) 先进行 6 次 8 分频，再进行 4 次 7 分频；<br>(3) 将 4 次 7 分频平均的插入到 6 次 8 分频中；<br>(4) 将 6 次 8 分频平均的插入到 4 次 7 分频中。</p>
@@ -885,7 +899,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">63.2k</span>
+                        class="white-color">66.7k</span>
             
             
             
