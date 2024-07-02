@@ -291,7 +291,7 @@ HADDR：地址总线HTRANS[1:0]：传输类型，00：IDLE，01：BUSY，10：NO
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.6k
+                    1.7k
                 </div>
                 
 
@@ -394,6 +394,14 @@ HADDR：地址总线HTRANS[1:0]：传输类型，00：IDLE，01：BUSY，10：NO
 </ul>
 <p>​	AHB允许打断突发传输，场景：在传输过程中，仲裁器改变了HGRANT信号，或者slave在传输过程中发出ERROR的响应。</p>
 <p>​	AXI中不允许打断突发传输，需要等待传输完成。</p>
+<ul>
+<li>等待传输</li>
+</ul>
+<p>​	 salve可以通过hreadyout拉低打断传输，master可以通过设置htrans为busy打断传输。如果hready拉低时，htrans有效，此时不可以更改总线的地址和传输类型，需要等到hreadyout拉高时才可以修改。</p>
+<img src="/2024/022437262/640.png" alt="图片" style="zoom: 67%;">
+
+<p>针对定长的传输，如果hreadyout拉低，此时master的htrans为busy，允许trans更改为seq，且地址和传输类型不能更改。针对不定长的传输INCR，允许master在hreadyout为0时更改为其他类型的传输，如果为SEQ，表示继续传输当前的任务，如果为NOSEQ，表示开始新的任务。</p>
+<img src="/2024/022437262/640-1717253953042-3.png" alt="图片" style="zoom:67%;">
 
                 
             </div>
@@ -771,7 +779,7 @@ HADDR：地址总线HTRANS[1:0]：传输类型，00：IDLE，01：BUSY，10：NO
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             

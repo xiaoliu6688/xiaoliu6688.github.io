@@ -292,7 +292,7 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    5.8k
+                    6k
                 </div>
                 
 
@@ -322,13 +322,13 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wudpekerlily/article/details/129494440">https://blog.csdn.net/wudpekerlily/article/details/129494440</a></p>
 </blockquote>
 <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>低功耗设计是一套完整的理论体系，从原理、代码、UPF、综合、版图等等，每个步骤的一点点提高，都会带来不同程度的优化，勿以优化小而不为，点点滴滴的进步就会造就更加节能的芯片实现。</p>
-<p>Leakage power指漏电功耗<br>Output charging power指电容充放电功耗<br>Internal switching power指短路电流功耗<br>input pin power：输入引脚功耗，输入状态的变化不一定会导致输出切换，当CMOS逻辑门的输入切换时，任然会消耗少量功耗，并且不会导致输出切换。</p>
+<p>Leakage power指漏电功耗，跟工作电压VDD，阈值电压Vth和宽长比有关。<br>Output charging power指电容充放电功耗<br>Internal switching power指短路电流功耗，PMOS和NMOS同时导通，电源到地的短路电流功耗。<br>input pin power：输入引脚功耗，输入状态的变化不一定会导致输出切换，当CMOS逻辑门的输入切换时，任然会消耗少量功耗，并且不会导致输出切换。</p>
 <h3 id="标准单元库中组合逻辑单元的功耗"><a href="#标准单元库中组合逻辑单元的功耗" class="headerlink" title="标准单元库中组合逻辑单元的功耗"></a>标准单元库中组合逻辑单元的功耗</h3><p>下表描述的是内部输入引脚到输出引脚转换的内部功耗，对应短路电流功耗，采用二维查找变的方式实现。</p>
 <img src="/2024/020534087/image-20240527150153558.png" alt="image-20240527150153558" style="zoom:50%;">
 
 <img src="/2024/020534087/image-20240527150728150.png" alt="image-20240527150728150" style="zoom:50%;">
 
-<p>由不导致输出转换的输入转换所消耗的内部功耗在标准单元库中的输入引脚部分单独指定。比如两输入的与非门，当一个引脚为0时，另外一个引脚转换，输出不会发生转变，但是内部电容会有充放电，产生内部功耗。】</p>
+<p>由不导致输出转换的输入转换所消耗的内部功耗在标准单元库中的输入引脚部分单独指定。比如两输入的与非门，当一个引脚为0时，另外一个引脚转换，输出不会发生转变，但是内部电容会有充放电，产生内部功耗。</p>
 <img src="/2024/020534087/image-20240527151521908.png" alt="image-20240527151521908" style="zoom:50%;">
 
 <h3 id="标准单元库中时序逻辑单元的功耗"><a href="#标准单元库中时序逻辑单元的功耗" class="headerlink" title="标准单元库中时序逻辑单元的功耗"></a>标准单元库中时序逻辑单元的功耗</h3><p>相比于组合逻辑电路，时序电路输出有Q和Q反。内部功耗相当于一个三维查找表：输入转换时间、输出Q负载，输出Q反 负载。</p>
@@ -353,7 +353,8 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
 <img src="/2024/020534087/image-20240528000657364.png" alt="image-20240528000657364" style="zoom: 50%;">
 
 <p>功耗不仅与开关活动有关，还和外部环境有关（PVT，ff，高电压和高温度corner功耗大）</p>
-<h1 id="低功耗设计"><a href="#低功耗设计" class="headerlink" title="低功耗设计"></a>低功耗设计</h1><h3 id="为什么提出？"><a href="#为什么提出？" class="headerlink" title="为什么提出？"></a>为什么提出？</h3><p>为了降低芯片功耗，且RTL代码无法进行电源分析。</p>
+<h1 id="低功耗设计"><a href="#低功耗设计" class="headerlink" title="低功耗设计"></a>低功耗设计</h1><p>PPA中，Power是最抽象的，因为无法准确描述功耗是多少。</p>
+<h3 id="为什么提出？"><a href="#为什么提出？" class="headerlink" title="为什么提出？"></a>为什么提出？</h3><p>为了降低芯片功耗，且RTL代码无法进行电源分析。</p>
 <h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><ol>
 <li>门控时钟</li>
 <li>电源门控</li>
@@ -556,7 +557,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 <li><p>动态功耗和静态功耗分别指的是什么？可以通过什么方式降低？</p>
 <p>动态功耗与电压、负载电容以及信号翻转频率有关；静态功耗与漏电功耗有关；</p>
 <p>措施：降低电源电压、从后端角度降低负载电容、减小信号翻转频率（门控时钟技术）</p>
-<p>​	使用高阈值的管子、后端使用多电压域设计技术</p>
+<p>使用高阈值的管子、后端使用多电压域设计技术</p>
 </li>
 </ol>
 <p>​	（可以按照上面不同层次来回答如何降低功耗）</p>
@@ -628,6 +629,14 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 
 <p>架构时钟门控器不会对时序产生任何影响，并且是节省功耗最有效的方法之一。架构时钟器会使得时钟树综合变得负责，如果不仔细处理和实现，会导致较大的时钟偏差。</p>
 <p>架构时钟门控有时也称为粗粒度时钟门控。细粒度时钟门控指的是时钟门控的自动推理，自动插入的。</p>
+<img src="/2024/020534087/image-20240614222640503.png" alt="image-20240614222640503" style="zoom: 50%;">
+
+<p>使用时钟门控好处：功耗节省30%到40%，面积节省20%（一个clock gating代替多个mux逻辑）</p>
+<p>使用原则：</p>
+<ol>
+<li>至少位宽是3以上的寄存器才有意义，否则面积和功耗都不会改善</li>
+<li>clock buffer尽可能放在clock gating cell后面</li>
+</ol>
 <h3 id="1-7-电源门控"><a href="#1-7-电源门控" class="headerlink" title="1.7 电源门控"></a>1.7 电源门控</h3><p>通过关闭未使用模块的电压来降低功耗，可以使用头部单元断开VDD，或者使用尾部单元断开VSS。</p>
 <p>当ASIC中包括可以关闭的模块和始终打开的模块时，需要注意以下事项</p>
 <ol>
@@ -1049,7 +1058,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             

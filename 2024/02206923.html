@@ -294,7 +294,7 @@ INVX1,2,4,8,1">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    5.1k
+                    5.4k
                 </div>
                 
 
@@ -394,6 +394,7 @@ extract_physical_constraints name.def<span aria-hidden="true" class="line-number
 <p><strong>注意事项：第一次时，topo模式需要创建milkway，第二次进入dct模式时，已经有def文件，但是不需要创建milkway库，直接打开就可以</strong></p>
 <h2 id="DC前期环境配置"><a href="#DC前期环境配置" class="headerlink" title="DC前期环境配置"></a>DC前期环境配置</h2><p>ddc是专用的二进制设计数据库格式，可以被ICC、PT读取；<br>工艺库中的db库给dc读的，lib是给人看的。</p>
 <p>synthetic_library是DC软件提供的库；design ware library中有一些优化的ip核，在优化时被调用。</p>
+<p>target library是工艺库的逻辑库，用来查找reference的<br>link library包含target lib，还有marco，ip等，用来综合和优化。</p>
 <p>link library 中， * 代表DC Memory 内存空间；<br>在link前需要指明当前current_design<br>link后要check_design 检查是否有丢失的pins和没有添加进来的实例。</p>
 <ul>
 <li><p>读取设计文件<br>analyze elaborate，elaborate 是唯一一种可以指明代码中参数的方式。-parameter “ xxx”<br>read_verilog命令会生成“GETCH”库中unmapped的ddc格式的文件</p>
@@ -465,6 +466,9 @@ extract_physical_constraints name.def<span aria-hidden="true" class="line-number
 <li>门级电路优化</li>
 <li>静态多电压技术、多阈值标准单元</li>
 </ul>
+<ol start="13">
+<li>多阈值电压的工艺库综合策略：第一遍使用HVT管子综合，对于关键路径不满足时序要求的case使用LVT减小延迟以满足setup检查。</li>
+</ol>
 <h2 id="环境约束"><a href="#环境约束" class="headerlink" title="环境约束"></a>环境约束</h2><h3 id="工作条件"><a href="#工作条件" class="headerlink" title="工作条件"></a>工作条件</h3><p>设置工作条件：<code>set_operating_conditions</code>，用来描述设计的工艺、电压、温度。PVT</p>
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token punctuation">[</span><span class="token operator">-</span>library lib_name<span class="token punctuation">]</span>     <span class="token comment">#指定工艺库</span>
 <span class="token punctuation">[</span><span class="token operator">-</span>analysis_type<span class="token punctuation">]</span>    	<span class="token comment">#应执行的分析类型，最慢，最快，基于芯片变异性的延迟</span>
@@ -562,6 +566,8 @@ report_design <span class="token comment"># 得到最大最小的工作条件和
 <p>如果电路中负的最大裕量是比较小的，认为约束和模块划分都是正确的，不需要将网表返回到GTECH结构，也不需要做逻辑级的优化，可以使用compile -incremental_mapping 增量优化，DC所要作的是进行门级单元的替换，即在不违反设计规则的情况下用延时小的单元替换延时较大的单元。也可以根据违例情况，添加选项进行单独修复。</p>
 <h3 id="修复hold违例"><a href="#修复hold违例" class="headerlink" title="修复hold违例"></a>修复hold违例</h3><p>通常作法是插入buffer，但是可能会带来建立时间的违例；<br>hold的检查一般到cts后才可以得到准确值。<strong>DC 不修正保持时间的违例</strong></p>
 <p>由于反相器具有再生特性，可以在长连线中插入多级buffer，目的就是降低rc延迟。</p>
+<h3 id="流片后修复违例"><a href="#流片后修复违例" class="headerlink" title="流片后修复违例"></a>流片后修复违例</h3><p>对于setup违例，通过增加时钟周期，降低频率。</p>
+<p>对于hold违例，通过升高芯片的温度，增加Tc-q延迟来满足保持时间违例。</p>
 <h2 id="常见命令"><a href="#常见命令" class="headerlink" title="常见命令"></a>常见命令</h2><h3 id="Synopsis-Tcl"><a href="#Synopsis-Tcl" class="headerlink" title="Synopsis Tcl"></a><strong>Synopsis Tcl</strong></h3><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">get_<span class="token operator">*</span> 和all_<span class="token operator">*</span>返回的都是collection类型的句柄，而不是list。
 <span class="token keyword">set</span> <span class="token variable">foo</span> <span class="token punctuation">[</span>get_ports <span class="token operator">*</span><span class="token punctuation">]</span> 
 <span class="token comment">#得到的foo只是个集合“collection”的句柄，不是列表，用echo和puts无效，用query_objects $foo输出</span>
@@ -628,6 +634,19 @@ set_output_delay <span class="token operator">-</span>clock clk_100 <span class=
 <p>基础：set_max&#x2F;min_delay这两种约束，一般用于异步时钟的数据约束上。set clock group -asynchronous或者set false path设置 对这两个时钟域数据不进行时序检查，但是一般需要保证跨时钟传递的数据要满足最大最小延迟，而不会高的离谱。比如异步fifo读写指针的格雷码，如果延迟时间太长，目的时钟域周期太短，会导致传输路径延迟超过两个周期。</p>
 </blockquote>
 <p>采用单握手机制进行跨时钟域数据传输。原因是SPI和数字CORE部分时钟速率差较大，单握手适用于慢时钟域到快时钟域的数据传输。</p>
+<p><strong>异步复位，同步释放</strong></p>
+<p>ASIC电路必须要使用异步复位，同步释放电路。</p>
+<img src="/2024/02206923/image-20240603155426193.png" alt="image-20240603155426193" style="zoom: 50%;">
+
+<p>在dc时，set_dont_touch的有rst_n和masterrst_n信号。在ICC布局布线时，需要建立masterst的复位树。将异步复位同步释放电路封装成一个module，防止在优化过程中，修改了网表，net的名字发生变化，封装成一个module后，直接对output端口masterrst约束建立复位树。</p>
+<p>复位树对复位信号的偏斜不敏感，保证延迟足够短即可。</p>
+<p>dc约束如下</p>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token keyword">set</span> <span class="token variable">rst</span> <span class="token punctuation">[</span><span class="token keyword">list</span> u_sync_reset<span class="token operator">/</span>master_rstn nrst<span class="token punctuation">]</span>
+<span class="token builtin">foreach</span> i $<span class="token variable">rst</span> <span class="token punctuation">&#123;</span>
+  set_dont_touch $<span class="token variable">i</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>获取同步器输出的复位信号：**<code>u_sync_reset/master_rstn</code>**</p>
 <h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><h4 id="dc-shell中执行bash命令"><a href="#dc-shell中执行bash命令" class="headerlink" title="dc_shell中执行bash命令"></a>dc_shell中执行bash命令</h4><p>​	前面加shell &#x2F; sh，比如 <code>shell gvim</code></p>
 <p>​	-tee 读取标准输入数据到文件    -i 忽略中断信号</p>
 <p>​	| 管道命令</p>
@@ -1015,7 +1034,7 @@ synoff <span class="token comment">#取消 工艺库lib文件中显示的底色<
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             

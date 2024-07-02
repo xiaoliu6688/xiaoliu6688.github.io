@@ -297,7 +297,7 @@ always @(posedge clk) begin
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.3k
+                    1.4k
                 </div>
                 
 
@@ -427,6 +427,7 @@ always @(posedge clk)
 <li>异步复位容易产生毛刺，导致整个电路发生复位；<br>解决办法：使用毛刺过滤电路；<br>对于时序逻辑的复位信号，当有连续周期的reset时才进行复位；<br>对于组合逻辑的复位信号，使用reset_delay &amp; reset_delay10ns判断复位；</li>
 <li>复位信号的扇出很大，需要特殊考虑<br>解决办法：和cts一样处理；</li>
 </ul>
+<p>FPGA通常使用 “<strong>同步复位</strong>“处理，原因：异步复位占用更多的布线资源，导致难以满足时序性能要求。</p>
 <h3 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h3><blockquote>
 <p>《 硬件架构的艺术 数字电路的设计方法与技术》</p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/104550266">https://zhuanlan.zhihu.com/p/104550266</a></p>
@@ -808,7 +809,7 @@ always @(posedge clk)
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             

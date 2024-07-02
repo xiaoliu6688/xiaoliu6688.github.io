@@ -411,6 +411,7 @@
 <h4 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h4><pre class="line-numbers language-none"><code class="language-none">原码+补码&#x3D;模;
 负数+模&#x3D;补码;   -2的原码4’b1010, 补码为-2+16&#x3D;14(4&#39;b1110)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
+<p>在verilog中的算术右移操作<code>&gt;&gt;&gt;</code>需要声明要移位的变量为<code>signed</code>类型。</p>
 <h3 id="华莱士树算法"><a href="#华莱士树算法" class="headerlink" title="华莱士树算法"></a>华莱士树算法</h3><p><strong>本质是</strong> <strong>对累加的各个部分积进行压缩，最终压缩到单个C和S，通过加法器计算得到结果</strong></p>
 <h4 id="进位保存加法器"><a href="#进位保存加法器" class="headerlink" title="进位保存加法器"></a><strong>进位保存加法器</strong></h4><ul>
 <li>CAS （carry save adder）</li>
@@ -912,7 +913,7 @@ CSA #<span class="token punctuation">(</span><span class="token punctuation">.</
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             

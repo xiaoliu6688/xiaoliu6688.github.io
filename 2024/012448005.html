@@ -292,7 +292,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    5.4k
+                    6.2k
                 </div>
                 
 
@@ -441,8 +441,10 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 </li>
 <li><p>锁存器容易产生毛刺glitch，不能异步复位，上电后出去不确定的状态。STA非常复杂。</p>
 </li>
-<li><p>摩尔状态机输出只与当前状态有关，米利状态机不仅与当前状态有关，还取决于输入；<br>因为输入的组合逻辑，所以米利状态机要比摩尔状态机输出快一个周期。</p>
-</li>
+</ul>
+<p>​	锁存器latch也可以用来做timing borrow，修复setup和hold违例；正锁存器用来修复setup违例，利用高电平的透明时间。负锁存器用来修复hold违例，利用高电平的数据保持时间。</p>
+<ul>
+<li>摩尔状态机输出只与当前状态有关，米利状态机不仅与当前状态有关，还取决于输入；<br>因为输入的组合逻辑，所以米利状态机要比摩尔状态机输出快一个周期。</li>
 </ul>
 <h5 id="计算bit的位宽"><a href="#计算bit的位宽" class="headerlink" title="计算bit的位宽"></a>计算bit的位宽</h5><p>​	两个unsigned 8bit数相加&#x2F;乘，需要设置相应的位宽为：9bit&#x2F;16bit<br>​	两个signed 8bti数相加&#x2F;乘，需要设置结果位宽为：9bit&#x2F;15bit</p>
 <h3 id="verilog语法"><a href="#verilog语法" class="headerlink" title="verilog语法"></a>verilog语法</h3><p>定义数字的方法：N’Bvalue。如果采用’Bvalue，大多数编译器会视为32比特，但是可能存在意想不到的错误，建议使用确定的位宽表示数据。</p>
@@ -450,16 +452,51 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 <p>function可以使用外部的变量，但是最好定义一下输入，类似形参的方式传递到function中。</p>
 <p>状态机FSM最好采用摩尔型的，保证输出只与当前状态有关，而且状态是寄存器输出的，可以降低产生毛刺的概率。缺点是，输出的结果相比于米利可能会延迟一个周期。</p>
 <p>在一个时钟上升沿，如果同时存在非阻塞和阻塞语句，执行顺序：先依次执行阻塞（&#x3D;），再同时执行非阻塞（&lt;&#x3D;）。</p>
+<p><strong>deposit和force的区别</strong></p>
+<p>force将信号赋予一个固定的值，不能为变量.<br>deposit可以将信号赋予变量值</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">initial</span> <span class="token keyword">begin</span>
+	<span class="token kernel-function property">$deposit</span><span class="token punctuation">(</span>variable<span class="token punctuation">,</span>value<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token kernel-function property">$deposit</span><span class="token punctuation">(</span>Q<span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>deposit比force好用，不用release，有其他变量向其赋值时可以直接使用。适用于没有初值的cell的输出，解决x态传播问题。</p>
+<p>也可以使用force-release方式进行没有复位信号的初始化</p>
+<pre class="line-numbers language-none"><code class="language-none">initial begin
+	force TOP.reg_a &#x3D; 0;
+	#0;
+	release TOP.reg_a;
+end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="任务和函数"><a href="#任务和函数" class="headerlink" title="任务和函数"></a>任务和函数</h5><p>task和function都是在模块内部任意位置定义，在模块内部使用。</p>
+<p>任务和函数的局部变量都是静态的，可以用关键词automatic对变量声明，相当于每个任务和函数的局部变量都是独立唯一的，不影响多个相同任务调用时的并发执行。</p>
+<p>任务：</p>
+<ol>
+<li>可以没有输入输出，也可以有多个</li>
+<li>可以包含延迟语句</li>
+<li>task调用是过程性语句，只能出现在always块或initial块中，不能在assign中</li>
+</ol>
+<p>函数：</p>
+<ol>
+<li>至少有一个输入参数，不能声明为inout</li>
+<li>可以没有输出，或者只有一个输出，函数名为输出变量</li>
+<li>不能含有延迟语句</li>
+</ol>
+<p>区别：</p>
+<ol>
+<li>task可以定义自己的仿真时间单位和精度，function不可以。</li>
+<li>verilog中，函数不可以调用任务，但是任务可以调用函数</li>
+<li>function至少有一个输入变量</li>
+</ol>
 <h3 id="乒乓操作"><a href="#乒乓操作" class="headerlink" title="乒乓操作"></a>乒乓操作</h3><img src="/2024/012448005/image-20240303220028047.png" alt="image-20240303220028047" style="zoom: 33%;">
 
 <p>输入数据通过输入选择单元和输出选择单元，有节拍的切换数据流，形成流水线的操作。</p>
 <p>最大的特点：站在乒乓操作模块两侧，输入和输出数据的连续不断的，没有停顿。</p>
 <ul>
 <li><p>节省缓冲区的长度</p>
-<p>前提是所有的数据并不是同时使用的，这样速度就会慢一些。</p>
+<p>前提是缓冲的数据并不是同时使用的。</p>
 </li>
 <li><p>用低速模块处理高速数据流</p>
-<p>使用DPRAM，读写是可以同时进行的。假设时钟为10ms，前5ms向DPRAM1写入数据，后5ms就可以读出前5ms写入的低地址数据，第一个10ms就多出5ms。第二个10ms，DPRAM1的数据完全可以读出数据。第三个10ms，前5ms继续向DPRAM1的低地址写入数据，但是这5ms可以读出高地址的数据，相当于又多出来5ms。因此，对于DPRAM1中的数据，最多有 <strong>20ms</strong>时间可以给下级处理，对应两个时钟周期，数据吞吐量为50Mbps。</p>
+<p>使用DPRAM，读写是可以同时进行的。假设读写数据周期为10ms，前5ms向DPRAM1写入数据，后5ms就可以读出前5ms写入的低地址数据，第一个10ms就多出5ms。第二个10ms，DPRAM1的数据完全可以读出数据。第三个10ms，前5ms继续向DPRAM1的低地址写入数据，但是这5ms可以读出高地址的数据，相当于又多出来5ms。因此，对于DPRAM1中的数据，最多有 <strong>20ms</strong>时间可以给下级处理，对应两个数据周期，数据吞吐量为50Mbps。</p>
 <img src="/2024/012448005/image-20240303230150945.png" alt="image-20240303230150945" style="zoom:40%;"></li>
 </ul>
 <p><strong>静态多电压技术</strong>，可以有效降低动态功耗。但是会使得静态功耗恶化，因为低电压的缺点带来的是低阈值电压，管子更容易开启，漏电流变大。</p>
@@ -494,12 +531,19 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 </ol>
 <p>竞争：信号经过两条以上的路径到达门的输入端，由于不同路径的延迟不一样，时间有先有后，这就叫竞争。</p>
 <p>由于竞争产生的错误输出就是毛刺。</p>
+<h4 id="高阻态"><a href="#高阻态" class="headerlink" title="高阻态"></a>高阻态</h4><p>数字芯片中的高阻态指的是没有任何驱动，输出既不是高电平也不是低电平，相当于开路。</p>
+<h5 id="奇校验、偶校验"><a href="#奇校验、偶校验" class="headerlink" title="奇校验、偶校验"></a>奇校验、偶校验</h5><p>偶校验：数据位  共有偶数个1，  	校验位为0；<br>奇校验：数据位  共有奇数个1，	  校验位为0；<br>0011_1011  偶校验位：1，奇校验位：0</p>
 <p>面试题目总结（华为）</p>
 <ul>
 <li>在异步fifo设计中，地址比较时，有没有必要使用格雷码？</li>
 </ul>
 <p>有必要，以满信号生成为例，读地址传递过来时必须是格雷码才可以，不能是二进制数据直接采样。如果是采样二进制数据，多bit数据翻转，数据稳定的时间相比于单bit要长很多，产生毛刺的概率也很大。</p>
 <p>使用格雷码的优点：计数值递增时，单比特数据发生变化，通过打两拍的方式跨时钟域传递即可。跳变时，数据稳定的时间也很短，产生毛刺的概率小。如果不使用格雷码，存在数据一致性问题，多比特数据跳变，数据稳定的时间也很长。</p>
+<p><strong>2选1 MUX实现组合逻辑</strong><br>通过两个二选一的MUX实现异或逻辑，如下</p>
+<p>异或的逻辑很容易用Y&#x3D;A?(~B):B;写出来，电路图可以表示为：</p>
+<p><img src="/2024/012448005/wps1.png" alt="img"></p>
+<p>那么，接下来，只需要用二输入MUX表示B的非门即可</p>
+<p><img src="/2024/012448005/wps2.png" alt="img"></p>
 <h2 id="数字前端优化"><a href="#数字前端优化" class="headerlink" title="数字前端优化"></a>数字前端优化</h2><p>比较运算的优化</p>
 <pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">assign</span> max_data <span class="token operator">=</span> a <span class="token operator">></span> b <span class="token operator">?</span> a <span class="token punctuation">:</span> b<span class="token punctuation">;</span>
 <span class="token keyword">assign</span> min_data <span class="token operator">=</span> a <span class="token operator">></span> b <span class="token operator">?</span> b <span class="token punctuation">:</span> a<span class="token punctuation">;</span>
@@ -509,6 +553,11 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 <span class="token keyword">assign</span> min_data <span class="token operator">=</span> c<span class="token punctuation">[</span>MAX<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">?</span> a <span class="token punctuation">:</span> b<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>在逻辑综合后的门级网表中，有大量的与非门和或非门，因为采用CMOS工艺实现的，相比于与门和或门，具有更高的速度。</p>
+<p><strong>数据通道不复位</strong><br>为了降低功耗和寄存器的面积，对于数据通路复位值没有意义，只有当使能信号有效时才使用，这时就可以不使用带复位的寄存器。在后仿时，需要使用$deposit初始化无复位寄存器的值。<br>deposit的作用是存储不同的值到寄存器输出q信号中，仅仅在初始化阶段提供一个初始值，防止电路后仿真时出现的x态影响其他信号。</p>
+<p><strong>资源共享策略</strong><br>将重复利用的数据线，例如” &lt;&#x3D; “和” &#x3D;&#x3D; “用一个固定的线wire表示。</p>
+<p><img src="/2024/012448005/image-20240603142208460.png" alt="image-20240603142208460"></p>
+<p><img src="/2024/012448005/image-20240603142214800.png" alt="image-20240603142214800"></p>
+<p><strong>操作数隔离</strong><br>在数据通路中，将不使用的逻辑输出  的输入设置为固定值，防止其无效运算，降低功耗。</p>
 <h2 id="脚本辅助设计"><a href="#脚本辅助设计" class="headerlink" title="脚本辅助设计"></a>脚本辅助设计</h2><p>使用Python生成规律的代码，比如case语句中的赋值。</p>
 <p>a[15:0]和数组b[255:0], 当输入cnt为0时，a &#x3D; b[15:0];cnt为1时，a&#x3D;b[31:16];</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"case(cnt)"</span><span class="token punctuation">)</span>
@@ -565,6 +614,10 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 <li>易于实现的存储器结构：寄存器定义时，将功能相同的bit位放在一起编址</li>
 <li>考虑将来需求：设计一定的冗余度；确保重要的比特位可以被软件访问到</li>
 </ol>
+<h5 id="设计策略"><a href="#设计策略" class="headerlink" title="设计策略"></a>设计策略</h5><ol>
+<li>完成整体架构设计，使用C model或者sv建模，验证方案可行性</li>
+<li>先完成，再优化。首先完成功能，再一点点精进，优化PPA</li>
+</ol>
 <h4 id="高速设计"><a href="#高速设计" class="headerlink" title="高速设计"></a>高速设计</h4><ol>
 <li>使用独热码进行状态编码：每次状态跳变，只有2个bit翻转，数据稳定时间短，组合逻辑延迟小。</li>
 <li>使用互斥的数据选择器而不是优先级编码器：具有优先级的编码器组合逻辑延迟较大，不利于提高电路的工作速度。</li>
@@ -578,6 +631,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
 <li>同步器模块的命名应易于识别</li>
 <li>将所有的同步器放置在顶层的一个或两个模块内。</li>
 </ol>
+<p>时序逻辑中的case语句，默认不推荐default，当出现缺省条件时，数据保持不变，便于在DC时插入ICG，clock gating，降低功耗。</p>
 
                 
             </div>
@@ -955,7 +1009,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             

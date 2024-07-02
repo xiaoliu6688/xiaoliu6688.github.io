@@ -279,7 +279,7 @@ https://www.cnblogs.com/xzj8023tp/p/12970790.html
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.3k
+                    1.9k
                 </div>
                 
 
@@ -310,7 +310,7 @@ https://www.cnblogs.com/xzj8023tp/p/12970790.html
 </blockquote>
 <h2 id="加密算法概念"><a href="#加密算法概念" class="headerlink" title="加密算法概念"></a>加密算法概念</h2><p>一个密码系统的加密密钥和解密密钥相同，或者虽然不相同但是由其中的任意一个可以很容易地推导出另一个，则称该密码系统采用的是对称密码体制。优点是 <strong>加解密速度快</strong>，安全系数不高。AES是对称密钥体制算法。</p>
 <p>如果一个密码系统的加密密钥和解密密钥不同，并且由加密密钥推导出解密密钥(或者由解密密钥推导出加密密钥)是计算上不可行的，则称该密码系统采用的是非对称密码体制。采用非对称密码体制的每个用户都有一对选定的密钥，其中一个是可以公开的，一个由用户自己秘密保存。RSA是非对称加密算法的一种。优点是安全系数高，可以方便、安全的实现数字签名和验证。</p>
-<p>AES算法在明文加密时，需要将整个明文分组，每组16个字节。</p>
+<h3 id="AES加密算法"><a href="#AES加密算法" class="headerlink" title="AES加密算法"></a>AES加密算法</h3><p>AES算法在明文加密时，需要将整个明文分组，每组16个字节。</p>
 <h4 id="AES加密算法两种模式ECB和CBC"><a href="#AES加密算法两种模式ECB和CBC" class="headerlink" title="AES加密算法两种模式ECB和CBC"></a>AES加密算法两种模式ECB和CBC</h4><h5 id="ECB模式"><a href="#ECB模式" class="headerlink" title="ECB模式"></a>ECB模式</h5><p>相同的输入产生相同的输出。优点：简单，有利于并行计算，误差不会传送。缺点：可能对明文进行主动攻击。</p>
 <img src="/2024/031353724/SouthEast.jpeg" alt="img" style="zoom: 50%;">
 
@@ -377,8 +377,31 @@ https://www.cnblogs.com/xzj8023tp/p/12970790.html
 <li>常量变换</li>
 </ul>
 <p>​	Rcon[]是一个具有10个元素的常量数组，x0&#x3D;{01},x1&#x3D;{02},…….x(8)&#x3D;{1b},x(9)&#x3D;{36}</p>
-<h3 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h3><p>为什么AES-128算法采用10次轮加密，而不是20次？</p>
+<h4 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h4><p>为什么AES-128算法采用10次轮加密，而不是20次？</p>
 <p>因为考虑了安全性和性能（速度）的折中，10轮迭代加密基本满足AES加密算法的安全性要求，加密时间也可以接受。</p>
+<h3 id="DES加密算法"><a href="#DES加密算法" class="headerlink" title="DES加密算法"></a>DES加密算法</h3><h4 id="初始置换（IP置换）"><a href="#初始置换（IP置换）" class="headerlink" title="初始置换（IP置换）"></a>初始置换（IP置换）</h4><p>将输入的64bit明文块进行置换和重新排列，生成新的64bit数据块目的：增加加密的混乱程度，使得每一位都能够对后面的加密过程产生影响，提高加密强度。</p>
+<img src="/2024/031353724/4f2a76eb1686402fabf130533445e38a.png" alt="在这里插入图片描述" style="zoom:67%;">
+
+<p>逆初始变换的变换规则和初始变换相反，可逆的。</p>
+<h4 id="加密轮F函数"><a href="#加密轮F函数" class="headerlink" title="加密轮F函数"></a>加密轮F函数</h4><p><img src="/2024/031353724/image-20240702151958722.png" alt="image-20240702151958722"></p>
+<p>将64bit的数据分为两组，低32bit为右，高32bit为左。每一轮F函数都需要进行一系列的扩展变换，然后与子密钥异或，进而S盒替换、P盒替换。</p>
+<h4 id="扩展变换"><a href="#扩展变换" class="headerlink" title="扩展变换"></a>扩展变换</h4><p>32bit数据通过扩展置换表得到新的48bit数据。</p>
+<img src="/2024/031353724/image-20240702153041256.png" alt="image-20240702153041256" style="zoom:67%;">
+
+<p>通过位数扩展使得每一位都可以在下一步操作中影响更多的比特，达到扩散的效果。</p>
+<h4 id="S盒替换"><a href="#S盒替换" class="headerlink" title="S盒替换"></a>S盒替换</h4><p>扩展置换后的48bit数据，通过8个S盒得到32bit数据。具体如下：每组6bit数据的第1bit和最后1bit拼接得到{data[6]，data[1]}行索引，中间4bit作为列索引得到相应的数据。</p>
+<h4 id="P盒替换"><a href="#P盒替换" class="headerlink" title="P盒替换"></a>P盒替换</h4><p>和初始变换类似，替换数据的位置即可。</p>
+<img src="/2024/031353724/image-20240702155217039.png" alt="image-20240702155217039" style="zoom:67%;">
+
+<h4 id="子密钥产生模块"><a href="#子密钥产生模块" class="headerlink" title="子密钥产生模块"></a>子密钥产生模块</h4><p>DES算法使用64bit密钥，真正参与加解密运算的只有56bit，64位密钥中第1、8、16、24、32、40、48、56及64位都是奇偶校验标志位，用于检验密钥在产生子密钥的过程中是否发生错误。</p>
+<img src="/2024/031353724/image-20240702161608655.png" alt="image-20240702161608655" style="zoom: 80%;">
+
+<p>64bit初始密钥首先根据密钥转换表得到56位密钥，原理和初始置换相同。再由56位密钥产生16组子密钥。根据子密钥移位序列表将两个28位的数据循环左移，而后拼接合成，再根据置换表的内容进行置换选择得到48bit输出数据。</p>
+<p>每一组子密钥的生成都需要经历移位、重组、置换步骤，16组子密钥对应16轮重复运算，且每一轮旋转移位后得到的左28位与右28位数据又将作为下一个子密钥生成的输入。</p>
+<h3 id="FPGA"><a href="#FPGA" class="headerlink" title="FPGA"></a>FPGA</h3><p>Altera开发板的逻辑单元LC是LE，LE的结构：一个4输入的LUT和寄存器</p>
+<p><img src="/2024/031353724/webp.webp" alt="img"></p>
+<p>xillinx开发板的逻辑单元是CLB，一个CLB包括两个slice，每个slice由4个 6输入的LUT和8个寄存器组成。</p>
+<p><img src="/2024/031353724/webp-1719911249197-5.webp" alt="img"></p>
 
                 
             </div>
@@ -728,7 +751,7 @@ https://www.cnblogs.com/xzj8023tp/p/12970790.html
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             

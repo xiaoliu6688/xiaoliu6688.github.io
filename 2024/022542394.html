@@ -292,7 +292,7 @@ Cache：用一块小而块的存储设备（采用SRAM实">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    822
+                    924
                 </div>
                 
 
@@ -343,12 +343,25 @@ Cache：用一块小而块的存储设备（采用SRAM实">
 <p>​	在写回的更新策略中，cache命中，首先会更新cacheline的数据，导致内存和cache中数据不一致，当该cache line被替代时，将替换的数据写到内存中。dirty bit是标记要写回到内存的cache line。</p>
 <p><strong>通常写分配和写回策略一起使用</strong></p>
 <hr>
-<h4 id="两路组相连"><a href="#两路组相连" class="headerlink" title="两路组相连"></a>两路组相连</h4><p>将cache平均分成多份，每一份就是一路，两路组相连缓存就是将cache分为2份，每份32Bytes。</p>
+<h4 id="两路组相连"><a href="#两路组相连" class="headerlink" title="两路组相连"></a>两路组相连</h4><p>将cache平均分成多份，每一份就是一路，两路组相连缓存就是将cache分为2份，每份32Bytes。一个index可以对应多个cacheline。</p>
 <img src="/2024/022542394/image-20240225153918193.png" alt style="zoom: 33%;">
 
 <p>直接映射缓存每个地址只有一个cacheline的tag进行比较。</p>
 <p>index也称为 组索引，相比于直接映射缓存，两路组相连映射缓存的index要少1bit，因为cache的个数少了一半，相当于一个addr地址对应于两个cacheline，然后通过tag比对两次，命中一个即cache命中。</p>
 <p>优点：降低cache的颠簸可能性；<br>缺点：硬件成本高；</p>
+<h4 id="全相连"><a href="#全相连" class="headerlink" title="全相连"></a>全相连</h4><p>没有index，将tag与所有的cacheline作比较。</p>
+<p><img src="/2024/022542394/1665648129223.png" alt="img"></p>
+<ul>
+<li>一般TLB采用这种结构</li>
+</ul>
+<h4 id="替换策略"><a href="#替换策略" class="headerlink" title="替换策略"></a>替换策略</h4><p>替换发生在某个cache set中所有的cacheline都满了的情况。</p>
+<ol>
+<li><p>LRU（Least Recently Used）</p>
+<p>为每个cacheline设置一个使用次数计数部分，每当way被访问就累加1，计数值最小的就是要替换的cacheline</p>
+</li>
+<li><p>随机替换</p>
+</li>
+</ol>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
 <li><strong>CPU读cache时</strong></li>
 </ul>
@@ -735,7 +748,7 @@ Cache：用一块小而块的存储设备（采用SRAM实">
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             

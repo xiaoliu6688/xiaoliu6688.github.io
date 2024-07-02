@@ -288,7 +288,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    697
+                    1.3k
                 </div>
                 
 
@@ -323,72 +323,103 @@
 <h3 id="icache"><a href="#icache" class="headerlink" title="icache"></a>icache</h3><p>fence模块发出flash，stall和nop使能信号，将取指令的pc地址保持不变，将进入if阶段的fence指令通过nop冲刷掉，也就是说icache的cachemem一个周期就要完成冲刷。</p>
 <img src="/2024/022113792/image-20240222105149731.png" alt style="zoom:50%;">
 
-<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
   <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
-    flash <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	flash <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
   <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>fence_i<span class="token punctuation">)</span>
-    flash <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+	flash <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
   <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>flash_done<span class="token punctuation">)</span>
-    flash <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	flash <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 <span class="token keyword">assign</span> stall <span class="token operator">=</span> flash <span class="token operator">|</span> fence_i<span class="token punctuation">;</span>
-<span class="token keyword">assign</span> nop <span class="token operator">=</span> stall<span class="token punctuation">;</span>
-</code></pre>
+<span class="token keyword">assign</span> nop <span class="token operator">=</span> stall<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <h3 id="dcache"><a href="#dcache" class="headerlink" title="dcache"></a>dcache</h3><p>设置FLASH和FLASH_DONE状态，等待到fence.i指令流水到访存阶段，进入FLASH状态，遍历所有cacheline，将所有脏（dirty）块写到内存中；cachesize为4k，cacheline为8byte，共需要进行512次写数据传输，判断dirty位是否为1，并通过wstrb确定有效字节，将wdata写入内存。</p>
 <p>遍历结束后，flash_finish拉高，进入FLASH_DONE状态，拉高flash_done，pc重新从内存中取指令，流水线继续执行，完成了指令和数据的一致性。</p>
 <img src="/2024/022113792/image-20240222112053777.png" alt style="zoom: 50%;">
 
 <img src="/2024/022113792/image-20240226100157943.png" alt style="zoom:50%;">
 
-<pre class=" language-verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
-    <span class="token keyword">case</span> <span class="token punctuation">(</span>state<span class="token punctuation">)</span>
-        IDLE <span class="token punctuation">:</span> next_state <span class="token operator">=</span> flash <span class="token operator">?</span> FLASH <span class="token punctuation">:</span>
-                            <span class="token punctuation">(</span><span class="token operator">!</span>hit <span class="token operator">&amp;&amp;</span> dirty <span class="token operator">&amp;&amp;</span> valid<span class="token punctuation">)</span> <span class="token operator">?</span> WRITEBACK <span class="token punctuation">:</span>
-                            <span class="token punctuation">(</span><span class="token operator">!</span>hit <span class="token operator">&amp;&amp;</span> valid<span class="token punctuation">)</span> <span class="token operator">?</span> RADDR <span class="token punctuation">:</span> IDLE<span class="token punctuation">;</span>
-        WRITEBACK <span class="token punctuation">:</span> next_state <span class="token operator">=</span> WADDR<span class="token punctuation">;</span>
-        ALLOCATE <span class="token punctuation">:</span> next_state <span class="token operator">=</span> IDLE<span class="token punctuation">;</span>
-        RADDR <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_arvalid <span class="token operator">&amp;&amp;</span> axi_arready<span class="token punctuation">)</span> next_state <span class="token operator">=</span> RDATA<span class="token punctuation">;</span>
-        RDATA <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_rvalid  <span class="token operator">&amp;&amp;</span> axi_rready <span class="token punctuation">)</span> next_state <span class="token operator">=</span> ALLOCATE<span class="token punctuation">;</span>
-        WADDR <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_awvalid <span class="token operator">&amp;&amp;</span> axi_awready<span class="token punctuation">)</span> next_state <span class="token operator">=</span> WDATA<span class="token punctuation">;</span>
-        WDATA <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_wvalid  <span class="token operator">&amp;&amp;</span> axi_wready <span class="token punctuation">)</span> next_state <span class="token operator">=</span> WRESP<span class="token punctuation">;</span>
-        WRESP <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_bvalid  <span class="token operator">&amp;&amp;</span> axi_bready <span class="token punctuation">)</span> next_state <span class="token operator">=</span> <span class="token punctuation">(</span>flash_flag <span class="token operator">&amp;&amp;</span> flash_finish<span class="token punctuation">)</span> <span class="token operator">?</span> FLASH_DONE 
-                                                <span class="token punctuation">:</span> flash_flag <span class="token operator">?</span> WADDR 
-                                                <span class="token punctuation">:</span> RADDR<span class="token punctuation">;</span>
-        FLASH <span class="token punctuation">:</span> next_state <span class="token operator">=</span> WADDR<span class="token punctuation">;</span>
-        FLASH_DONE <span class="token punctuation">:</span> next_state <span class="token operator">=</span> IDLE<span class="token punctuation">;</span>
-        <span class="token keyword">default</span> <span class="token punctuation">:</span> next_state <span class="token operator">=</span> IDLE<span class="token punctuation">;</span>
-    <span class="token keyword">endcase</span>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	<span class="token keyword">case</span> <span class="token punctuation">(</span>state<span class="token punctuation">)</span>
+		IDLE <span class="token punctuation">:</span> next_state <span class="token operator">=</span> flash <span class="token operator">?</span> FLASH <span class="token punctuation">:</span>
+							<span class="token punctuation">(</span><span class="token operator">!</span>hit <span class="token operator">&amp;&amp;</span> dirty <span class="token operator">&amp;&amp;</span> valid<span class="token punctuation">)</span> <span class="token operator">?</span> WRITEBACK <span class="token punctuation">:</span>
+							<span class="token punctuation">(</span><span class="token operator">!</span>hit <span class="token operator">&amp;&amp;</span> valid<span class="token punctuation">)</span> <span class="token operator">?</span> RADDR <span class="token punctuation">:</span> IDLE<span class="token punctuation">;</span>
+		WRITEBACK <span class="token punctuation">:</span> next_state <span class="token operator">=</span> WADDR<span class="token punctuation">;</span>
+		ALLOCATE <span class="token punctuation">:</span> next_state <span class="token operator">=</span> IDLE<span class="token punctuation">;</span>
+		RADDR <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_arvalid <span class="token operator">&amp;&amp;</span> axi_arready<span class="token punctuation">)</span> next_state <span class="token operator">=</span> RDATA<span class="token punctuation">;</span>
+		RDATA <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_rvalid  <span class="token operator">&amp;&amp;</span> axi_rready <span class="token punctuation">)</span> next_state <span class="token operator">=</span> ALLOCATE<span class="token punctuation">;</span>
+		WADDR <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_awvalid <span class="token operator">&amp;&amp;</span> axi_awready<span class="token punctuation">)</span> next_state <span class="token operator">=</span> WDATA<span class="token punctuation">;</span>
+		WDATA <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_wvalid  <span class="token operator">&amp;&amp;</span> axi_wready <span class="token punctuation">)</span> next_state <span class="token operator">=</span> WRESP<span class="token punctuation">;</span>
+		WRESP <span class="token punctuation">:</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>axi_bvalid  <span class="token operator">&amp;&amp;</span> axi_bready <span class="token punctuation">)</span> next_state <span class="token operator">=</span> <span class="token punctuation">(</span>flash_flag <span class="token operator">&amp;&amp;</span> flash_finish<span class="token punctuation">)</span> <span class="token operator">?</span> FLASH_DONE 
+												<span class="token punctuation">:</span> flash_flag <span class="token operator">?</span> WADDR 
+												<span class="token punctuation">:</span> RADDR<span class="token punctuation">;</span>
+		FLASH <span class="token punctuation">:</span> next_state <span class="token operator">=</span> WADDR<span class="token punctuation">;</span>
+		FLASH_DONE <span class="token punctuation">:</span> next_state <span class="token operator">=</span> IDLE<span class="token punctuation">;</span>
+		<span class="token keyword">default</span> <span class="token punctuation">:</span> next_state <span class="token operator">=</span> IDLE<span class="token punctuation">;</span>
+	<span class="token keyword">endcase</span>
 <span class="token keyword">end</span>
 
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
   <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
-    flash_cnt <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+	flash_cnt <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
   <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span><span class="token punctuation">(</span>state <span class="token operator">==</span> WDATA<span class="token punctuation">)</span><span class="token operator">&amp;&amp;</span>axi_wready<span class="token operator">&amp;&amp;</span>axi_wready<span class="token operator">&amp;&amp;</span>flash_flag<span class="token punctuation">)</span>
-    flash_cnt <span class="token operator">&lt;=</span> flash_cnt <span class="token operator">+</span> <span class="token number">'h1</span><span class="token punctuation">;</span>
+	flash_cnt <span class="token operator">&lt;=</span> flash_cnt <span class="token operator">+</span> <span class="token number">'h1</span><span class="token punctuation">;</span>
   <span class="token keyword">else</span> 
-    flash_cnt <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+	flash_cnt <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
   <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
-    flash_finish <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	flash_finish <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
   <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>flash_flag <span class="token operator">&amp;&amp;</span> <span class="token punctuation">(</span>flash_cnt <span class="token operator">==</span> CACHE_SIZE<span class="token punctuation">)</span><span class="token punctuation">)</span>
-    flash_finish <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+	flash_finish <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
   <span class="token keyword">else</span> 
-    flash_finish <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	flash_finish <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
   <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span>
-    flash_flag <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	flash_flag <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
   <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>state <span class="token operator">==</span> FLASH_DONE<span class="token punctuation">)</span>
-    flash_flag <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	flash_flag <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
   <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>state <span class="token operator">==</span> FLASH<span class="token punctuation">)</span>
-    flash_flag <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+	flash_flag <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 
-<span class="token keyword">assign</span> axi_wstrb  <span class="token operator">=</span> <span class="token punctuation">(</span>flash_flag<span class="token operator">&amp;</span>dirty<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">8'b11111111</span> <span class="token punctuation">:</span> <span class="token punctuation">(</span>flash_flag<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">8'b0000_0000</span> <span class="token punctuation">:</span> byte_enable<span class="token punctuation">;</span>
-</code></pre>
+<span class="token keyword">assign</span> axi_wstrb  <span class="token operator">=</span> <span class="token punctuation">(</span>flash_flag<span class="token operator">&amp;</span>dirty<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">8'b11111111</span> <span class="token punctuation">:</span> <span class="token punctuation">(</span>flash_flag<span class="token punctuation">)</span> <span class="token operator">?</span> <span class="token number">8'b0000_0000</span> <span class="token punctuation">:</span> byte_enable<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="虚拟存储器"><a href="#虚拟存储器" class="headerlink" title="虚拟存储器"></a>虚拟存储器</h4><p>分页机制，虚拟地址划分以 <strong>页</strong>为单位（page），典型大小为4KB；<br>物理地址也有页，与虚拟页大小相同，称为 <strong>帧frame</strong></p>
+<p>VA和PA都有两部分组成，一个是用来索引虚拟页或者物理帧，一个是页&#x2F;帧偏移</p>
+<p>MMU内存管理单元负责虚拟内存到物理内存的映射。</p>
+<p><img src="/2024/022113792/1666059846816.png" alt="img"></p>
+<h5 id="单级页表"><a href="#单级页表" class="headerlink" title="单级页表"></a>单级页表</h5><p><strong>页表</strong> 用来存储VA到PA的映射关系，VA的一个页就可以放在物理地址的任何一个帧上了。</p>
+<p>页表放在物理内存中，每个进程都有自己的页表。页表寄存器（PTR）用来索引页表。</p>
+<p>单级页表访问内存（两次访问物理内存）</p>
+<ol>
+<li>根据PTR定位物理内存中的页表</li>
+<li>根据VPN访问页表中的PFN</li>
+<li>根据PFN访问物理内存</li>
+</ol>
+<h5 id="多级页表"><a href="#多级页表" class="headerlink" title="多级页表"></a>多级页表</h5><p>单级页表一张就需要4MB的巨大空间。多级页表将单级页表进行划分，实现更小的子页，也不需要巨大的连续地址空间。</p>
+<img src="/2024/022113792/1666060401537.png" alt="img" style="zoom: 80%;">
+
+<ul>
+<li>一个一级和二级页表都有2^10个表项, 因为物理内存是32位, 所以大小均为4KB, 正好可以放进物理内存的一个页内</li>
+<li>一级页表4KB大小一般是不可避免的, 而二级页表则是根据需求逐步创建的, 操作系统会尽量让虚拟地址集中, 减少二级页表的开辟</li>
+<li>多级页表的优势：易于扩展，当地址位宽增加到64位时，通过增加级数减少页表的占用。</li>
+</ul>
+<p><img src="/2024/022113792/1666077064529.png" alt="img"></p>
+<p>虚拟内存的优点：</p>
+<ol>
+<li>每个进程都独占连续的地址空间</li>
+<li>可以将连续的虚拟内存地址映射到不连续的物理地址，减小物理内存的碎片</li>
+<li>为所有进程分配的总物理内存之和可以大于实际的物理内存大小，有些页在磁盘的swap区</li>
+<li>可以实现每个页的访问权限</li>
+</ol>
+<h4 id="TLB的设计"><a href="#TLB的设计" class="headerlink" title="TLB的设计"></a>TLB的设计</h4><p>对于两级页表，需要访问两次物理内存才可以得到物理地址，延时太长。</p>
+<p>增加一个 <strong>页表Cache</strong>加速这一进程，将页表中最近使用的PTE缓存起来，称为TLB（transition lookaside buffer）</p>
+<p>TLB只有时间相关性，一般TLB是全相连的，容量不会很大。</p>
 
                 
             </div>
@@ -766,7 +797,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             

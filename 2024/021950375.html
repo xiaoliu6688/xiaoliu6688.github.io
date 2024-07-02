@@ -5,8 +5,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="一生一芯-CPU流水线设计（一）, RayBiiao">
-    <meta name="description" content="将整个结构划分为五级，相比于单周期的CPU，在流水线设计过程中主要解决数据冒险和结构冒险。
-数据冒险将数据旁路模块bypass放在译码阶段（id），与教材中放在执行阶段不同，原因是可以减少寄存器堆的一个读端口（译码to执行阶段 写寄存器的时">
+    <meta name="description" content="将整个结构划分为五级，相比于单周期的CPU，在流水线设计过程中主要解决数据冒险和结构冒险和结构冒险。
+数据冒险将数据旁路模块bypass放在译码阶段（id），与教材中放在执行阶段不同，原因是可以减少寄存器堆的一个读端口（译码to执行阶段 写">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -289,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.5k
+                    1.6k
                 </div>
                 
 
@@ -314,7 +314,7 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>将整个结构划分为五级，相比于单周期的CPU，在流水线设计过程中主要解决数据冒险和结构冒险。</p>
+                <p>将整个结构划分为五级，相比于单周期的CPU，在流水线设计过程中主要解决数据冒险和结构冒险和结构冒险。</p>
 <h2 id="数据冒险"><a href="#数据冒险" class="headerlink" title="数据冒险"></a>数据冒险</h2><p>将数据旁路模块bypass放在译码阶段（id），与教材中放在执行阶段不同，原因是可以减少寄存器堆的一个读端口（译码to执行阶段 写寄存器的时候，Write back阶段已经将数据写入到寄存器堆中，所以要单独设置一个读端口读取写入寄存器堆的数据）</p>
 <p>数据旁路的数据来源有四个：</p>
 <ol>
@@ -380,6 +380,8 @@ jalr  a5 <span aria-hidden="true" class="line-numbers-rows"><span></span><span><
   cpu_gpr <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">uint64_t</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">(</span>VerilatedDpiOpenVar<span class="token operator">*</span><span class="token punctuation">)</span>r<span class="token punctuation">)</span><span class="token operator">-></span><span class="token function">datap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
+<h2 id="结构冒险"><a href="#结构冒险" class="headerlink" title="结构冒险"></a>结构冒险</h2><p>由于只有一个内存空间，在取指阶段和访存阶段同时需要访问SRAM时，发生控制冒险。<br>解决措施：流水线停顿stall，Dcache优先级高于Icache，保证取数据优先，取数据完成后继续取指令。</p>
+<p>在译码和写回阶段时，需要读取和写入寄存器的值，当访问的地址一样时，发生结构冒险。<br>解决措施：判断读出和将要写入的地址一致时，直接将写入的结果旁路给读出的变量。</p>
 <h2 id="流水线-思考"><a href="#流水线-思考" class="headerlink" title="流水线-思考"></a>流水线-思考</h2><p>发出反压信号stall时，会让整个流水线停顿下来；<br>原因是每级流水的上下游没有握手和反压，当需要反压时，只能跨级反压，并且让所有的寄存器保持不变；</p>
 <p><strong>如果每级流水都有响应的握手信号，就可以进行逐级反压，上面流水线不一定全部停顿下来，可以进一步提高效率</strong></p>
 <h4 id="debug"><a href="#debug" class="headerlink" title="debug"></a>debug</h4><p>实现srlw指令出现的问题：</p>
@@ -766,7 +768,7 @@ jalr  a5 <span aria-hidden="true" class="line-numbers-rows"><span></span><span><
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             

@@ -278,7 +278,7 @@ set_cloc">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.4k
+                    1.5k
                 </div>
                 
 
@@ -445,6 +445,8 @@ create_generated_clock <span class="token operator">-</span>name CLKd1 <span cla
 <p>对于八选一的MUX，使用了infer_mux原语，DC工具会自动扩展，灵活构建MUX Tree满足8选1的需求。如果工艺库中只有4选1的MUX，compile后的结果如下</p>
 <p><img src="/2024/03097089/b593e35e30f240b892c59612701218a1.png" alt="在这里插入图片描述"></p>
 <p>使用RTL原语的方法，对于设计人员的工作量大为减少，并且可以不依赖工艺库，DC工具甚至可以自动构建MUX tree，达到了事半功倍的效果。</p>
+<h5 id="set-false-path和set-disable-timing区别"><a href="#set-false-path和set-disable-timing区别" class="headerlink" title="set_false_path和set_disable_timing区别"></a>set_false_path和set_disable_timing区别</h5><p>set_false_path只对data path起作用，EDA工具还是会计算路径的timing，只是不会报告是否有违例。</p>
+<p>set_disable_timing对计算路径的timing起作用，完全不会分析timing arc。</p>
 
                 
             </div>
@@ -806,7 +808,7 @@ create_generated_clock <span class="token operator">-</span>name CLKd1 <span cla
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             

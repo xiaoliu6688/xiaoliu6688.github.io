@@ -527,7 +527,7 @@ write_aggregate_report dashboard<span aria-hidden="true" class="line-numbers-row
 <p><img src="/2023/112431792/290753-20220707155459981-1844018659.png"></p>
 <p>AC_fifo01：检查fifo是否上溢或者下溢</p>
 <p>AC_handshake01&#x2F;02: </p>
-<p>01检查req-&gt;ack信号是否满足四相握手协议。REQ拉高-&gt;ACK拉高-&gt;REQ拉低-&gt;ACK拉低</p>
+<p>01检查req-&gt;ack信号是否满足四相握手协议。REQ拉高-&gt;ACK拉高-&gt;REQ拉低-&gt;ACK拉低。valid&#x3D;》REQ，ready&#x3D;》ACK</p>
 <p><img src="/2023/112431792/290753-20220707155544879-178987688.png"></p>
 <p>02检查是否会有数据丢失</p>
 <h3 id="项目中出现的问题"><a href="#项目中出现的问题" class="headerlink" title="项目中出现的问题"></a>项目中出现的问题</h3><h4 id="LINT检查误报生成锁存器"><a href="#LINT检查误报生成锁存器" class="headerlink" title="LINT检查误报生成锁存器"></a>LINT检查误报生成锁存器</h4><p>code如下</p>
@@ -1020,7 +1020,7 @@ write_aggregate_report dashboard<span aria-hidden="true" class="line-numbers-row
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">67.9k</span>
+                        class="white-color">72.4k</span>
             
             
             
