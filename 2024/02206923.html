@@ -510,7 +510,7 @@ set_clock_uncertainty <span class="token operator">-</span>setup 0.2 $ CLOCK <sp
 report_clock <span class="token comment"># -skew检查时钟约束</span>
 report_clock <span class="token operator">-</span>verbose  <span class="token comment"># verbose 详细的输出</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<h4 id="输入输出约束"><a href="#输入输出约束" class="headerlink" title="输入输出约束"></a>输入输出约束</h4><h5 id="约束输入-输出延迟"><a href="#约束输入-输出延迟" class="headerlink" title="约束输入&#x2F;输出延迟"></a>约束输入&#x2F;输出延迟</h5><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token comment"># 一般设置外部延迟值占周期的60%</span>
+<h4 id="输入输出约束"><a href="#输入输出约束" class="headerlink" title="输入输出约束"></a>输入输出约束</h4><h5 id="约束输入-输出延迟"><a href="#约束输入-输出延迟" class="headerlink" title="约束输入&#x2F;输出延迟"></a>约束输入&#x2F;输出延迟</h5><pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token comment"># 一般设置外部延迟值占周期的60%~70%</span>
 <span class="token comment">#设置输入延迟</span>
 set_input_delay <span class="token operator">-</span>max 0.5 <span class="token operator">-</span>clock clk <span class="token punctuation">[</span>remove_from_collection <span class="token punctuation">[</span>all_inputs<span class="token punctuation">]</span> <span class="token punctuation">[</span>get_ports clk<span class="token punctuation">]</span><span class="token punctuation">]</span>
 remove_input_delay <span class="token punctuation">[</span>get_ports clk<span class="token punctuation">]</span>
@@ -1034,7 +1034,7 @@ synoff <span class="token comment">#取消 工艺库lib文件中显示的底色<
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.4k</span>
+                        class="white-color">72.8k</span>
             
             
             

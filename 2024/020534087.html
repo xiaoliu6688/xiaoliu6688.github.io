@@ -322,8 +322,8 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wudpekerlily/article/details/129494440">https://blog.csdn.net/wudpekerlily/article/details/129494440</a></p>
 </blockquote>
 <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>低功耗设计是一套完整的理论体系，从原理、代码、UPF、综合、版图等等，每个步骤的一点点提高，都会带来不同程度的优化，勿以优化小而不为，点点滴滴的进步就会造就更加节能的芯片实现。</p>
-<p>Leakage power指漏电功耗，跟工作电压VDD，阈值电压Vth和宽长比有关。<br>Output charging power指电容充放电功耗<br>Internal switching power指短路电流功耗，PMOS和NMOS同时导通，电源到地的短路电流功耗。<br>input pin power：输入引脚功耗，输入状态的变化不一定会导致输出切换，当CMOS逻辑门的输入切换时，任然会消耗少量功耗，并且不会导致输出切换。</p>
-<h3 id="标准单元库中组合逻辑单元的功耗"><a href="#标准单元库中组合逻辑单元的功耗" class="headerlink" title="标准单元库中组合逻辑单元的功耗"></a>标准单元库中组合逻辑单元的功耗</h3><p>下表描述的是内部输入引脚到输出引脚转换的内部功耗，对应短路电流功耗，采用二维查找变的方式实现。</p>
+<p>Leakage power指漏电功耗，跟工作电压VDD，阈值电压Vth和宽长比有关。<br>Output charging power指电容充放电功耗<br>Internal switching power指短路电流功耗，PMOS和NMOS同时导通，电源到地的短路电流功耗。<br>input pin power：输入引脚功耗，输入状态的变化不一定会导致输出切换，当CMOS逻辑门的输入切换时，仍然会消耗少量功耗，并且不会导致输出切换。</p>
+<h3 id="标准单元库中组合逻辑单元的功耗"><a href="#标准单元库中组合逻辑单元的功耗" class="headerlink" title="标准单元库中组合逻辑单元的功耗"></a>标准单元库中组合逻辑单元的功耗</h3><p>下表描述的是内部输入引脚到输出引脚转换的内部功耗，对应短路电流功耗，采用二维查找表的方式实现。</p>
 <img src="/2024/020534087/image-20240527150153558.png" alt="image-20240527150153558" style="zoom:50%;">
 
 <img src="/2024/020534087/image-20240527150728150.png" alt="image-20240527150728150" style="zoom:50%;">
@@ -339,7 +339,7 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
 <img src="/2024/020534087/image-20240527155952177.png" alt="image-20240527155952177" style="zoom:50%;">
 
 <p>漏电功耗取决于设计中单元的状态（逻辑0还是1），动态功耗取决于设计中的开关活动。</p>
-<h2 id="ASIC中的功耗分析"><a href="#ASIC中的功耗分析" class="headerlink" title="ASIC中的功耗分析"></a>ASIC中的功耗分析</h2><p>功率计算的关键是每个网络的切换活动，切换网络由两个参数组成：静态概率和转换速率。</p>
+<h2 id="ASIC中的功耗-分析"><a href="#ASIC中的功耗-分析" class="headerlink" title="ASIC中的功耗 分析"></a>ASIC中的功耗 分析</h2><p>功率计算的关键是每个网络的切换活动，切换网络由两个参数组成：静态概率和转换速率。</p>
 <p>静态概率：信号的预期状态。静态概率为0.2，表示信号20%的时间处于逻辑1,80%的时间处于逻辑0。<br>转换速率：单位时间的切换次数。对于周期性信号，切换速率是信号频率的2倍。因为切换包括上升和下降。</p>
 <p>对于组合逻辑单元功耗的计算，需要以下参数。其中，静态概率用来计算漏电功耗（输出的静态概率是通过输入引脚的静态概率得到的），切换速率和查找表用来计算短路电流功耗。负载和电源电压用来计算电容充放电功耗。</p>
 <img src="/2024/020534087/image-20240527225547934.png" alt="image-20240527225547934" style="zoom:50%;">
@@ -354,7 +354,7 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
 
 <p>功耗不仅与开关活动有关，还和外部环境有关（PVT，ff，高电压和高温度corner功耗大）</p>
 <h1 id="低功耗设计"><a href="#低功耗设计" class="headerlink" title="低功耗设计"></a>低功耗设计</h1><p>PPA中，Power是最抽象的，因为无法准确描述功耗是多少。</p>
-<h3 id="为什么提出？"><a href="#为什么提出？" class="headerlink" title="为什么提出？"></a>为什么提出？</h3><p>为了降低芯片功耗，且RTL代码无法进行电源分析。</p>
+<h3 id="为什么提出？"><a href="#为什么提出？" class="headerlink" title="为什么提出？"></a>为什么提出？</h3><p>为了降低芯片功耗，且RTL代码无法进行功耗分析。</p>
 <h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><ol>
 <li>门控时钟</li>
 <li>电源门控</li>
@@ -369,7 +369,7 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
 <p>因为普通的RTL代码无法进行电源的描述，需要一个语言去描述它。</p>
 <img src="/2024/020534087/1164424-20200306111959899-100355431.png" alt="img" style="zoom:67%;">
 
-<p>一共有三次UPF，DC后的是UPF‘，布局布线后的事UPF’‘。SDC+UPF+RTL &#x3D;》经过DC &#x3D;》gated netlist + UPF’</p>
+<p>一共有三次UPF，DC后的是UPF‘，布局布线后的是UPF’‘。SDC+UPF+RTL &#x3D;》经过DC &#x3D;》gated netlist + UPF’</p>
 <h4 id="UPF术语-概念"><a href="#UPF术语-概念" class="headerlink" title="UPF术语&#x2F;概念"></a>UPF术语&#x2F;概念</h4><ul>
 <li><p>PD（Power Domain）</p>
 <p>共用一个电源（VDD，VSS）的一些模块。</p>
@@ -415,7 +415,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 </ol>
 <p>静态功耗：在没有信号变化时，由于漏电流所引起的功耗。</p>
 <img src="/2024/020534087/v2-30817fdf230a2209d3e42a37f4abbcf7_1440w.webp" alt style="zoom: 67%;">
-静态功耗的计算方式：<img src="/2024/020534087/v2-bf118d5d1de06f0f9110d057f1910cdf_1440w.png" alt="img" style="zoom:50%;">
+短路电流功耗的计算方式：<img src="/2024/020534087/v2-bf118d5d1de06f0f9110d057f1910cdf_1440w.png" alt="img" style="zoom:50%;">
 
 
 
@@ -495,7 +495,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 <ol start="5">
 <li>Retention Cells</li>
 </ol>
-<p>​	Retention cell: 保留单元，一种能够在电源关闭的情况下，能保持内部状态的特殊单元。需要两个电源供电。有save和restore的功能。保留寄存器使用HVt管，保证待机时漏电低。</p>
+<p>​	Retention cell: 保留单元，一种能够在电源关闭的情况下，能保持内部状态的特殊单元。需要两个电源供电。有save和restore的功能。保留寄存器使用<strong>HVt管</strong>，保证待机时漏电低。</p>
 <img src="/2024/020534087/image-20240528153049851.png" alt="image-20240528153049851" style="zoom: 50%;">
 
 <img src="/2024/020534087/image-20240528154615222.png" alt="image-20240528154615222" style="zoom:50%;">
@@ -546,6 +546,8 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 </li>
 <li><p>资源共享</p>
 <p>优化组合逻辑，共用相同的逻辑，减小不必要的计算，降低功耗。</p>
+</li>
+<li><p>操作数隔离：减少没必要的数据计算和信号翻转。</p>
 </li>
 </ol>
 </li>
@@ -610,7 +612,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 <li>降低峰值功耗。这取决于系统或者IP的温度，如果峰值功耗较高，导致局部过热。峰值功耗还和IR drop有关，防止峰值功耗过大导致工作电压无法满足要求。</li>
 <li>降低功能模式功耗或者待机功耗。长时间待机，可以优化待机功耗。</li>
 </ol>
-<h3 id="1-2-影响功耗的参数"><a href="#1-2-影响功耗的参数" class="headerlink" title="1.2 影响功耗的参数"></a>1.2 影响功耗的参数</h3><p>动态功耗与电源电压、负载和时钟频率有关。可以一些措施降低上述参数带来的功耗，比如逻辑重组、尺寸调整、降低VDD、静态多电压技术、时钟门控、动态电压频率缩放技术、面积缩减和门级逻辑优化技术。</p>
+<h3 id="1-2-影响功耗的参数"><a href="#1-2-影响功耗的参数" class="headerlink" title="1.2 影响功耗的参数"></a>1.2 影响功耗的参数</h3><p>动态功耗与电源电压、负载和时钟频率有关。一些措施降低上述参数带来的功耗，比如逻辑重组、尺寸调整、降低VDD、静态多电压技术、时钟门控、动态电压频率缩放技术、面积缩减和门级逻辑优化技术。</p>
 <p>静态功耗与电源电压、设计中标准单元的数量、强度以及阈值电压有关。为了降低静态功耗，可以降低电源电压，减少设计中的单元数目和使用高VT单元。可以使用的技术：多VT、多VDD和电源门控。</p>
 <p>在不同工作模式下使用不同频率的时钟或者关闭时钟。</p>
 <img src="/2024/020534087/image-20240528194931615.png" alt="image-20240528194931615" style="zoom:50%;">
@@ -627,11 +629,11 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 
 <img src="/2024/020534087/image-20240528203943961.png" alt="image-20240528203943961" style="zoom:50%;">
 
-<p>架构时钟门控器不会对时序产生任何影响，并且是节省功耗最有效的方法之一。架构时钟器会使得时钟树综合变得负责，如果不仔细处理和实现，会导致较大的时钟偏差。</p>
+<p>架构时钟门控器不会对时序产生任何影响，并且是节省功耗最有效的方法之一。架构时钟器会使得时钟树综合变得复杂，如果不仔细处理和实现，会导致较大的时钟偏差。</p>
 <p>架构时钟门控有时也称为粗粒度时钟门控。细粒度时钟门控指的是时钟门控的自动推理，自动插入的。</p>
 <img src="/2024/020534087/image-20240614222640503.png" alt="image-20240614222640503" style="zoom: 50%;">
 
-<p>使用时钟门控好处：功耗节省30%到40%，面积节省20%（一个clock gating代替多个mux逻辑）</p>
+<p>使用架构时钟门控好处：功耗节省30%到40%，面积节省20%（一个clock gating代替多个mux逻辑）</p>
 <p>使用原则：</p>
 <ol>
 <li>至少位宽是3以上的寄存器才有意义，否则面积和功耗都不会改善</li>
@@ -640,7 +642,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 <h3 id="1-7-电源门控"><a href="#1-7-电源门控" class="headerlink" title="1.7 电源门控"></a>1.7 电源门控</h3><p>通过关闭未使用模块的电压来降低功耗，可以使用头部单元断开VDD，或者使用尾部单元断开VSS。</p>
 <p>当ASIC中包括可以关闭的模块和始终打开的模块时，需要注意以下事项</p>
 <ol>
-<li>生成用于控制各个模块的电源门控控制信号时钟打开</li>
+<li>用于控制各个模块的电源门控控制信号的电源是常开的</li>
 <li>隔离单元放置在可以关闭的模块输出处，以便向其他模块提供有效的控制信号。</li>
 </ol>
 <h4 id="状态保留"><a href="#状态保留" class="headerlink" title="状态保留"></a>状态保留</h4><p>将系统断电时的状态保存在保留寄存器中，在重新启动时可以快速恢复，减小了复位延迟和相应的功耗。</p>
@@ -681,6 +683,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span>
 	result <span class="token operator">=</span> op1 <span class="token operator">*</span> op2<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
+<p>不仅可以减小面积，还可以降低功耗。</p>
 <h3 id="1-11-其他"><a href="#1-11-其他" class="headerlink" title="1.11 其他"></a>1.11 其他</h3><h4 id="消除冗余逻辑，优化逻辑"><a href="#消除冗余逻辑，优化逻辑" class="headerlink" title="消除冗余逻辑，优化逻辑"></a>消除冗余逻辑，优化逻辑</h4><h4 id="状态机编码使用格雷码或者独热码"><a href="#状态机编码使用格雷码或者独热码" class="headerlink" title="状态机编码使用格雷码或者独热码"></a>状态机编码使用格雷码或者独热码</h4><h4 id="避免自由运行的计数器，限制计数器的边界"><a href="#避免自由运行的计数器，限制计数器的边界" class="headerlink" title="避免自由运行的计数器，限制计数器的边界"></a>避免自由运行的计数器，限制计数器的边界</h4><h4 id><a href="#" class="headerlink" title></a></h4>
                 
             </div>
@@ -1058,7 +1061,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.4k</span>
+                        class="white-color">72.8k</span>
             
             
             

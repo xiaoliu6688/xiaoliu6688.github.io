@@ -292,7 +292,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    6.2k
+                    6.5k
                 </div>
                 
 
@@ -558,6 +558,32 @@ end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span>
 <p><img src="/2024/012448005/image-20240603142208460.png" alt="image-20240603142208460"></p>
 <p><img src="/2024/012448005/image-20240603142214800.png" alt="image-20240603142214800"></p>
 <p><strong>操作数隔离</strong><br>在数据通路中，将不使用的逻辑输出  的输入设置为固定值，防止其无效运算，降低功耗。</p>
+<h5 id="优化毛刺的产生"><a href="#优化毛刺的产生" class="headerlink" title="优化毛刺的产生"></a>优化毛刺的产生</h5><p>bg. 在verilog仿真过程中出现一个很奇怪的现象，cnt计数值在非上升沿处发生了跳变，与预期不符，导致功能错误。代码如下：</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> hclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+    pclken  <span class="token operator">&lt;=</span> <span class="token number">1'b1</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>hclk_cnt <span class="token operator">==</span> <span class="token punctuation">(</span>hclk_pclk_ratio <span class="token operator">-</span> <span class="token number">1'b1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    pclken  <span class="token operator">&lt;=</span> <span class="token number">1'b1</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span>
+    pclken  <span class="token operator">&lt;=</span> <span class="token number">1'b0</span><span class="token punctuation">;</span>
+ 
+<span class="token keyword">assign</span> pclk_en <span class="token operator">=</span> pclken<span class="token punctuation">;</span>
+<span class="token keyword">assign</span> pclk    <span class="token operator">=</span> pclken <span class="token operator">&amp;</span> hclk<span class="token punctuation">;</span>
+
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> pclk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    cnt <span class="token operator">&lt;=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+  <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+    cnt <span class="token operator">&lt;=</span> cnt <span class="token operator">+</span> <span class="token number">'h1</span><span class="token punctuation">;</span>
+  <span class="token keyword">end</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>仿真现象：在vcs&#x2F;verdi下，cnt发现异常跳变，pclk没有异常。在modelsim上在cnt异常跳变时，pclk出现了毛刺。如下</p>
+<p><img src="/2024/012448005/image-20240706004836127.png" alt="image-20240706004836127"></p>
+<p>原因：这是由于pclk是组合逻辑输出，pclken是hclk下的posedge边沿同步输出的，由于Tcq的延迟，导致在hclk上升沿时，pclken会延迟很小一段时间，这个时期 hclk&amp;pclken，会有很小一段时间高电平（毛刺）。在时钟上的毛刺会导致always块误触，cnt异常累加。</p>
+<p>解决办法：pclken在hclk下negedge边沿同步输出，</p>
+<p><img src="/2024/012448005/image-20240706005724864.png" alt="image-20240706005724864"></p>
+<p>在hclk下降沿，pclken由于Tcq延迟，并不会导致在下降沿产生毛刺，所以cnt计数值不会异常累加。</p>
 <h2 id="脚本辅助设计"><a href="#脚本辅助设计" class="headerlink" title="脚本辅助设计"></a>脚本辅助设计</h2><p>使用Python生成规律的代码，比如case语句中的赋值。</p>
 <p>a[15:0]和数组b[255:0], 当输入cnt为0时，a &#x3D; b[15:0];cnt为1时，a&#x3D;b[31:16];</p>
 <pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"case(cnt)"</span><span class="token punctuation">)</span>
@@ -1009,7 +1035,7 @@ end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span>
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.4k</span>
+                        class="white-color">72.8k</span>
             
             
             
