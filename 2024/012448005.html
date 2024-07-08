@@ -581,7 +581,7 @@ end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span>
 <p>仿真现象：在vcs&#x2F;verdi下，cnt发现异常跳变，pclk没有异常。在modelsim上在cnt异常跳变时，pclk出现了毛刺。如下</p>
 <p><img src="/2024/012448005/image-20240706004836127.png" alt="image-20240706004836127"></p>
 <p>原因：这是由于pclk是组合逻辑输出，pclken是hclk下的posedge边沿同步输出的，由于Tcq的延迟，导致在hclk上升沿时，pclken会延迟很小一段时间，这个时期 hclk&amp;pclken，会有很小一段时间高电平（毛刺）。在时钟上的毛刺会导致always块误触，cnt异常累加。</p>
-<p>解决办法：pclken在hclk下negedge边沿同步输出，</p>
+<p>解决办法：pclken在hclk下negedge边沿同步输出。</p>
 <p><img src="/2024/012448005/image-20240706005724864.png" alt="image-20240706005724864"></p>
 <p>在hclk下降沿，pclken由于Tcq延迟，并不会导致在下降沿产生毛刺，所以cnt计数值不会异常累加。</p>
 <h2 id="脚本辅助设计"><a href="#脚本辅助设计" class="headerlink" title="脚本辅助设计"></a>脚本辅助设计</h2><p>使用Python生成规律的代码，比如case语句中的赋值。</p>
@@ -1035,7 +1035,7 @@ end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span>
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.8k</span>
+                        class="white-color">73.4k</span>
             
             
             

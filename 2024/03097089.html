@@ -278,7 +278,7 @@ set_cloc">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.5k
+                    2k
                 </div>
                 
 
@@ -308,6 +308,14 @@ set_cloc">
 
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_group <span class="token operator">-</span>asynchronous <span class="token operator">-</span>group C1 <span class="token operator">-</span>group C2<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
+<p>set_clock_group在master clock的作用影响下，不会应用于generated时钟上，需要显式指定generated时钟和其他时钟组的关系。</p>
+<img src="/2024/03097089/6ad3e4714d4306da76065df5e0481aa1.png" alt="img" style="zoom:50%;">
+
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_group <span class="token operator">-</span>asynchronous <span class="token operator">-</span>group <span class="token punctuation">[</span>get_clocks CLKA<span class="token punctuation">]</span> <span class="token operator">-</span>group <span class="token punctuation">[</span>get_clocks CLKB divCLKB<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ul>
+<li>logically exclusive</li>
+</ul>
 <ol>
 <li>如果一个电路中有两个clock，有一个选择信号控制两个clock输出，这两个时钟在逻辑上是互斥的，需要声明<code>logically_exclusive</code></li>
 </ol>
@@ -317,8 +325,18 @@ create_clock <span class="token operator">-</span>period 20 <span class="token o
 set_clock_group <span class="token operator">-</span>logically_exclusive <span class="token operator">-</span>group C1 <span class="token operator">-</span>group C2
 <span class="token comment"># 如果不声明 -logically_exclusive  DC会认为有4中可能，CLK1 产生数据 CLK1 去采样，CLK1 产生数据 CLK2 去采样，CLK2 产生数据 CLK1 去采样，CLK2 产生数据 CLK2 去采样。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 
+<p>如果两个时钟同时存在，但是他们之间没有任何的path，这两个时钟可以设置为logically_exclusive。时钟ClkOut通过MUX选出来后，clk1和clk2不会在下游有交互。</p>
+<img src="/2024/03097089/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3podWFuZ2Rr,size_16,color_FFFFFF,t_70.png" alt="img" style="zoom:50%;">
+
+<p>如果mux之外存在clk2驱动的flops和clkout驱动的flops有相互作用，此时不能设置clk1和clk2为logical exclusive,此时必须在 MX1 的 output 处创建 generated 时钟，创建的时钟可以设置为逻辑互斥关系。</p>
+<img src="/2024/03097089/5ed3941ff6efe7926621bb57a8aa0112.png" alt="img" style="zoom:50%;">
+
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">creat_generated_clock <span class="token operator">-</span>name genclk1 <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_MUX1<span class="token operator">/</span>IN1<span class="token punctuation">]</span> <span class="token operator">-</span>master_clock CLK1 <span class="token punctuation">[</span>get_pins U_MUX1<span class="token operator">/</span>Y<span class="token punctuation">]</span> <span class="token operator">-</span>divide_by 1
+creat_generated_clock <span class="token operator">-</span>name genclk2 <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_MUX1<span class="token operator">/</span>IN2<span class="token punctuation">]</span> <span class="token operator">-</span>master_clock CLK2 <span class="token punctuation">[</span>get_pins U_MUX1<span class="token operator">/</span>Y<span class="token punctuation">]</span> <span class="token operator">-</span>divide_by 1 <span class="token operator">-</span>add 
+set_clock_groups <span class="token operator">-</span>logically_exclusive <span class="token operator">-</span>group genclk1 <span class="token operator">-</span>group genclk2<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
 <ol start="2">
-<li>如果一个net或者port上又可能存在两个时钟，需要对该net声明physical exclusive</li>
+<li>当两个时钟在同一时刻不可能同时存在时，这两个时钟可以设置为physical exclusive关系。</li>
 </ol>
 <img src="/2024/03097089/image-20240309171004892.png" alt="image-20240309171004892" style="zoom:67%;">
 
@@ -326,12 +344,12 @@ set_clock_group <span class="token operator">-</span>logically_exclusive <span c
 <span class="token punctuation">[</span>get_pins mux1<span class="token operator">/</span>Z<span class="token punctuation">]</span>
 create_generated_clock <span class="token operator">-</span>name GC2 <span class="token operator">-</span>divide_by 1 <span class="token operator">-</span>souce <span class="token punctuation">[</span>get_pins mux1<span class="token operator">/</span>B<span class="token punctuation">]</span>  \
 <span class="token punctuation">[</span>get_pins mux1<span class="token operator">/</span>Z<span class="token punctuation">]</span>
-set_clock_group <span class="token operator">-</span>physically_exclusive <span class="token operator">-</span>group C1 <span class="token operator">-</span>group C2<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+set_clock_group <span class="token operator">-</span>physically_exclusive <span class="token operator">-</span>group GC1 <span class="token operator">-</span>group GC2<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <ul>
 <li>总结</li>
 </ul>
-<p>如果两个时钟经过一个mux输出，对这两个输入时钟需要声明<code>logically exclusive</code>。针对某个pin或者net，输出的时钟在物理上是唯一的，需要声明<code>physically exclusive</code>。</p>
+<p>如果两个时钟可能同时存在，但是两个时钟组的信号没有交互，可以声明为<code>logically exclusive</code>。如果两个时钟在同一时刻不可能同时存在，需要声明<code>physically exclusive</code>。</p>
 <img src="/2024/03097089/image-20240309172447158.png" alt="image-20240309172447158" style="zoom: 33%;">
 
 <h4 id="create-generated-clock"><a href="#create-generated-clock" class="headerlink" title="create generated clock"></a>create generated clock</h4><p>明确generated clock和master clock的关系，</p>
@@ -372,6 +390,16 @@ set_false_path <span class="token punctuation">[</span><span class="token operat
 <span class="token punctuation">[</span><span class="token operator">-</span>through through_list<span class="token punctuation">]</span> <span class="token comment"># 包括pin，ports，cells，nets</span>
 <span class="token comment"># 包含form 或者 to 或者 through的path 都是false path</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
+<h5 id="set-false-path和set-disable-timing区别"><a href="#set-false-path和set-disable-timing区别" class="headerlink" title="set_false_path和set_disable_timing区别"></a>set_false_path和set_disable_timing区别</h5><p>set_false_path只对data path起作用，EDA工具还是会计算路径的timing，只是不会报告是否有违例。</p>
+<p>set_disable_timing对计算路径的timing起作用，完全不会分析timing arc。</p>
+<p>对于异步电路要使用set_clock_group，同步电路使用false_path，主要区别在于crosstalk的计算。设置false_path后，按照同步方式来计算crosstalk，部分延迟不会计算在path内。如果timing clean后，设置clock group，report timing会发现存在较多timing违例。</p>
+<h5 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h5><img src="/2024/03097089/1735380-20200414154416129-1897703915.png" alt="img" style="zoom: 25%;">
+
+<p>在crosstalk分析中，当信号A和信号B跳变发生于同一时刻，那么信号B会因为信号A的影响，产生一个delta delay。而如果信号A的跳变过早或者过晚，那么对于信号B的delay就没有影响。</p>
+<p>当进行on-chip-variation mode 分析的时候。每一个aggressor和victim的跳变，都会有个最早到达时间和最晚到达时间。这个最早和最晚到达时间中间的window，就称为timing window。只有当aggressor和victim的timing window有重叠时，delta delay才会产生，也就是说，aggressor才会对victim产生影响。</p>
+<p>如果设set false path，工具会继续按照同步关系计算timing window。</p>
+<p>而我们知道，对于aggressor和victim属于两个具有异步关系的clock的情况，aggressor的跳变可能发生于victim整个时钟周期的任何时刻。而不只是在按照同步clock计算出来的timing windlow中。</p>
+<p>而按照同步关系来计算的话，aggressor对victim的timing window之外的跳变的影响，工具就忽略了。这可能会导致严重的后果，轻则性能下降（setup），重则芯片fail（hold）。</p>
 <h4 id="multi-cycle-path"><a href="#multi-cycle-path" class="headerlink" title="multi-cycle-path"></a>multi-cycle-path</h4><p>多周期设计。适应场景：设计时加入移位寄存器来做使能信号。</p>
 <img src="/2024/03097089/image-20240309214325529.png" alt="image-20240309214325529" style="zoom: 67%;">
 
@@ -386,7 +414,7 @@ set_multicycle_path <span class="token operator">-</span>hold 5 <span class="tok
 <p><img src="/2024/03097089/image-20240309215949714.png" alt="image-20240309215949714"></p>
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_multicycle_path <span class="token operator">-</span>from CLK1 <span class="token operator">-</span>to CLK2 <span class="token operator">-</span>setup 3 <span class="token operator">-</span>end
 set_multicycle_path <span class="token operator">-</span>from CLK1 <span class="token operator">-</span>to CLK2 <span class="token operator">-</span>hold 2 <span class="token operator">-</span>end
-<span class="token operator">-</span>end 以捕获时钟为基准，移动的是capture clock，<span class="token operator">-</span>setup向右移，<span class="token operator">-</span>hold向左移<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># -end 以捕获时钟为基准，移动的是capture clock，-setup向右移，-hold向左移</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
 <ul>
 <li>快时钟到慢时钟</li>
@@ -445,8 +473,6 @@ create_generated_clock <span class="token operator">-</span>name CLKd1 <span cla
 <p>对于八选一的MUX，使用了infer_mux原语，DC工具会自动扩展，灵活构建MUX Tree满足8选1的需求。如果工艺库中只有4选1的MUX，compile后的结果如下</p>
 <p><img src="/2024/03097089/b593e35e30f240b892c59612701218a1.png" alt="在这里插入图片描述"></p>
 <p>使用RTL原语的方法，对于设计人员的工作量大为减少，并且可以不依赖工艺库，DC工具甚至可以自动构建MUX tree，达到了事半功倍的效果。</p>
-<h5 id="set-false-path和set-disable-timing区别"><a href="#set-false-path和set-disable-timing区别" class="headerlink" title="set_false_path和set_disable_timing区别"></a>set_false_path和set_disable_timing区别</h5><p>set_false_path只对data path起作用，EDA工具还是会计算路径的timing，只是不会报告是否有违例。</p>
-<p>set_disable_timing对计算路径的timing起作用，完全不会分析timing arc。</p>
 
                 
             </div>
@@ -808,7 +834,7 @@ create_generated_clock <span class="token operator">-</span>name CLKd1 <span cla
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.8k</span>
+                        class="white-color">73.4k</span>
             
             
             
