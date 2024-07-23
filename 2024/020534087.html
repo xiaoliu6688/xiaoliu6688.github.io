@@ -292,7 +292,7 @@ https://blog.csdn.net/wudpekerlily/article/details/129494440
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    6k
+                    6.1k
                 </div>
                 
 
@@ -582,6 +582,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 <p>H2L移位器通常需要一个或者两个反相器。将H2L移位器放在低电压域。</p>
 <p><img src="/2024/020534087/image-20240514154339175.png" alt="image-20240514154339175"></p>
 <p>L2H移位器放在目标电压域，因为输出需要更大的驱动电流。距离较远可能需要在中间添加缓冲器。</p>
+<p>Level Shifter是在物理实现中place&amp;route通过UPF添加进去的。</p>
 <p><img src="/2024/020534087/image-20240514154643558.png" alt="image-20240514154643558"></p>
 <p><img src="/2024/020534087/image-20240514155742347.png" alt="image-20240514155742347"></p>
 <p>在RTL或者floorplan时可添加level shifter。</p>
@@ -624,6 +625,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 <p>设计通常具有多种功能模式-高速和低速模式。在设计未以全部性能运行时，电源电压降低以应对性能下降的情况</p>
 <p>这种方式可以显著节省功耗，但是架构设计、验证和实现方面成本较高。</p>
 <h3 id="1-5-降低VDD"><a href="#1-5-降低VDD" class="headerlink" title="1.5 降低VDD"></a>1.5 降低VDD</h3><p>不同模块根据性能要求采用不同电压，电压值可以是静态的，即静态多电压技术。</p>
+<p>降低VDD，在一定程度上，功耗可以平方的速率下降，速度也可以提高 。</p>
 <h3 id="1-6-时钟门控"><a href="#1-6-时钟门控" class="headerlink" title="1.6 时钟门控"></a>1.6 时钟门控</h3><p>此类时钟门由设计者显式实例化，可运行于模块级，每个模块分配一个时钟门控，可在不需要时关闭模块的时钟。</p>
 <img src="/2024/020534087/image-20240528203516380.png" alt="image-20240528203516380" style="zoom: 50%;">
 
@@ -657,6 +659,23 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 <p>降低模块的功耗可以采用 电源门控和时钟门控，或者降低时钟频率以降低功耗。</p>
 <p>设计还可以进入睡眠模式，所有的时钟都关闭，以等待中断唤醒信号。</p>
 <p>在电源门控时，需要进行状态保留和恢复，增加了时间的开销。</p>
+<h3 id="逻辑优化"><a href="#逻辑优化" class="headerlink" title="逻辑优化"></a>逻辑优化</h3><ul>
+<li><p>logic restructuring</p>
+<p><img src="/2024/020534087/image-20240719230545790.png" alt="image-20240719230545790"></p>
+</li>
+<li><p>input order，将翻转概率大的信号放在后级 </p>
+<p><img src="/2024/020534087/image-20240719231156897.png" alt="image-20240719231156897"></p>
+</li>
+<li><p>pin order：关键信号放在靠近输出的位置，可以减小延迟降低功耗</p>
+</li>
+</ul>
+<p>​	<img src="/2024/020534087/image-20240719231322365.png" alt="image-20240719231322365"></p>
+<ul>
+<li><p>balanced delay paths to reduce glitching</p>
+<p><img src="/2024/020534087/image-20240719232048842.png" alt="image-20240719232048842"></p>
+</li>
+</ul>
+<p>​	链型结构比树型结构更容易产生毛刺。</p>
 <h3 id="1-10-RTL-技巧"><a href="#1-10-RTL-技巧" class="headerlink" title="1.10 RTL 技巧"></a>1.10 RTL 技巧</h3><h4 id="减少没必要的信号翻转"><a href="#减少没必要的信号翻转" class="headerlink" title="减少没必要的信号翻转"></a>减少没必要的信号翻转</h4><pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span> <span class="token keyword">posedge</span> reset <span class="token keyword">or</span> <span class="token keyword">negedge</span> ahb_clk<span class="token punctuation">)</span>
 <span class="token keyword">if</span> <span class="token punctuation">(</span>reset<span class="token punctuation">)</span>
 	ahb_dbus <span class="token operator">&lt;=</span> <span class="token number">32</span>b’<span class="token number">0</span><span class="token punctuation">;</span>
@@ -684,7 +703,11 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
 	result <span class="token operator">=</span> op1 <span class="token operator">*</span> op2<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>不仅可以减小面积，还可以降低功耗。</p>
-<h3 id="1-11-其他"><a href="#1-11-其他" class="headerlink" title="1.11 其他"></a>1.11 其他</h3><h4 id="消除冗余逻辑，优化逻辑"><a href="#消除冗余逻辑，优化逻辑" class="headerlink" title="消除冗余逻辑，优化逻辑"></a>消除冗余逻辑，优化逻辑</h4><h4 id="状态机编码使用格雷码或者独热码"><a href="#状态机编码使用格雷码或者独热码" class="headerlink" title="状态机编码使用格雷码或者独热码"></a>状态机编码使用格雷码或者独热码</h4><h4 id="避免自由运行的计数器，限制计数器的边界"><a href="#避免自由运行的计数器，限制计数器的边界" class="headerlink" title="避免自由运行的计数器，限制计数器的边界"></a>避免自由运行的计数器，限制计数器的边界</h4><h4 id><a href="#" class="headerlink" title></a></h4>
+<h4 id="状态机编码-在状态切换速率高的地方使用格雷码"><a href="#状态机编码-在状态切换速率高的地方使用格雷码" class="headerlink" title="状态机编码 在状态切换速率高的地方使用格雷码"></a>状态机编码 在状态切换速率高的地方使用格雷码</h4><p><img src="/2024/020534087/image-20240719233119438.png" alt="image-20240719233119438"></p>
+<p><img src="/2024/020534087/image-20240719233410081.png" alt="image-20240719233410081"></p>
+<p>系统级降低功耗，选用不同速度的SRAM，以降低功耗。</p>
+<p><img src="/2024/020534087/image-20240719233953702.png" alt="image-20240719233953702"></p>
+<h3 id="1-11-其他"><a href="#1-11-其他" class="headerlink" title="1.11 其他"></a>1.11 其他</h3><h4 id="消除冗余逻辑，优化逻辑"><a href="#消除冗余逻辑，优化逻辑" class="headerlink" title="消除冗余逻辑，优化逻辑"></a>消除冗余逻辑，优化逻辑</h4><h4 id="状态机编码使用格雷码或者独热码"><a href="#状态机编码使用格雷码或者独热码" class="headerlink" title="状态机编码使用格雷码或者独热码"></a>状态机编码使用格雷码或者独热码</h4><h4 id="避免自由运行的计数器，限制计数器的边界"><a href="#避免自由运行的计数器，限制计数器的边界" class="headerlink" title="避免自由运行的计数器，限制计数器的边界"></a>避免自由运行的计数器，限制计数器的边界</h4>
                 
             </div>
             <hr/>
@@ -1061,7 +1084,7 @@ set_domain_supply_net<span aria-hidden="true" class="line-numbers-rows"><span></
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">73.4k</span>
+                        class="white-color">77.5k</span>
             
             
             

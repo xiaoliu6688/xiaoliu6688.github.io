@@ -288,7 +288,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    380
+                    401
                 </div>
                 
 
@@ -352,8 +352,9 @@
 
 <img src="/2023/112317390/image-20231123213918097.png" alt="assign delay wave" style="zoom: 50%;">
 
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><strong>只有always块的RHS才可以准确描述组合逻辑的延迟。</strong></p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><strong>只有always块的非阻塞赋值RHS才可以准确描述组合逻辑的延迟。</strong></p>
 <h4 id="Bug"><a href="#Bug" class="headerlink" title="Bug"></a>Bug</h4><p>在tb测试时，如果输入信号是通过@(posedge clk)给出的，一定要 <strong>使用&lt;&#x3D;非阻塞赋值</strong>。否则，会导致，在上升沿时阻塞和非阻塞赋值冲突。</p>
+<p>建模中，对于延迟的信号，需要 <strong>赋初始值</strong>。</p>
 
                 
             </div>
@@ -489,8 +490,8 @@
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                    数字前端
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E4%B8%AD%E7%AB%AF/" class="post-category">
+                                    数字中端
                                 </a>
                             
                             
@@ -731,7 +732,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">73.4k</span>
+                        class="white-color">77.5k</span>
             
             
             

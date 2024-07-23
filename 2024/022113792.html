@@ -266,8 +266,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                数字前端
+                            <a href="/categories/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="post-category">
+                                体系结构
                             </a>
                         
                     </div>
@@ -418,8 +418,9 @@
 <li>可以实现每个页的访问权限</li>
 </ol>
 <h4 id="TLB的设计"><a href="#TLB的设计" class="headerlink" title="TLB的设计"></a>TLB的设计</h4><p>对于两级页表，需要访问两次物理内存才可以得到物理地址，延时太长。</p>
-<p>增加一个 <strong>页表Cache</strong>加速这一进程，将页表中最近使用的PTE缓存起来，称为TLB（transition lookaside buffer）</p>
-<p>TLB只有时间相关性，一般TLB是全相连的，容量不会很大。</p>
+<p>增加一个 <strong>页表Cache</strong>加速这一进程，将页表中最近使用的PTE缓存起来，称为TLB（transition lookaside buffer）TLB是MMU的高速缓存，提高虚拟地址转换速度。TLB在MMU里面。</p>
+<p>TLB只有时间相关性，一般TLB是全相连的，容量不会很大，采用全相连映射。</p>
+<p>Cache存储实际的数据，TLB存储地址映射关系，存储的是MMU的映射关系。</p>
 
                 
             </div>
@@ -797,7 +798,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">73.4k</span>
+                        class="white-color">77.5k</span>
             
             
             

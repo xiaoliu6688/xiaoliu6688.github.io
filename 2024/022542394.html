@@ -270,8 +270,8 @@ Cache：用一块小而块的存储设备（采用SRAM实">
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                数字前端
+                            <a href="/categories/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="post-category">
+                                体系结构
                             </a>
                         
                     </div>
@@ -292,7 +292,7 @@ Cache：用一块小而块的存储设备（采用SRAM实">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    924
+                    1.5k
                 </div>
                 
 
@@ -343,34 +343,88 @@ Cache：用一块小而块的存储设备（采用SRAM实">
 <p>​	在写回的更新策略中，cache命中，首先会更新cacheline的数据，导致内存和cache中数据不一致，当该cache line被替代时，将替换的数据写到内存中。dirty bit是标记要写回到内存的cache line。</p>
 <p><strong>通常写分配和写回策略一起使用</strong></p>
 <hr>
+<h4 id="直接映射"><a href="#直接映射" class="headerlink" title="直接映射"></a>直接映射</h4><p>  <img src="/2024/022542394/image-20240722104817022.png" alt="image-20240722104817022"></p>
+<p>优点：实现简单，运算组合逻辑延迟小。<br>缺点：hit rate较低，容易颠簸。</p>
 <h4 id="两路组相连"><a href="#两路组相连" class="headerlink" title="两路组相连"></a>两路组相连</h4><p>将cache平均分成多份，每一份就是一路，两路组相连缓存就是将cache分为2份，每份32Bytes。一个index可以对应多个cacheline。</p>
 <img src="/2024/022542394/image-20240225153918193.png" alt style="zoom: 33%;">
 
 <p>直接映射缓存每个地址只有一个cacheline的tag进行比较。</p>
 <p>index也称为 组索引，相比于直接映射缓存，两路组相连映射缓存的index要少1bit，因为cache的个数少了一半，相当于一个addr地址对应于两个cacheline，然后通过tag比对两次，命中一个即cache命中。</p>
 <p>优点：降低cache的颠簸可能性；<br>缺点：硬件成本高；</p>
-<h4 id="全相连"><a href="#全相连" class="headerlink" title="全相连"></a>全相连</h4><p>没有index，将tag与所有的cacheline作比较。</p>
+<img src="/2024/022542394/image-20240722105457813.png" alt="image-20240722105457813" style="zoom:67%;">
+
+<h4 id="全相连"><a href="#全相连" class="headerlink" title="全相连"></a>全相连</h4><p>没有index，将addr的tag与所有的cacheline作比较。</p>
 <p><img src="/2024/022542394/1665648129223.png" alt="img"></p>
 <ul>
-<li>一般TLB采用这种结构</li>
+<li>一般TLB采用这种结构，size很小</li>
+<li>缺点：面积、功耗代价很大。优点：很高的命中率，灵活性高。</li>
 </ul>
 <h4 id="替换策略"><a href="#替换策略" class="headerlink" title="替换策略"></a>替换策略</h4><p>替换发生在某个cache set中所有的cacheline都满了的情况。</p>
 <ol>
-<li><p>LRU（Least Recently Used）</p>
-<p>为每个cacheline设置一个使用次数计数部分，每当way被访问就累加1，计数值最小的就是要替换的cacheline</p>
+<li><p><strong>LRU（Least Recently Used）</strong>最近最少使用替换算法</p>
+<p>为每个cacheline设置一个使用次数计数部分，每当way被访问就累加1，计数值最小的就是要替换的cacheline。</p>
+<p><img src="/2024/022542394/image-20240722134726409.png" alt="image-20240722134726409"></p>
+<p>LRU指示最近最少使用的cacheline，MRU指示最近最多使用的cacheline。</p>
+<p>当cacheline hit时，需要更改计数器的值，hit 的cacheline设置为0，低于hit cacheline的计数值加1。相当于设置了MRU的优先级。</p>
+<p>当cacheline 没有hit时，需要替换cacheline，将最近最没有使用的cacheline设置为替换后的cacheline，并将计数值设置为0，其他没有替换的cacheline都要加1。</p>
 </li>
 <li><p>随机替换</p>
 </li>
+<li><p>Round robin，first in first out。</p>
+</li>
 </ol>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<h3 id="更新策略总结"><a href="#更新策略总结" class="headerlink" title="更新策略总结"></a>更新策略总结</h3><ul>
 <li><strong>CPU读cache时</strong></li>
 </ul>
 <p>​	若hit，CPU直接从cache读取数据即可<br>​	若miss，<br>​		Read allocate读分配：先从内存中读取数据到cache，再从cache中读数据。</p>
 <ul>
 <li><strong>CPU写cache时</strong></li>
 </ul>
-<p>​	若hit，有两种处理方式<br>​		Write thorough：把数据同时更新cache和内存中<br>​		Write back ：先更新cacheline数据，被替换时再通过flush方式写入内存</p>
+<p>​	若hit，有两种处理方式<br>​		Write thorough：把数据同时更新cache和内存中<br>​		Write back ：先更新cacheline数据，设置dirty位，被替换时再通过flush方式写入内存</p>
 <p>​	若miss，有两种方式<br>​		Write allocate：先把数据读取到cache中，更新该cacheline，被替换时再通过flush方式写入内存<br>​		No Write allocate：只更新主存数据</p>
+<h3 id="Multi-level-Caches"><a href="#Multi-level-Caches" class="headerlink" title="Multi-level Caches"></a>Multi-level Caches</h3><p><img src="/2024/022542394/image-20240722141434334.png" alt="image-20240722141434334"></p>
+<p>Inclusive和Exclusive Cache</p>
+<p><img src="/2024/022542394/image-20240722142442377.png" alt="image-20240722142442377"></p>
+<p>inclusive cache中，L1的数据一定包含在L2中，当L1的cacheline被替换时，L2的数据也要替换掉。</p>
+<p>exclusive cache中，L1数据被替换时，放在L2 Cache中。 </p>
+<h3 id="Cache-Performance"><a href="#Cache-Performance" class="headerlink" title="Cache Performance"></a>Cache Performance</h3><p><strong>AMAT（Average memory access time）&#x3D; cache hit time + cache_miss_rate * cache_miss_latency；</strong></p>
+<p><img src="/2024/022542394/image-20240722143323292.png" alt="image-20240722143323292"></p>
+<p>降低cache miss rate方法：</p>
+<p><img src="/2024/022542394/image-20240722143524701.png" alt="image-20240722143524701"></p>
+<p>软件编译去减小miss rate</p>
+<p> <img src="/2024/022542394/image-20240722143848234.png" alt="image-20240722143848234"></p>
+<p>降低hit time（tag look up+cache access）</p>
+<p><strong>PIPT(Physically indexed and physically tagged cache)</strong></p>
+<ul>
+<li>hit time &#x3D; TLB latency + cache latency</li>
+</ul>
+<p><img src="/2024/022542394/image-20240722145855659.png" alt="image-20240722145855659"></p>
+<p><strong>VIVT(Virtually indexed Virtually Tagged cache)</strong></p>
+<p><img src="/2024/022542394/image-20240722150128840.png" alt="image-20240722150128840"></p>
+<p><strong>VIPT(Virtuall indexed Physically tagged cache)</strong></p>
+<p><img src="/2024/022542394/image-20240722150443695.png" alt="image-20240722150443695"></p>
+<p>降低cache miss的延迟</p>
+<p><img src="/2024/022542394/image-20240722151009627.png" alt="image-20240722151009627"></p>
+<p><img src="/2024/022542394/image-20240722151228022.png" alt="image-20240722151228022"></p>
+<h4 id="Prefetch"><a href="#Prefetch" class="headerlink" title="Prefetch"></a>Prefetch</h4><p><img src="/2024/022542394/image-20240722151309597.png" alt="image-20240722151309597"></p>
+<h3 id="Cache-MESI"><a href="#Cache-MESI" class="headerlink" title="Cache MESI"></a>Cache MESI</h3><p><img src="/2024/022542394/image-20240722164009399.png" alt="image-20240722164009399"></p>
+<p>将transition 序列串行化，通过interconnect network来实现，否则会有内存一致性问题。</p>
+<p>MESI cache一致性协议是write-invalidate的。</p>
+<p>保证cache一致性的提前是 <strong>写传播和事务串行化</strong>，写传播表示 在对某一个cacheline进行修改时，需要让其他核心的cache知道该修改。</p>
+<p><img src="/2024/022542394/image-20240722164508794.png" alt="image-20240722164508794"></p>
+<p><img src="/2024/022542394/image-20240722164553808.png" alt="image-20240722164553808"></p>
+<p>系统里面只能有一个cacheline是modified</p>
+<p> <img src="/2024/022542394/image-20240722164932903.png" alt="image-20240722164932903"></p>
+<p>cacheline只存在当前cache里面，memory中其他cache里面没有。</p>
+<p><img src="/2024/022542394/image-20240722165020653.png" alt="image-20240722165020653"></p>
+<p>cacheline在多个cache里面都有。</p>
+<p><img src="/2024/022542394/image-20240722165055916.png" alt="image-20240722165055916"></p>
+<p><img src="/2024/022542394/image-20240722165352888.png" alt="image-20240722165352888"></p>
+<p><img src="/2024/022542394/image-20240722170305260.png" alt="image-20240722170305260"></p>
+<p><img src="/2024/022542394/image-20240722170448079.png" alt="image-20240722170448079"></p>
+<p>软件可以配置将内存数据写入到Scratchpad Mmeory中。没有tag的比较，速度非常快，一个周期就可以得到数据。</p>
+<h4 id="内存一致性和缓存一致性的区别"><a href="#内存一致性和缓存一致性的区别" class="headerlink" title="内存一致性和缓存一致性的区别"></a>内存一致性和缓存一致性的区别</h4><p>缓存一致性有两个角度，纵向：cache和内存中的数据不一致。横向：不同cache的同一个cacheline数据不一致。</p>
+<p>内存一致性：从多个核心角度看待内存数据不一致，如果不同核心发出读写任务，且乱序，如果不做内存一致性处理，容易导致读写数据不一致的问题。</p>
 
                 
             </div>
@@ -506,8 +560,8 @@ Cache：用一块小而块的存储设备（采用SRAM实">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                    数字前端
+                            <a href="/categories/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="post-category">
+                                    体系结构
                                 </a>
                             
                             
@@ -748,7 +802,7 @@ Cache：用一块小而块的存储设备（采用SRAM实">
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">73.4k</span>
+                        class="white-color">77.5k</span>
             
             
             

@@ -267,8 +267,8 @@ Rule：s">
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                数字前端
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E4%B8%AD%E7%AB%AF/" class="post-category">
+                                数字中端
                             </a>
                         
                     </div>
@@ -289,7 +289,7 @@ Rule：s">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    3.2k
+                    3.3k
                 </div>
                 
 
@@ -374,7 +374,21 @@ reset <span class="token operator">-</span>name <span class="token string">"xxx.
 <ul>
 <li>约束文件 .sgdc</li>
 </ul>
-<p>​	包括clock，reset，set_case_analysis( -name -value)</p>
+<p>​	包括clock，reset，set_case_analysis( -name -value)<br>  <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token operator">/</span><span class="token operator">/</span>指定模块顶层
+current_design training 
+<span class="token operator">/</span><span class="token operator">/</span>约束时钟, 模块顶层所有的时钟都要约束
+<span class="token keyword">clock</span> <span class="token operator">-</span>name CLKA <span class="token operator">-</span>period 10 <span class="token operator">-</span>edge <span class="token punctuation">&#123;</span>0 5<span class="token punctuation">&#125;</span>
+<span class="token keyword">clock</span> <span class="token operator">-</span>name CLKB <span class="token operator">-</span>period 100 <span class="token operator">-</span>edge <span class="token punctuation">&#123;</span>0 50<span class="token punctuation">&#125;</span>
+<span class="token operator">/</span><span class="token operator">/</span>约束复位
+reset <span class="token operator">-</span>name reset_a <span class="token operator">-</span>value 0
+reset <span class="token operator">-</span>name reset_b <span class="token operator">-</span>value 0
+<span class="token operator">/</span><span class="token operator">/</span>约束输入端口
+input <span class="token operator">-</span>name <span class="token punctuation">&#123;</span>in_a in_b reset_a<span class="token punctuation">&#125;</span> <span class="token operator">-</span>clock CLKA
+input <span class="token operator">-</span>name <span class="token punctuation">&#123;</span>resetn_b<span class="token punctuation">&#125;</span> <span class="token operator">-</span>clock CLKB
+<span class="token operator">/</span><span class="token operator">/</span>约束输出端口
+output <span class="token operator">-</span>name <span class="token punctuation">&#123;</span>dout<span class="token punctuation">&#125;</span> <span class="token operator">-</span>clock CLKB
+<span class="token operator">/</span><span class="token operator">/</span>如果有SDC约束文件
+sdc_data <span class="token operator">-</span>file ..<span class="token operator">/</span>my_file.sdc<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <ul>
 <li>文件不同颜色标识	<ul>
 <li>绿色代表该模块可分析，但是不可综合</li>
@@ -1020,7 +1034,7 @@ write_aggregate_report dashboard<span aria-hidden="true" class="line-numbers-row
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">73.4k</span>
+                        class="white-color">77.5k</span>
             
             
             

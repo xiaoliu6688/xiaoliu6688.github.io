@@ -495,6 +495,11 @@ set_input_transition<span aria-hidden="true" class="line-numbers-rows"><span></s
 <p>ICC在global routing绕线期间，以GRC为为最小单位安排走线。</p>
 <p>report_congestion报告会计算每个GRC的 # of available routing tracks（#1）和 # of nets crossing GRC edge（#2），如果#2大于#1，就存在overflow，即走线资源不足。而congestion报告会给出每个方向以及每一层存在overflow问题的GRC数量（及百分比），overflow总数和单个GRC max的overflow数量，根据这些数据可以判断congestion的情况。如果有GRC的overflow大于10，则可能走线走不通，如果有2%或者更多的GRC存在overflow，那么可能会出现SI和timing的问题。</p>
 <h3 id="修复违例"><a href="#修复违例" class="headerlink" title="修复违例"></a>修复违例</h3><p>place_opt之后，如果有小的setup违例，可以使用<code>psynopt</code>命令修复</p>
+<h4 id="Signoff-Items"><a href="#Signoff-Items" class="headerlink" title="Signoff Items"></a>Signoff Items</h4><ul>
+<li>DRC</li>
+<li>LVS</li>
+<li>timing signoff</li>
+</ul>
 
                 
             </div>
@@ -872,7 +877,7 @@ set_input_transition<span aria-hidden="true" class="line-numbers-rows"><span></s
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">73.4k</span>
+                        class="white-color">77.5k</span>
             
             
             

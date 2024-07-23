@@ -267,8 +267,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
-                                数字前端
+                            <a href="/categories/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" class="post-category">
+                                体系结构
                             </a>
                         
                     </div>
@@ -289,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.6k
+                    1.9k
                 </div>
                 
 
@@ -391,6 +391,26 @@ jalr  a5 <span aria-hidden="true" class="line-numbers-rows"><span></span><span><
 <span class="token comment">// 存在特殊情况，如果data_A[31]为1，且data_B为0，srlw的高32位应该全为1.</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>如果srlw指令中的data_B &gt;&#x3D; 1，srlw结果高32bit都为0，两种方式的结果一致；<br>如果srlw指令中的data_B &#x3D; 0，data_A的第32bit为0，两种方式结果一致；<br>如果srlw指令中的data_B &#x3D; 0，data_A的第32bit为1，两种方式结果不一致；第一种是正确的。</p>
+<h2 id="分支预测"><a href="#分支预测" class="headerlink" title="分支预测"></a>分支预测</h2><h3 id="静态分支预测"><a href="#静态分支预测" class="headerlink" title="静态分支预测"></a>静态分支预测</h3><p>认为分支跳转或者不跳转，有50%的命中率。</p>
+<img src="/2024/021950375/image-20240722200708161.png" alt="image-20240722200708161" style="zoom: 50%;">
+
+<h3 id="动态分支预测"><a href="#动态分支预测" class="headerlink" title="动态分支预测"></a>动态分支预测</h3><h4 id="两位饱和计数器"><a href="#两位饱和计数器" class="headerlink" title="两位饱和计数器"></a>两位饱和计数器</h4><p>连续两次跳转或者不跳转，下次才可以判断出 <strong>跳转或者不跳转</strong></p>
+<p><img src="/2024/021950375/image-20240722201032850.png" alt="image-20240722201032850"></p>
+<p>缺点</p>
+<p><img src="/2024/021950375/image-20240722201703859.png" alt="image-20240722201703859"></p>
+<h4 id="PHT（Pattern-History-Table）"><a href="#PHT（Pattern-History-Table）" class="headerlink" title="PHT（Pattern History Table）"></a>PHT（Pattern History Table）</h4><p>有很多两位饱和计数器，选择部分pc值（某些比特位）作为索引。</p>
+<p><img src="/2024/021950375/image-20240722233858059.png" alt="image-20240722233858059"></p>
+<p><img src="/2024/021950375/image-20240722201409392.png" alt="image-20240722201409392"></p>
+<p><img src="/2024/021950375/image-20240722201420902.png" alt="image-20240722201420902"></p>
+<h4 id="基于局部历史的分支预测"><a href="#基于局部历史的分支预测" class="headerlink" title="基于局部历史的分支预测"></a>基于局部历史的分支预测</h4><p>引入BHR（Branch History Register），使用BHR寄存器来记录有一条指令在过去的历史状态。首先，用指令（beq）的PC中的K位去寻找一个n位的BHR，n表示记录一个指令的n个历史结果。将BHR中n bits值和PC中t bits做一定的操作，查找PHT得到预测值。</p>
+<p><img src="/2024/021950375/image-20240723003728648.png" alt="image-20240723003728648"></p>
+<h4 id="基于全局历史的分支预测"><a href="#基于全局历史的分支预测" class="headerlink" title="基于全局历史的分支预测"></a>基于全局历史的分支预测</h4><p>引入GHR（Global History Register），记录所有跳转指令的结果。将GHR的数据和PC中某些bits做一定操作，索引PHT，得到预测值。</p>
+ <img src="/2024/021950375/image-20240723003842439.png" alt="image-20240723003842439" style="zoom:50%;">
+
+<blockquote>
+<p>参考</p>
+<p><a target="_blank" rel="noopener" href="https://yufoo1.github.io/docs/superscalar-processor-architecture/branch-prediction/#%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B%E7%9A%84%E6%9B%B4%E6%96%B0">https://yufoo1.github.io/docs/superscalar-processor-architecture/branch-prediction/#%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B%E7%9A%84%E6%9B%B4%E6%96%B0</a></p>
+</blockquote>
 
                 
             </div>
@@ -768,7 +788,7 @@ jalr  a5 <span aria-hidden="true" class="line-numbers-rows"><span></span><span><
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">73.4k</span>
+                        class="white-color">77.5k</span>
             
             
             
