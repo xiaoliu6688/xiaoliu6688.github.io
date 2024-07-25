@@ -348,13 +348,10 @@
 <li><p>过滤负毛刺</p>
 <p>过滤一个周期的负毛刺，当负电平持续两个周期，才可以输出低电平；</p>
 <p>采用两拍的寄存器，两级输出做 “<strong>或</strong>”操作；</p>
-<img src="/2024/022637133/image-20240226150251458.png" alt="image-20240226150251458" style="zoom: 67%;">
 </li>
 <li><p>过滤正毛刺</p>
 <p>过滤一个周期的正毛刺，当正电平持续两个周期，才可以输出正电平；</p>
 <p>采用两拍的寄存器，两级输出做 “<strong>与</strong>”操作；</p>
-<img src="/2024/022637133/image-20240226150436436.png" alt="image-20240226150436436" style="zoom:67%;">
-
 <pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">filter_pos</span><span class="token punctuation">(</span>
     <span class="token keyword">input</span>       clk<span class="token punctuation">,</span>
     <span class="token keyword">input</span>       nrst<span class="token punctuation">,</span>
@@ -601,10 +598,8 @@
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
         valid_r1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>valid_i <span class="token operator">&amp;</span> ready_r1<span class="token punctuation">)</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>ready_r1<span class="token punctuation">)</span>
         valid_r1 <span class="token operator">&lt;=</span> valid_i<span class="token punctuation">;</span>
-    <span class="token keyword">else</span> 
-        valid_r1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
@@ -631,10 +626,8 @@
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
         valid_r2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>valid_r1 <span class="token operator">&amp;</span> ready_r2<span class="token punctuation">)</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>ready_r2<span class="token punctuation">)</span>
         valid_r2 <span class="token operator">&lt;=</span> valid_r1<span class="token punctuation">;</span>
-    <span class="token keyword">else</span> 
-        valid_r2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 
 <span class="token keyword">reg</span> <span class="token punctuation">[</span><span class="token number">15</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> mul_1<span class="token punctuation">,</span> mul_2<span class="token punctuation">,</span> mul_3<span class="token punctuation">,</span> mul_4<span class="token punctuation">;</span>
@@ -652,10 +645,8 @@
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
         valid_r3 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>valid_r2 <span class="token operator">&amp;</span> ready_r3<span class="token punctuation">)</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>ready_r3<span class="token punctuation">)</span>
         valid_r3 <span class="token operator">&lt;=</span> valid_r2<span class="token punctuation">;</span>
-    <span class="token keyword">else</span> 
-        valid_r3 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 
 <span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
@@ -666,7 +657,7 @@
 
 <span class="token keyword">assign</span> valid_o <span class="token operator">=</span> valid_r3<span class="token punctuation">;</span>
 
-<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h2 id="快速计算one-hot码中“1”所对应的下标"><a href="#快速计算one-hot码中“1”所对应的下标" class="headerlink" title="快速计算one-hot码中“1”所对应的下标"></a>快速计算one-hot码中“1”所对应的下标</h2><p>题目：找一个多bit信号最高位的1或最低位的1所对应的下标</p>
 <p>思路：根据独热码和对应坐标的真值表，写出逻辑表达式；</p>

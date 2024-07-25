@@ -366,7 +366,7 @@ Cache：用一块小而块的存储设备（采用SRAM实">
 <p><img src="/2024/022542394/image-20240722134726409.png" alt="image-20240722134726409"></p>
 <p>LRU指示最近最少使用的cacheline，MRU指示最近最多使用的cacheline。</p>
 <p>当cacheline hit时，需要更改计数器的值，hit 的cacheline设置为0，低于hit cacheline的计数值加1。相当于设置了MRU的优先级。</p>
-<p>当cacheline 没有hit时，需要替换cacheline，将最近最没有使用的cacheline设置为替换后的cacheline，并将计数值设置为0，其他没有替换的cacheline都要加1。</p>
+<p>当cacheline 没有hit时，需要替换cacheline，将最近最少使用的cacheline设置为替换后的cacheline，并将计数值设置为0，其他没有替换的cacheline都要加1。</p>
 </li>
 <li><p>随机替换</p>
 </li>

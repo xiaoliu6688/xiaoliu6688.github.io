@@ -359,13 +359,13 @@ AXI的读写地址和通道分离，可以有效提高总线带宽。
 </li>
 </ol>
 <p>独占读添加一个slave的表项，独占写查表判断是否hit，hit返回exokay，否则返回okay。</p>
-<h5 id="master视角下的独占访问"><a href="#master视角下的独占访问" class="headerlink" title="master视角下的独占访问"></a>master视角下的独占访问</h5><p>master通过执行独占读来启动独占操作，通常会从salve返回exokay响应，表明slave记录了要监视的地址。</p>
+<h6 id="master视角下的独占访问"><a href="#master视角下的独占访问" class="headerlink" title="master视角下的独占访问"></a>master视角下的独占访问</h6><p>master通过执行独占读来启动独占操作，通常会从salve返回exokay响应，表明slave记录了要监视的地址。</p>
 <p>如果master尝试从不支持独占访问的slave进行独占读取，则salve返回okay而不是exokay响应，master可以视为不支持独占访问的错误条件，建议master不要再发出独占写操作。</p>
 <p>在独占读操作完成之前，master不得开始独占写操作。</p>
-<h5 id="slave视角下的独占访问"><a href="#slave视角下的独占访问" class="headerlink" title="slave视角下的独占访问"></a>slave视角下的独占访问</h5><p>支持独占访问的slave必须具有监视器硬件，需要为每个master ID设置一个监视单元。单端口的slave可以在外部设置一个标准的独占访问监视器，多端口的salve可能需要内部监视。</p>
+<h6 id="slave视角下的独占访问"><a href="#slave视角下的独占访问" class="headerlink" title="slave视角下的独占访问"></a>slave视角下的独占访问</h6><p>支持独占访问的slave必须具有监视器硬件，需要为每个master ID设置一个监视单元。单端口的slave可以在外部设置一个标准的独占访问监视器，多端口的salve可能需要内部监视。</p>
 <p>独占监视器巨鹿任何独占读操作的地址和ARID值，并监视该位置，直到该位置被执行写入操作，或者一个具有相同ARID值的独占读取将监视器的地址替换。</p>
 <p>监视器会监视AWID和AWADDR是否和监视器中的记录一致，一致返回EXOKAY，否则OKAY</p>
-<h5 id="独占访问的限制"><a href="#独占访问的限制" class="headerlink" title="独占访问的限制"></a>独占访问的限制</h5><ul>
+<h6 id="独占访问的限制"><a href="#独占访问的限制" class="headerlink" title="独占访问的限制"></a>独占访问的限制</h6><ul>
 <li>独占访问的任务，读和写的ID、大小和长度等控制信号必须一致。</li>
 <li>地址必须和传输字节数对齐。</li>
 <li>独占访问的突发长度不能超过16 transfer。</li>
