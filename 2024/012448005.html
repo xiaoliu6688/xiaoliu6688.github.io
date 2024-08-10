@@ -292,7 +292,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    7.4k
+                    7.6k
                 </div>
                 
 
@@ -529,6 +529,14 @@ end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span>
 <p>竞争：信号经过两条以上的路径到达门的输入端，由于不同路径的延迟不一样，时间有先有后，这就叫竞争。</p>
 <p>由于竞争产生的错误输出就是毛刺。</p>
 <h4 id="高阻态"><a href="#高阻态" class="headerlink" title="高阻态"></a>高阻态</h4><p>数字芯片中的高阻态指的是没有任何驱动，输出既不是高电平也不是低电平，相当于开路。</p>
+<h4 id="双口RAM"><a href="#双口RAM" class="headerlink" title="双口RAM"></a>双口RAM</h4><p>双口RAM是共享式的存储器，有两套独立的地址、数据和控制线。</p>
+<p>结构：地址译码逻辑、数据缓冲区和控制逻辑。	<br>当同时写一个地址或者一个端口读，一个端口写同一个地址时，发生冲突。</p>
+<p>解决办法：</p>
+<ol>
+<li>设置标志位. 两个端口的读写每次访问时，需要设置、判断标志位。</li>
+<li>利用硬件解决。当发生冲突时，拉低busy信号反压控制信号ready，达到分时访问的目的。</li>
+</ol>
+<p>应用：由于可以并行读取和写入数据，所以适用于高速处理的数据流。比如人工智能领域，大量的矩阵存储和处理运算。</p>
 <h5 id="奇校验、偶校验"><a href="#奇校验、偶校验" class="headerlink" title="奇校验、偶校验"></a>奇校验、偶校验</h5><p>偶校验：数据位  共有偶数个1，  	校验位为0；<br>奇校验：数据位  共有奇数个1，	  校验位为0；<br>0011_1011  偶校验位：1，奇校验位：0</p>
 <p>面试题目总结（华为）</p>
 <p><strong>在异步fifo设计中，地址比较时，有没有必要使用格雷码？</strong></p>
@@ -1068,7 +1076,7 @@ end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span>
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">79.7k</span>
+                        class="white-color">79.9k</span>
             
             
             
