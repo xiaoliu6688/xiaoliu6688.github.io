@@ -292,7 +292,7 @@ https://blog.csdn.net/wudpekerlily/article/details/130536789?spm=1001.2014.3001.
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    6.6k
+                    7.4k
                 </div>
                 
 
@@ -600,7 +600,7 @@ end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span>
 
 <p>跨时钟域传输多比特数据时，如果传输数据较少，可以采用握手机制。对于慢时钟域到快时钟域的数据传输，可以采用半握手方式。对于快时钟到慢时钟域的数据传输需要使用全握手方式。</p>
 <h5 id="源同步时钟"><a href="#源同步时钟" class="headerlink" title="源同步时钟"></a>源同步时钟</h5><p>芯片间传递数据的同时还传送数据同步的时钟，时钟上升沿对准数据的中间位置。在接收端用提供的时钟将数据恢复之后，接收端可以使用一个异步fifo将恢复的数据同步到本地时钟域。</p>
-<p>在一些应用中，采用两个时钟（strobe、！strobe），数据速率是时钟速率的两倍，称为DDR，用于DDR存储器中。</p>
+<p>在一些应用中，采用两个时钟（strobe、!strobe），数据速率是时钟速率的两倍，称为DDR，用于DDR存储器中。</p>
 <img src="/2024/012448005/image-20240523111612438.png" alt="image-20240523111612438" style="zoom:50%;">
 
 <h5 id="嵌入式时钟"><a href="#嵌入式时钟" class="headerlink" title="嵌入式时钟"></a>嵌入式时钟</h5><p>源同步时钟应用于短距离和并行数据传输，对于高速和长距离传输，数据与时钟之间的相位差异会更加难以控制。在嵌入式时钟机制中，没有与数据同时传输的时钟。数据本身具有足够多的 高到低和低到高的转换，接收端利用这种转换使用PLL来提取时钟，之后使用该时钟同步接收的数据。例如PCIe，USB等，数据速率可以达到几Gbps</p>
@@ -653,6 +653,44 @@ end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span>
 <li>将所有的同步器放置在顶层的一个或两个模块内。</li>
 </ol>
 <p>时序逻辑中的case语句，默认不推荐default，当出现缺省条件时，数据保持不变，便于在DC时插入ICG，clock gating，降低功耗。</p>
+<h3 id="FIFO深度计算"><a href="#FIFO深度计算" class="headerlink" title="FIFO深度计算"></a>FIFO深度计算</h3><p>fifo的几个作用</p>
+<ul>
+<li>解决跨时钟域传输问题</li>
+<li>用来缓冲数据</li>
+<li>解决位宽不匹配</li>
+</ul>
+<p>在实际应用中不会存在对FIFO持续写读，这样的话FIFO相当于一个存储器件，而不是缓冲器件。<strong>FIFO深度的计算建立在满足一次突发传输的基础上。</strong></p>
+<h4 id="写时钟快，读时钟慢"><a href="#写时钟快，读时钟慢" class="headerlink" title="写时钟快，读时钟慢"></a>写时钟快，读时钟慢</h4><h5 id="无间断写和读"><a href="#无间断写和读" class="headerlink" title="无间断写和读"></a>无间断写和读</h5><p>如果写时钟速率为80 MHz，读时钟速率为50 MHz，写入120个数据时，FIFO深度为多少？</p>
+<p>120 - 120 * （1&#x2F;80M）&#x2F; (1&#x2F;50M) &#x3D; 45, 所以FIFO深度应该为45。</p>
+<h5 id="间断写和读"><a href="#间断写和读" class="headerlink" title="间断写和读"></a>间断写和读</h5><p>写时钟频率为80 MHz，读时钟频率为50 MHz，每两次写入操作间隔1个写时钟周期，每两次读取操作间隔3个读时钟周期。一次突发写入120个数据，FIFO深度为多少？</p>
+<p>解法：相当于每两个写时钟周期写入一个数据，每4个读时钟周期读出一个数据。等效成无间断的读写传输。<br>120 - 120 * （1&#x2F;40M）&#x2F; (1&#x2F;12.5M) &#x3D; 83, 所以FIFO深度应该为83。</p>
+<h4 id="写时钟慢，读时钟快"><a href="#写时钟慢，读时钟快" class="headerlink" title="写时钟慢，读时钟快"></a>写时钟慢，读时钟快</h4><h5 id="无间断的读写"><a href="#无间断的读写" class="headerlink" title="无间断的读写"></a>无间断的读写</h5><p>因为数据写入后，很快就被读走，所以FIFO深度设置为1即可。</p>
+<h5 id="间断的读写"><a href="#间断的读写" class="headerlink" title="间断的读写"></a>间断的读写</h5><p>写时钟频率30 MHz，读时钟频率50 MHz，一次写入突发长度为120。每两次写入操作间隔1个写时钟周期，每两次读取操作间隔3个读时钟周期。求FIFO深度是多少？</p>
+<p>解法：相当于写数据频率为15MHz，读数据频率为12.5MHz。<br>120 - 120 * （1&#x2F;15M）&#x2F; (1 &#x2F; 12.5M) &#x3D; 20。</p>
+<h4 id="写时钟和读时钟一样快"><a href="#写时钟和读时钟一样快" class="headerlink" title="写时钟和读时钟一样快"></a>写时钟和读时钟一样快</h4><h5 id="无间断读写"><a href="#无间断读写" class="headerlink" title="无间断读写"></a>无间断读写</h5><p>如果读写时钟没有相位差，数据不需要缓冲，FIFO深度为0.<br>如果读写时钟有固定相位差，写入的数据在一个时钟周期内被读走，FIFO深度为1.</p>
+<h5 id="间断读写"><a href="#间断读写" class="headerlink" title="间断读写"></a>间断读写</h5><p>写入时钟频率 fA &#x3D; 读取时钟频率 fB &#x3D; 50MHz。一次写入的突发长度120。每两次写入操作间隔1个时钟周期，每两次读取操作间隔3个时钟周期。FIFO深度应该为多少？</p>
+<p>解法：相当于写数据速率为25MHz，读数据速率为12.5MHz。<br>120 - 120 * （1&#x2F;25M）&#x2F; （1 &#x2F; 12.5M）&#x3D; 60。</p>
+<h4 id="特定时间内写、读速率固定"><a href="#特定时间内写、读速率固定" class="headerlink" title="特定时间内写、读速率固定"></a>特定时间内写、读速率固定</h4><p>Q：每100个时钟写入80个数据，剩余20个随机值（无效）；每10个时钟读出8个数据。求FIFO深度最小是多少才能满足要求？</p>
+<p>A：在背靠背传输时，会出现写数据最多的情况，产生最大FIFO深度。</p>
+<p><img src="/2024/012448005/image-20240731220200682.png" alt="image-20240731220200682"></p>
+<p>160 - 160 * 0.8 &#x3D; 32；</p>
+<h3 id="RDC-Reset-Domain-Cross"><a href="#RDC-Reset-Domain-Cross" class="headerlink" title="RDC(Reset Domain Cross)"></a>RDC(Reset Domain Cross)</h3><p>类似CDC问题，异步的复位信号可能会导致亚稳态问题出现。</p>
+<p><img src="/2024/012448005/72827e18d53afad7a69a831aa1f1a662.png" alt="img"></p>
+<p>如果rst1有效时，会导致q1的输出不确定，正好赶上dff2的时钟上升沿，产生亚稳态。</p>
+<p>解决办法：</p>
+<ul>
+<li><p>在rst1复位之前，rst2正处于复位中。</p>
+<p><img src="/2024/012448005/ad4559a61e7ca8f488e1919fa0a7aa72.png" alt="img"></p>
+</li>
+<li><p>数据隔离</p>
+<p>在rst1复位时，将q1的输出 与 隔离信号做 与，输出0</p>
+<p><img src="/2024/012448005/5f46cf212c9cd14162dabf73bdaf02b6.png" alt="img"></p>
+</li>
+<li><p>时钟隔离</p>
+<p>在rst1复位时，让dff2的时钟信号无效。</p>
+<p><img src="/2024/012448005/5b1a57234f4701b30291f2bea085e635.png" alt="img"></p>
+</li>
+</ul>
 
                 
             </div>
@@ -1030,7 +1068,7 @@ end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span>
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">77.5k</span>
+                        class="white-color">79.7k</span>
             
             
             

@@ -336,15 +336,14 @@ Cache：用一块小而块的存储设备（采用SRAM实">
 <ul>
 <li>写回</li>
 </ul>
-<p>​	当CPU执行store指令并在cache命中时，我们只更新cache中的数据。并且每个cache line中会有一个bit位记录数据是否被修改过，称之为dirty bit。我们会将dirty bit置1。主存中的数据只会在cache line被替换或者显示的clean操作时更新。因此，主存中的数据可能是未修改的数据，而修改的数据躺在cache中。cache和主存的数据可能不一致。更新cacheline时，要根据dirty位，决定是否将数据写回内存。然后再进行其他操作</p>
+<p>​	当CPU执行store指令并在cache命中时，我们只更新cache中的数据。并且每个cache line中会有一个bit位记录数据是否被修改过，称之为dirty bit。我们会将dirty bit置1。主存中的数据只会在cache line被替换或者显示的clean操作时更新。因此，主存中的数据可能是未修改的数据，而修改的数据躺在cache中。cache和主存的数据可能不一致。更新cacheline时，要根据dirty位，决定是否将数据写回内存。然后再进行其他操作。</p>
 <ul>
 <li><h5 id="dirty-bit"><a href="#dirty-bit" class="headerlink" title="dirty bit"></a>dirty bit</h5></li>
 </ul>
 <p>​	在写回的更新策略中，cache命中，首先会更新cacheline的数据，导致内存和cache中数据不一致，当该cache line被替代时，将替换的数据写到内存中。dirty bit是标记要写回到内存的cache line。</p>
 <p><strong>通常写分配和写回策略一起使用</strong></p>
 <hr>
-<h4 id="直接映射"><a href="#直接映射" class="headerlink" title="直接映射"></a>直接映射</h4><p>  <img src="/2024/022542394/image-20240722104817022.png" alt="image-20240722104817022"></p>
-<p>优点：实现简单，运算组合逻辑延迟小。<br>缺点：hit rate较低，容易颠簸。</p>
+<h4 id="直接映射"><a href="#直接映射" class="headerlink" title="直接映射  "></a>直接映射  <img src="/2024/022542394/image-20240722104817022.png" alt="image-20240722104817022"></h4><p>优点：实现简单，运算组合逻辑延迟小。<br>缺点：hit rate较低，容易颠簸。</p>
 <h4 id="两路组相连"><a href="#两路组相连" class="headerlink" title="两路组相连"></a>两路组相连</h4><p>将cache平均分成多份，每一份就是一路，两路组相连缓存就是将cache分为2份，每份32Bytes。一个index可以对应多个cacheline。</p>
 <img src="/2024/022542394/image-20240225153918193.png" alt style="zoom: 33%;">
 
@@ -370,7 +369,7 @@ Cache：用一块小而块的存储设备（采用SRAM实">
 </li>
 <li><p>随机替换</p>
 </li>
-<li><p>Round robin，first in first out。</p>
+<li><p>Round robin，first in first out</p>
 </li>
 </ol>
 <h3 id="更新策略总结"><a href="#更新策略总结" class="headerlink" title="更新策略总结"></a>更新策略总结</h3><ul>
@@ -392,7 +391,7 @@ Cache：用一块小而块的存储设备（采用SRAM实">
 <p>降低cache miss rate方法：</p>
 <p><img src="/2024/022542394/image-20240722143524701.png" alt="image-20240722143524701"></p>
 <p>软件编译去减小miss rate</p>
-<p> <img src="/2024/022542394/image-20240722143848234.png" alt="image-20240722143848234"></p>
+<p><img src="/2024/022542394/image-20240722143848234.png" alt="image-20240722143848234"></p>
 <p>降低hit time（tag look up+cache access）</p>
 <p><strong>PIPT(Physically indexed and physically tagged cache)</strong></p>
 <ul>
@@ -802,7 +801,7 @@ Cache：用一块小而块的存储设备（采用SRAM实">
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">77.5k</span>
+                        class="white-color">79.7k</span>
             
             
             

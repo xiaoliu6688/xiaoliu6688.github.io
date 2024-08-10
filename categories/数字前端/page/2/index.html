@@ -360,11 +360,11 @@
                 </a>
                 
                 
-                <a href="/categories/%E6%95%B0%E5%AD%97%E4%B8%AD%E7%AB%AF/" title="数字中端: 1">
+                <a href="/categories/%E6%95%B0%E5%AD%97%E4%B8%AD%E7%AB%AF/" title="数字中端: 2">
                     <span class="chip center-align waves-effect waves-light
                              chip-default "
                             style="background-color: #A3E4D7;">数字中端
-                        <span class="tag-length">1</span>
+                        <span class="tag-length">2</span>
                     </span>
                 </a>
                 
@@ -394,10 +394,9 @@
                     <div class="card-content article-content">
                         <div class="summary block-with-text">
                             
-                                总线性能指标决定总线接口性能的两个主要特征是 带宽和延迟。
-带宽是总线的位宽，延迟是指事务启动和完成的延迟，在突发传输中，延迟通常指第一次transfer传输完成。
-AXI的读写地址和通道分离，可以有效提高总线带宽。
-乱序ID给定ID事务的
+                                乱序ID给定ID事务的所有transfer需要进行排序，而不同ID事务的transfer没有顺序限制。
+同一个事务的AWID、WID和BID是一样的，ARID和RID是一样的。
+不同的transition可以有相同的ID，在执行时必须顺序返
                             
                         </div>
                         <div class="publish-info">
@@ -727,7 +726,7 @@ always @(posedge clk) begin
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">77.5k</span>
+                        class="white-color">79.7k</span>
             
             
             

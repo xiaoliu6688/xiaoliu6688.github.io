@@ -5,10 +5,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="AXI协议, RayBiiao">
-    <meta name="description" content="总线性能指标决定总线接口性能的两个主要特征是 带宽和延迟。
-带宽是总线的位宽，延迟是指事务启动和完成的延迟，在突发传输中，延迟通常指第一次transfer传输完成。
-AXI的读写地址和通道分离，可以有效提高总线带宽。
-乱序ID给定ID事务的">
+    <meta name="description" content="乱序ID给定ID事务的所有transfer需要进行排序，而不同ID事务的transfer没有顺序限制。
+同一个事务的AWID、WID和BID是一样的，ARID和RID是一样的。
+不同的transition可以有相同的ID，在执行时必须顺序返">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -291,7 +290,7 @@ AXI的读写地址和通道分离，可以有效提高总线带宽。
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.9k
+                    3.6k
                 </div>
                 
 
@@ -316,10 +315,7 @@ AXI的读写地址和通道分离，可以有效提高总线带宽。
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h4 id="总线性能指标"><a href="#总线性能指标" class="headerlink" title="总线性能指标"></a>总线性能指标</h4><p>决定总线接口性能的两个主要特征是 带宽和延迟。</p>
-<p>带宽是总线的位宽，延迟是指事务启动和完成的延迟，在突发传输中，延迟通常指第一次transfer传输完成。</p>
-<p>AXI的读写地址和通道分离，可以有效提高总线带宽。</p>
-<h4 id="乱序ID"><a href="#乱序ID" class="headerlink" title="乱序ID"></a>乱序ID</h4><p>给定ID事务的所有transfer需要进行排序，而不同ID事务的transfer没有顺序限制。</p>
+                <h4 id="乱序ID"><a href="#乱序ID" class="headerlink" title="乱序ID"></a>乱序ID</h4><p>给定ID事务的所有transfer需要进行排序，而不同ID事务的transfer没有顺序限制。</p>
 <p>同一个事务的AWID、WID和BID是一样的，ARID和RID是一样的。</p>
 <p>不同的transition可以有相同的ID，在执行时必须顺序返回。</p>
 <h3 id="AXI协议"><a href="#AXI协议" class="headerlink" title="AXI协议"></a>AXI协议</h3><h4 id="AXI3和AXI4的区别"><a href="#AXI3和AXI4的区别" class="headerlink" title="AXI3和AXI4的区别"></a>AXI3和AXI4的区别</h4><h5 id="1-Burst"><a href="#1-Burst" class="headerlink" title="1. Burst"></a>1. Burst</h5><p>AXI4对burst length进行了扩展<br>AXI4支持最大256 beats，AxLEN位宽为8；AXI3最大支持burst 16 beats，AxLEN位宽为4；</p>
@@ -422,6 +418,39 @@ AXI的读写地址和通道分离，可以有效提高总线带宽。
 <p>Exclusive访问：不会将整个访问路径都阻塞掉，允许其他master对互斥访问的salve进行访问。在salve中有个监视器记录互斥访问的地址，其他master不允许对其访问。他可能一直处于loop，也可以进入IDLE模式，当互斥访问结束后，通过中断唤醒，再去相应的访问。</p>
 <h4 id="Cache-support"><a href="#Cache-support" class="headerlink" title="Cache support"></a>Cache support</h4><p>如果是CPU发出的读写地址是MMIO的，AxCACHE的信号都不能有效。</p>
 <p><img src="/2024/02077053/image-20240723143123624.png" alt="image-20240723143123624"></p>
+<h2 id="总线性能分析"><a href="#总线性能分析" class="headerlink" title="总线性能分析"></a>总线性能分析</h2><h4 id="总线性能指标"><a href="#总线性能指标" class="headerlink" title="总线性能指标"></a>总线性能指标</h4><p>决定总线接口性能的两个主要特征是 带宽和延迟。</p>
+<p>带宽是总线的位宽，延迟是指事务启动和完成的延迟，在突发传输中，延迟通常指第一次transfer传输完成。</p>
+<p>AXI的读写地址和通道分离，可以有效提高总线带宽。</p>
+<h4 id="AXI、AHB和APB总线"><a href="#AXI、AHB和APB总线" class="headerlink" title="AXI、AHB和APB总线"></a>AXI、AHB和APB总线</h4><p>APB总线适应在低带宽的场景下，APB协议很简单，总是固定的两个周期完成一次数据传输。</p>
+<p>AHB总线适用于连接高性能和高时钟频率的模块。虽然AHB总线可以通过扩展数据位宽提高总线带宽，但在节省功耗的前提下，用户希望通过极窄的总线宽度、极低的总线频率来实现很高的数据吞吐量，AXI总线应运而生。</p>
+<p>AXI总线乱序收发，使得带宽得到了充分利用，可满足高性能SoC的需求。</p>
+<h4 id="AXI和AHB传输特点对比"><a href="#AXI和AHB传输特点对比" class="headerlink" title="AXI和AHB传输特点对比"></a>AXI和AHB传输特点对比</h4><p>AHB是固定的两级流水方式，第一拍传输地址第二拍传输数据。AXI只需要传输一次突发的首地址即可，而且可以传输多次突发任务，并且数据之间可以交织，大大提高了传输的效率。</p>
+<p>当总线中有慢速设备时，乱序的优势就非常明显，提高了总线利用率。</p>
+<h4 id="分析总线性能"><a href="#分析总线性能" class="headerlink" title="分析总线性能"></a>分析总线性能</h4><p><strong>BUS带宽计算</strong></p>
+<p>定义总线上有效数据位宽是B bit，最高工作频率F为100MHz，最大理论带宽为 T &#x3D; F * B bit&#x2F;S。但是一般总线传输都需要握手，无法达到最大带宽。</p>
+<p><strong>传输时间</strong></p>
+<p>单次传输所需的时间（总线授权开始到本次传输结束所需时间&#x2F;周期），每个传输包含一个或多个单个传输，传输时间则有长有短。通常有两种方式描述：</p>
+<ul>
+<li>最大传输时间:设备在传输过程中进行的最大传输所需要的时间</li>
+<li>平均传输时间：设备在传输过程中的平均传输时间</li>
+</ul>
+<p>影响因素包括：</p>
+<ul>
+<li>读&#x2F;写多少数据</li>
+<li>传输过程中的握手环节</li>
+<li>被访问资源的响应速度</li>
+<li>从主设备到从设备所经历的层数、bridge等</li>
+</ul>
+<p><strong>延时</strong></p>
+<p>指主设备发起请求到仲裁结束所需得时间。延迟和传输时间之和为访问时间。</p>
+<img src="/2024/02077053/image-20240802214755617.png" alt="image-20240802214755617" style="zoom:50%;">
+
+<h4 id="如何通过代码分析带宽、延迟和传输延迟"><a href="#如何通过代码分析带宽、延迟和传输延迟" class="headerlink" title="如何通过代码分析带宽、延迟和传输延迟"></a>如何通过代码分析带宽、延迟和传输延迟</h4><p>带宽</p>
+<p>分析方法：计算读写握手的次数，并实时输出(counter_r+counter_w)*4&#x2F;T_all；</p>
+<p>延迟</p>
+<p>分析方法：计算awvalid拉高后到awready拉高之间的周期，乘Tclk得到latency</p>
+<p>传输延迟</p>
+<p>分析方法：从写数据通道或者读数据通道的第一次握手开始到最后的写响应通道握手或者读数据的最后一笔之间的周期数，乘Tclk得到传输延迟。</p>
 
                 
             </div>
@@ -799,7 +828,7 @@ AXI的读写地址和通道分离，可以有效提高总线带宽。
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">77.5k</span>
+                        class="white-color">79.7k</span>
             
             
             
