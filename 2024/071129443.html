@@ -289,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    887
+                    1.1k
                 </div>
                 
 
@@ -376,6 +376,13 @@ import definitions:: *;
 <h2 id="第3章-SV文本值和数据类型"><a href="#第3章-SV文本值和数据类型" class="headerlink" title="第3章 SV文本值和数据类型"></a>第3章 SV文本值和数据类型</h2><p>sv中给变量赋值全1：<code>reg [31:0] data; data = &#39;1;</code></p>
 <p>verilog数据类型<br>    reg、integer和time是四值逻辑。wire和其他net类型的共有120种逻辑（四态逻辑+多个驱动强度）。</p>
 <p>sv数据类型<br>    定义的信号同时具有类型和数据类型。类型指示信号是 <strong>线网还是变量</strong>。数据类型指示是四值逻辑还是二值逻辑。</p>
+<h2 id="System-Verilog基础"><a href="#System-Verilog基础" class="headerlink" title="System Verilog基础"></a>System Verilog基础</h2><p>构造函数 new：在声明时，不能有返回值，void也不可以。</p>
+<h4 id="静态属性"><a href="#静态属性" class="headerlink" title="静态属性"></a>静态属性</h4><p>静态变量在多个实例之间是共享的。</p>
+<p>静态方法只能访问静态变量，访问非静态变量是非法的。静态方法不能是virtual的。</p>
+<p>在不创建对象的情况下，可以访问静态变量和静态方法。</p>
+<h4 id="浅拷贝和深拷贝"><a href="#浅拷贝和深拷贝" class="headerlink" title="浅拷贝和深拷贝"></a>浅拷贝和深拷贝</h4><p>浅拷贝中，所有变量的值都被复制，但是不复制对象，只复制句柄。</p>
+<p>要想实现深拷贝，需要实现自定义的方法，完成对象的复制。每次调用copy方法时，句柄都指向新的对象。</p>
+<h4 id="类的继承"><a href="#类的继承" class="headerlink" title="类的继承"></a>类的继承</h4><p>派生类继承父类的方法和属性；允许多级继承；子类可以修改父类的属性和方法；</p>
 
                 
             </div>
@@ -537,13 +544,13 @@ import definitions:: *;
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/052956001.html">
+                <a href="/2024/050742599.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8d3c667ae60de6d3a4bc3c82dccf5f0.jpg" class="responsive-img" alt="PTPX功耗分析">
+                        <img src="/medias/featureimages/8d3c667ae60de6d3a4bc3c82dccf5f0.jpg" class="responsive-img" alt="Digital_VLSI_Design(Prof_Adam)">
                         
-                        <span class="card-title">PTPX功耗分析</span>
+                        <span class="card-title">Digital_VLSI_Design(Prof_Adam)</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -554,14 +561,14 @@ import definitions:: *;
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-05-29
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-05-07
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/ASIC%E6%95%B0%E5%AD%97%E5%90%8E%E7%AB%AF%E6%B5%81%E7%A8%8B/" class="post-category">
-                                    ASIC数字后端流程
+                            <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="post-category">
+                                    读书笔记
                                 </a>
                             
                             
@@ -571,8 +578,8 @@ import definitions:: *;
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E5%8A%9F%E8%80%97%E5%88%86%E6%9E%90/">
-                        <span class="chip bg-color">功耗分析</span>
+                    <a href="/tags/asic-flow/">
+                        <span class="chip bg-color">asic flow</span>
                     </a>
                     
                 </div>
@@ -753,7 +760,7 @@ import definitions:: *;
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">79.9k</span>
+                        class="white-color">45k</span>
             
             
             
