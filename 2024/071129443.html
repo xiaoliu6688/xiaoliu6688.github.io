@@ -289,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.1k
+                    6.1k
                 </div>
                 
 
@@ -383,6 +383,469 @@ import definitions:: *;
 <h4 id="浅拷贝和深拷贝"><a href="#浅拷贝和深拷贝" class="headerlink" title="浅拷贝和深拷贝"></a>浅拷贝和深拷贝</h4><p>浅拷贝中，所有变量的值都被复制，但是不复制对象，只复制句柄。</p>
 <p>要想实现深拷贝，需要实现自定义的方法，完成对象的复制。每次调用copy方法时，句柄都指向新的对象。</p>
 <h4 id="类的继承"><a href="#类的继承" class="headerlink" title="类的继承"></a>类的继承</h4><p>派生类继承父类的方法和属性；允许多级继承；子类可以修改父类的属性和方法；</p>
+<h4 id="多态性"><a href="#多态性" class="headerlink" title="多态性"></a>多态性</h4><p>子类可以对继承的父类方法进行修改，当使用父类句柄指向子类对象时，所对应的方法是子类修改后的。</p>
+<p>同一个方法的不同实现形式，称为多态性。具体执行哪个方法，取决于指向的对象。</p>
+<h4 id="转换cast"><a href="#转换cast" class="headerlink" title="转换cast"></a>转换cast</h4><h5 id="静态转换"><a href="#静态转换" class="headerlink" title="静态转换"></a>静态转换</h5><p>在编译过程中完成静态转换，运行时不会有检查和错误报告。</p>
+<p>不适用于对象句柄转换。</p>
+<p>使用<code>‘</code> 强制转换更改数据类型。int’(123.0)</p>
+<h5 id="动态转换"><a href="#动态转换" class="headerlink" title="动态转换"></a>动态转换</h5><p>子类句柄的值可以直接赋给父类句柄。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">parent_class &#x3D; child_class; &#x2F;&#x2F; 允许 <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>父类句柄的值 不可以 赋给子类句柄。（编译错误，可以通过$cast跳过编译时的检查）</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">child_class &#x3D; parent_class; &#x2F;&#x2F; 不允许<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>如果父类句柄的值是指向子类对象的，可以将父类句柄的值赋给子类句柄</strong></p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">parent_class &#x3D; child_class;
+child_class &#x3D; parent_class; &#x2F;&#x2F;允许
+
+$cast(child_class, parent_class);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>由于父类句柄的值是变化的，在执行过程中，可以被赋值给子类句柄。因此，$cast被称为动态转换。</p>
+<h4 id="数据隐藏和封装"><a href="#数据隐藏和封装" class="headerlink" title="数据隐藏和封装"></a>数据隐藏和封装</h4><p>将数据隐藏在类中，并仅通过方法对其访问。</p>
+<h5 id="local"><a href="#local" class="headerlink" title="local"></a>local</h5><p>通过将成员声明为本地成员，避免通过句柄在外部对变量进行修改。不允许在子类声明中访问local的变量。</p>
+<h5 id="protected"><a href="#protected" class="headerlink" title="protected"></a>protected</h5><p>不允许通过句柄访问该变量，但是在子类声明中可以访问保护的变量。</p>
+<h4 id="virtual-抽象类"><a href="#virtual-抽象类" class="headerlink" title="virtual 抽象类"></a>virtual 抽象类</h4><p>用virtual声明为抽象类，抽象类为子类设置了原型。抽象类不能实例化，只能派生。</p>
+<p>抽象类可以包含只有方法的声明，而没有实现。</p>
+<h4 id="virtual-虚拟方法"><a href="#virtual-虚拟方法" class="headerlink" title="virtual 虚拟方法"></a>virtual 虚拟方法</h4><p>当父类使用virtual定义的函数和方法，父类句柄在指向子类对象时，可以动态索引到子类重写的方法。</p>
+<ul>
+<li>在为父类定义方法时，如果该方法后面会被覆盖或者继承，需要加virtual。需要保证子类和父类方法的参数和返回值类型都是一样的。</li>
+<li>virtual在父类中声明一次即可</li>
+<li>不能给变量添加virtual</li>
+</ul>
+<p>范围解析运算法：：，允许从类的外部访问静态变量和方法。</p>
+<h4 id="外部方法-extern"><a href="#外部方法-extern" class="headerlink" title="外部方法 extern"></a>外部方法 extern</h4><p>在类中需要使用extern声明方法；</p>
+<p>在外部实现时，需要使用类解析运算符指定类名，表明方法对应于哪个类。</p>
+<p>外部的方法&#x2F;任务必须和类中声明的方法&#x2F;任务 <strong>参数名称 一样</strong></p>
+<h4 id="typedef类"><a href="#typedef类" class="headerlink" title="typedef类"></a>typedef类</h4><p>提供类的前向声明。在某些情况下，需要再类声明之前例化类。</p>
+<h4 id="随机化"><a href="#随机化" class="headerlink" title="随机化"></a>随机化</h4><p>verilog使用$random生成随机整数，sv提供 rand和randomize方法，便于类对象的随机化。</p>
+<p>rand和randc的区别：randc在随机化时，变量值不会重复。</p>
+<p>为了随机化对象变量，需要使用randomize</p>
+<p>通过rand_mode来选择是否启用随机化。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">p.var.rand_mode(0&#x2F;1);
+p.rand_mode(0&#x2F;1);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>在调用randomize时，系统会调用pre_randomize()和post_randomize()函数，用户可以覆盖该函数，进行自定义的处理。</p>
+<h4 id="约束随机化"><a href="#约束随机化" class="headerlink" title="约束随机化"></a>约束随机化</h4><p>约束块是类成员，跟变量、函数、任务一样的地位；由条件或表达式组成，用来限制随机变量的值；</p>
+<p>约束块用大括号{}括起来；</p>
+<p>可以在类中定义，也可以像extern在外部定义，在类外定义的约束块称为extern约束块。</p>
+<p>与类成员一样，约束块也可以继承，如果遇到同名的约束，子类的对象遵从子类的约束；</p>
+<p><strong>约束方法</strong>：</p>
+<ol>
+<li>可以是可变的、常量或者范围的</li>
+<li>使用inside{ … }；  使用逗号指定特定的值，使用中括号[]指定范围；</li>
+<li>constrain addr_range { addr &gt; 3;}；</li>
+<li>可以使用其他随机变量作为限制条件； constraint addr_range { addr inside {[start_addr:end_addr]}; }</li>
+<li>范围取反，constraint addr_range { addr !(inside {[5:10]}); }</li>
+</ol>
+<h5 id="dist约束"><a href="#dist约束" class="headerlink" title="dist约束"></a>dist约束</h5><p>dist可以设置随机值出现的概率;dist {value :&#x3D; 3, value2 :&#x3D; 4, [value3：value4] :&#x2F; 4}；</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">addr dist &#123;2 :&#x3D; 5, [10：12] :&#x3D; 4&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h5 id="隐含约束"><a href="#隐含约束" class="headerlink" title="隐含约束"></a>隐含约束</h5><p>使用 -&gt; 隐含运算符，如果LHS为真，则约束有效；</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">string addr_range;
+rand int addr;
+constraint addr_range &#123;(addr_range &#x3D;&#x3D; &quot;small&quot;) -&gt; (addr &lt; 8)&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="if-else"><a href="#if-else" class="headerlink" title="if else"></a>if else</h5><pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">constraint address_range &#123; if(addr_range &#x3D;&#x3D; &quot;small&quot;)
+                              addr &lt; 8;
+                           else
+                              addr &gt; 8;
+                         &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="foreach-约束"><a href="#foreach-约束" class="headerlink" title="foreach 约束"></a>foreach 约束</h5><p>foreach使得约束数组更为容易</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">constraint constraint_name &#123; foreach( var[i]) var[i] &lt;condition&gt; &#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">constraint size_addr &#123;
+  addr.size &lt; 6;
+&#125;;
+constraint size_data &#123;
+  data.size &#x3D;&#x3D; addr.size;
+&#125;;
+constraint addr_values&#123;
+  foreach(addr[i]) addr[i] inside &#123;4, 6, 8, 10&#125;;
+&#125;;
+constraint data_values&#123;
+  foreach(data[i]) data[i] inside &#123;1, 3, 5, 7, 9, 11&#125;;
+&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>使用constraint_mode()方法可禁用任何特定的约束块，默认为1；属于约束块的函数；</p>
+<h5 id="静态约束"><a href="#静态约束" class="headerlink" title="静态约束"></a>静态约束</h5><p>通过static来声明，所有实例所共享。对于没有静态声明的约束，每个对象对约束的控制都是独立的。</p>
+<h5 id="内联约束"><a href="#内联约束" class="headerlink" title="内联约束"></a>内联约束</h5><p>关键词：with；在外部编写约束，与randomize一起调用；</p>
+<p>约束求解器考虑内联约束和类内部约束。内联约束不会覆盖类内部的约束。两个约束不能冲突，否则随机化失败。</p>
+<p>为了解决约束冲突问题，在类约束中使用 <strong>soft软约束</strong>，外部的内联约束具有更高的优先级。</p>
+<h5 id="唯一unique约束"><a href="#唯一unique约束" class="headerlink" title="唯一unique约束"></a>唯一unique约束</h5><p>生成数组或者变量集合中的唯一元素</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">constraint unique_name &#123;unique &#123;var1, var2, var3&#125;&#125;;
+constraint unique_name &#123;unique &#123;array&#125;&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h5 id="solve-before"><a href="#solve-before" class="headerlink" title="solve before"></a>solve before</h5><p>强制约束求解器来选择求解约束的顺序。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">constraint sab &#123;solve a before b&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h5 id="随机系统函数"><a href="#随机系统函数" class="headerlink" title="随机系统函数"></a>随机系统函数</h5><p>$urandom()；&#x2F;&#x2F; 无符号32bit随机数</p>
+<p>$random()；&#x2F;&#x2F; 有符号32bit随机数</p>
+<p>$urandom_range()；&#x2F;&#x2F; 有范围的无符号32bit随机数</p>
+<h4 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h4><p>实现共享资源的控制和基本同步。</p>
+<p>使用信号量的进程必须首先获取信号量，然后才能一直执行，直到其他进程释放信号量。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">semaphore sem_name;
+sem_name &#x3D; new(nums_of_keys); &#x2F;&#x2F; 默认信号量为0
+sem_name.put(nums_of_keys); &#x2F;&#x2F; 将信号量释放，默认释放1.
+sem_name.get(nums_of_keys); &#x2F;&#x2F; 获取信号量，默认为1
+sem_name.try_get(nums_of_keys); &#x2F;&#x2F; 尝试获取信号量，不会阻塞<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="邮箱"><a href="#邮箱" class="headerlink" title="邮箱"></a>邮箱</h4><p>通用邮箱</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">mailbox mailbox_name;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>参数化邮箱</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">mailbox#(type) mailbox_name;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-none"><code class="language-none">new();		 &#x2F;&#x2F; 无界的邮箱
+new(m_size); &#x2F;&#x2F; 有大小的邮箱
+
+put();
+try_put();
+get();
+num();
+try_get();<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>邮箱相当于一个通道，可以指定通道的类型。Generator往通道写数据，Driver从通道读取数据。</p>
+<h4 id="事件Event"><a href="#事件Event" class="headerlink" title="事件Event"></a>事件Event</h4><p>事件可用于进程的同步；事件操作由两个进程组成，一个进程触发事件，一个进程等待事件触发。</p>
+<p>使用 -&gt; 或者 -&gt;&gt;符号触发事件</p>
+<p>等待事件使用wait 或者 @</p>
+<p>sv引入了triggered()函数，用来检测某个事件是否被触发过，包括正在触发。线程可以等待这个结果，而不需用@阻塞，解决竞争问题。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">event</span> a<span class="token punctuation">;</span>
+<span class="token keyword">initial</span> <span class="token keyword">begin</span>
+	<span class="token number">#50</span>ns<span class="token punctuation">;</span>
+	<span class="token operator">-></span>a<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">initial</span> <span class="token keyword">begin</span> 
+	<span class="token number">#50</span>ns<span class="token punctuation">;</span>
+	@a<span class="token punctuation">;</span> <span class="token comment">// 有可能能等到，有可能等不到，存在竞争</span>
+<span class="token keyword">end</span>
+
+<span class="token keyword">initial</span> <span class="token keyword">begin</span>
+	<span class="token number">#50</span>ns<span class="token punctuation">;</span>
+	<span class="token function">wait</span><span class="token punctuation">(</span>a<span class="token punctuation">.</span>trigerred<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 一定可以等到，因为triggered可以检测事件被触发过。</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p>等待线程的语句需要在触发线程之前执行</p>
+</li>
+<li><p>@event与wait(event.triggered)的区别：</p>
+<p>若触发进程和等待进行在同一时刻，使用@event检测触发会发生竞争，@可能会错过检测事件的触发，而使用wait(event.trigerred)不会冲突，正常检测触发。</p>
+</li>
+</ul>
+<p>事件Event的检测控制 一般用@， wait也可以检测事件，<strong>或者和表达式结合起来用</strong></p>
+<pre class="line-numbers language-none"><code class="language-none">event a;
+-&gt;a;
+&#x2F;&#x2F; two ways
+@(a)
+wait(a.trigerred)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="wait-order"><a href="#wait-order" class="headerlink" title="wait_order();"></a>wait_order();</h5><p>按照一定的顺序触发事件，否则会运行错误。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">wait_order(a,b,c); 
+如果不按照a b c来触发事件，就会报错。
+wait_order(a,b,c) success &#x3D; 1; else success &#x3D; 0;  &#x2F;&#x2F; 不会报错<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>当一个事件变量被赋值给另一个事件变量时，两者将合并。因此，对任一事件变量执行 -&gt; 都会影响等待任一事件变量的进程。</p>
+<h4 id="program"><a href="#program" class="headerlink" title="program"></a>program</h4><ul>
+<li>可以实例化，像模块一样连接</li>
+<li>可以包含一个或多个initial块</li>
+<li>不能包含always、模块、接口或者其他程序</li>
+<li>不能使用非阻塞赋值</li>
+</ul>
+<p>program在设计和测试平台之间提供了无竞争的交互，程序块在REACTIVE反应区执行；模块内的非阻塞在ACTIVE活动区执行。</p>
+<h4 id="接口interface"><a href="#接口interface" class="headerlink" title="接口interface"></a>接口interface</h4><p>SV添加了接口，封装了模块之间的通信。接口是一组信号的集合，虚拟接口表示接口实例的变量。</p>
+<ul>
+<li>接口指定了方向，即modport</li>
+<li>时序信息：时钟模块</li>
+<li>接口可以有参数、常量、变量、函数和任务</li>
+<li>接口声明一次，句柄在模块&#x2F;组件之间传递</li>
+</ul>
+<h5 id="虚拟接口"><a href="#虚拟接口" class="headerlink" title="虚拟接口"></a>虚拟接口</h5><p>接口实例的变量。？</p>
+<ul>
+<li>在使用虚拟接口之前，需要先对其进行初始化。即，虚拟接口必须连接&#x2F;指向实际接口。</li>
+<li>访问未初始化的虚拟接口会导致运行时出现致命错误</li>
+<li>虚拟接口可以声明为类属性，这些属性可以通过new（）的参数进行初始化</li>
+<li>虚拟接口变量可以作为参数传递给任务，函数和方法</li>
+<li>所有接口变量&#x2F;方法都可以通过虚拟接口句柄访问，即virtual_intf.var</li>
+</ul>
+<p>单个虚拟接口变量可以在整个仿真过程中的不同时间表示不同的接口实例。</p>
+<p>在类中不可以实例化接口，但是允许声明虚拟接口指向实例化的接口。因此虚拟接口是接口类型的变量，在类中通过访问虚拟接口，进而访问接口信号。</p>
+<h4 id="modport"><a href="#modport" class="headerlink" title="modport"></a>modport</h4><p>对接口信号进行分组并规定方向。</p>
+<ul>
+<li>通过指定端口方向，modport提供访问限制；</li>
+<li>和在module中声明端口类似</li>
+<li>不允许对使用输入声明的modport线进行驱动，否则导致编译错误</li>
+<li>可以有任意数量的modports，一个线可以被分到多个modport中</li>
+<li>modport中可以有input，inout，output和ref</li>
+</ul>
+<h4 id="时钟块"><a href="#时钟块" class="headerlink" title="时钟块"></a>时钟块</h4><p>可以在接口、模块或者程序块program中声明；</p>
+<p>采样时发生竞争，会导致采样数据错误。为了避免在RTL仿真中出现信号竞争的问题，建议通过非阻塞赋值延迟的方式解决同步问题。</p>
+<p>由于各种可能性，如果clk和采样数据之间只存在若干个delta-cycle延迟，采样就有可能出现问题。clocking块基于时钟周期对信号进行采样和驱动的方式，可以消除信号竞争的问题。</p>
+<p><img src="/2024/071129443/image-20240813011123859.png" alt="image-20240813011123859"></p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">clocking cb @(posedge clk);
+  default input #1ps output #2;
+  input  from_Dut;
+  output to_Dut;
+endclocking<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>周期延迟 ##</p>
+<p>##8 表示延迟8个周期。</p>
+<h3 id="断言"><a href="#断言" class="headerlink" title="断言"></a>断言</h3><p>验证设计的行为，断言是嵌入在设计中或者仿真过程中绑定到设计单元的检查。警告或者错误是在特定条件下或者事件序列失败时生成的。 <strong>用于特定条件或者事件序列的发生，提供功能覆盖</strong>率。</p>
+<p>何时添加断言：状态机跳转、死锁、活锁；FIFOs，onehot等。模块间的协议验证、非期望的信号组合，稳定状态要求。</p>
+<p>有两种类型的断言：立即断言和并发断言；</p>
+<p><strong>立即断言</strong>是在当前仿真时间的检查，必须将立即断言放在过程块中。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">label: assert(expression) action_block;  &#x2F;&#x2F; 可以在断言语句周围创建一个命名块<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>action_block</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">pass_statement; else fail_statement;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>默认情况下，断言失败为错误。可以在fail_statement中指定严重性级别；</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">$fatal：运行时致命
+$error: 运行时错误
+$warning：运行时警告
+$info: 表示断言失败，没有特定的严重性<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>并发断言</strong>检查分布在多个时钟周期中的事件序列。</p>
+<ul>
+<li>只有在时钟边沿才会执行。</li>
+<li>测试表达式在时钟边沿根据所涉及的变量的采样值进行计算</li>
+<li>可以放置在程序块、模块、接口或者程序定义中。</li>
+</ul>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">assert property(@(posedge clk) a&amp;&amp;b); 
+&#x2F;&#x2F; 用property 区分 立即断言<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>SVA检查器的步骤</p>
+<img src="/2024/071129443/image-20240813112811809.png" alt="image-20240813112811809" style="zoom:50%;">
+
+<p>序列：在涉及多个&#x2F;单个时钟周期的时间段内计算布尔表达式。一个sequence可以包含若干个布尔表达式；同时允许在sequence中使用一些新的操作符，比如##,重复操作符、序列操作符。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">sequence name_of_sequence
+...
+endsequence<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>属性property：按逻辑或顺序组合多个序列，创建更复杂的序列。可以使用隐含操作符 |-&gt;和 |-&gt;&gt; 。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">property name_of_property(参数);
+	test_expression or
+    complex sequence expression
+endproperty<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>assert断言：</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">assertion_name : assert property(property_name);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="SVA序列sequence"><a href="#SVA序列sequence" class="headerlink" title="SVA序列sequence"></a>SVA序列sequence</h4><p>检查每个时钟边沿的行为</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">sequence seq1
+@(posedge clk) a &#x3D;&#x3D; 1;
+endsequence<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>序列表达式 </p>
+<p>通过在序列定义中定义参数，作为抽象模板；</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">sequence seq_lib(a, b)
+	a||b;
+endsequence
+
+sequence seq_1
+    seq_lib(req1, req2);
+endsequence<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>具有时序关系的序列</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">sequence seq
+    @(posedge clk) a ##2 b;
+endsequence
+&#x2F;&#x2F; 当上升沿时，如果a为1，之后两个周期后，b为1，则断言成功；否则失败。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>任何在sequence中的语句，都可以放在property</li>
+<li>任何property的语句，也可以放在sequence中，但是不能包含隐含操作符</li>
+<li>property中可以例化其他property和sequence，sequence只能调用sequence，不能例化property。</li>
+<li>property需要用cover&#x2F;assert&#x2F;assume等关键字例化，而sequence直接调用即可。</li>
+</ul>
+<h5 id="SVA中时钟使用情况"><a href="#SVA中时钟使用情况" class="headerlink" title="SVA中时钟使用情况"></a>SVA中时钟使用情况</h5><p>时钟可以在序列中指定，也可以在property中指定，也可以在断言语句中指定；</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">sequence seq 
+    @(posedge clk) a ##2 b;
+endsequence
+
+sequence seq1
+    a ##2 b;
+endsequence
+property p
+    @(posedge clk) seq1;
+endproperty
+assert property(p); <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>通常在property中定义时钟并保持序列独立于时钟比较好，提高代码的复用率。</p>
+<p><strong>断言序列不需要单独的property定义，要检查的表达式可以直接从assert中调用</strong></p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">sequence seq
+	a ##2 b;
+endsequence
+assert property(@(posedge clk) seq);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>assert中，如果调用了一个property，再定义时钟是非法的。</p>
+<h4 id="隐含运算符"><a href="#隐含运算符" class="headerlink" title="隐含运算符"></a>隐含运算符</h4><p>隐含构造只能与property定义一起使用，不能在sequence中使用。</p>
+<p>有两种类型：重叠的隐含，非重叠的隐含。</p>
+<p>重叠： |-&gt;。如果前因存在匹配项，则在同一周期计算后面的表达式；</p>
+<p>非重叠：|&#x3D;&gt;。如果前因存在匹配项，则在下一个周期计算后面的表达式；</p>
+<h5 id="SVA中的计数窗口"><a href="#SVA中的计数窗口" class="headerlink" title="SVA中的计数窗口"></a>SVA中的计数窗口</h5><pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">property p;
+  @(posedge clk) a |-&gt; ##[0:4] b;
+endproperty
+assert property(p);
+&#x2F;&#x2F; 在当前周期且前四个周期内b拉高
+    
+property p;
+  @(posedge clk) a |-&gt; ##[1:4] b;
+endproperty
+assert property(p);
+&#x2F;&#x2F; 在下个周期到第四个周期内b拉高。
+
+property p;
+  @(posedge clk) a |-&gt; ##[1:$] b;
+endproperty
+assert property(p);
+&#x2F;&#x2F; 检查器会持续检查b的值一直拉高<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="重复运算"><a href="#重复运算" class="headerlink" title="重复运算"></a>重复运算</h5><pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">property p;
+  @(posedge clk) a |-&gt; ##1 b ##1 b ##1 b;
+endproperty
+a: assert property(p);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上升沿a为高后，b应该持续三个周期为高，才可以断言成功。可以通过下面的重复运算符简化代码</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">signal [*n] or sequence [*n]<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">property p;
+  @(posedge clk) a |-&gt; ##1 b[*3];
+endproperty
+a: assert property(p);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>转到重复运算符：用于指定信号将于指定的次数匹配，而不一定在连续周期上。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">signal [-&gt;n]
+
+property p
+	@(posedge clk) a |-&gt; ##1 b[-&gt;3] ##1 c;
+endproperty<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>非连续重复：和转到重复类似，不同：不要求信号重复的最后一个匹配项发生在整个序列匹配结束之前的时钟周期中。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">signal [&#x3D;n] 
+
+a ##1 b[-&gt;1:3] ##1 c ; &#x2F;&#x2F;eg. a !b b !b !b b b c
+
+a ##1 b[&#x3D;1:3] ##1 c; &#x2F;&#x2F;eg. a !b b !b !b b b !b !b c<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="SVA-内置方法"><a href="#SVA-内置方法" class="headerlink" title="SVA 内置方法"></a>SVA 内置方法</h4><pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">$rose(boolean expression or signal name);
+&#x2F;&#x2F; 如果表达式的最低有效位更改为1，则返回true；否则，返回false
+sequence seq_rose
+    @(posedge clk) $rose(a);
+endsequence
+
+$fell(boolean expression or signal name)
+&#x2F;&#x2F; 如果表达式的最低有效位更改为0，则返回true；否则，返回false
+
+$stable(boolean expression or signal name)
+&#x2F;&#x2F; 如果表达式的值未更改，则返回 true。否则，它将返回 false。
+
+$past(signal, nums of clock cycles);
+&#x2F;&#x2F; 提供来自上一个时钟周期的信号值。
+property p;
+  @(posedge clk) b |-&gt; ($past(a,2) &#x3D;&#x3D; 1);
+endproperty
+a: assert property(p);
+&#x2F;&#x2F; b有效的前两个周期，a为1，断言才成功。
+
+a_1: assert property( @(posedge clk) $onehot(state) );
+a_2: assert property( @(posedge clk) $onehot0(state) );
+a_3: assert property( @(posedge clk) $isunknown(bus) ) ;
+a_4: assert property( @(posedge clk) $countones(bus)&gt; 1 );
+&#x2F;&#x2F; a_1 断言独热码 
+&#x2F;&#x2F; a_2 断言state是否为0或者独热码
+&#x2F;&#x2F; a_3 断言所有位中是否有x，z
+&#x2F;&#x2F; a_4 计算向量中的1的位数 
+    
+and: 断言两个事件同时发生
+intersect(a, b);
+ intersect: 断定两个事件同时发生和结束
+or: 断定两个事件至少一个发生
+    
+property ifelse_prop
+    @(posedge clk)
+    if(check) delay1
+    else 	  delay2;
+endproperty<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="local-variables"><a href="#local-variables" class="headerlink" title="local variables"></a>local variables</h5><p>允许使用中间变量</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">sequence seq
+	logic [7:0] lport;
+	(in_en, lport &#x3D; data_in) ##[1:5] (out_en and lport &#x3D;&#x3D; portout);
+endsequence<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h5 id="match-operators-匹配操作符"><a href="#match-operators-匹配操作符" class="headerlink" title="match operators 匹配操作符"></a>match operators 匹配操作符</h5><pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">a within b : b事件发生的时间段内包含a事件发生的时间段
+c throughout a: 断定a事件成立的过程中，c事件一直成立
+firstmatch(a b c): 只要a成立，就不用判断后面的b、c了<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="disable-iff"><a href="#disable-iff" class="headerlink" title="disable iff"></a>disable iff</h5><p>在某些条件下，如果某个条件为真，我们不希望继续检查，可以通过 disable iff来实现。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">property p
+	@(posedge clk)
+    disbale iff (reset) a |-&gt; ##1 b[-&gt;3] ##1 c;
+endproperty<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="ended"><a href="#ended" class="headerlink" title="ended"></a>ended</h5><p>连接序列时，序列的重点可以作为同步点。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">sequence seq_1;
+ (a &amp;&amp; b) ##1 c;
+endsequence
+
+sequence seq_2;
+  d ##[4:6] e;
+endsequence
+
+property p;
+  @(posedge clk) seq_1.ended |-&gt; ##2 seq_2.ended;
+endpeoperty
+a: assert property(p);
+&#x2F;&#x2F; 检查seq1和seq2是否匹配，他们之间有两个周期的延迟。如果不使用ended，seq_2会从d是否为1开始检查。
+&#x2F;&#x2F; seq_1结束的时候，延迟两个周期后，seq2事件也结束。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="实现可变延迟"><a href="#实现可变延迟" class="headerlink" title="实现可变延迟"></a>实现可变延迟</h4><p>在断言时，使用##var会导致编译错误，在断言时使用变量是非法的。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">sequence delay_seq(v_delay);
+    int delay;
+    (1, delay &#x3D; v_delay) ##0 (delay &gt;&#x3D; 0, delay&#x3D;delay-1) [*0:$];
+endsequence
+or
+sequence delay_seq(v_delay);
+  int delay;
+  (1,delay&#x3D;v_delay) ##0 first_match((1,delay&#x3D;delay-1) [*0:$] ##0 delay &lt;&#x3D;0);
+endsequence
+&#x2F;&#x2F; first_match 目的是只匹配第一次，delay&lt;&#x3D;0的条件，即delay&#x3D;0;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="覆盖率"><a href="#覆盖率" class="headerlink" title="覆盖率"></a>覆盖率</h4><h5 id="代码覆盖率"><a href="#代码覆盖率" class="headerlink" title="代码覆盖率"></a>代码覆盖率</h5><ul>
+<li>衡量设计代码的执行程度</li>
+<li>包括行覆盖、FSM、条件覆盖、分支覆盖、翻转覆盖率；</li>
+<li>仿真工具自动从设计代码中提取代码覆盖率</li>
+</ul>
+<h5 id="功能覆盖率"><a href="#功能覆盖率" class="headerlink" title="功能覆盖率"></a>功能覆盖率</h5><ul>
+<li><p>衡量在验证中执行了多少设计规范。</p>
+</li>
+<li><p>面向数据的覆盖率：检查数据值的组合。通过编写覆盖组、覆盖点以及交叉覆盖 获取面向数据的覆盖率</p>
+</li>
+<li><p>面向控制的覆盖率：检查是否发生了一系列的行为。通过编写sv 断言获取断言覆盖率。</p>
+</li>
+</ul>
+<p>覆盖率模型用covergroup构造定义，与类类似，可以通过new创建多个实例。covergroup可以在模块、程序、接口或类中定义。</p>
+<ul>
+<li>可以包括同步覆盖点采样的时钟事件</li>
+<li>一组覆盖点</li>
+<li>覆盖点之间的交叉覆盖</li>
+<li>可选的形式参数</li>
+</ul>
+<p>模块验证阶段出口条件：功能覆盖率100%，行覆盖率100%，分支覆盖率100%，条件覆盖率95%，状态机覆盖率90%左右，并对没有覆盖的地方给出说明。</p>
+<p>系统验证及其子系统验证时，关心模块之间的接口</p>
+<p>覆盖率点：对一个信号或者变量出现的值的定义或分类。</p>
+<p>交叉覆盖率点：对多个相互关联的信号或者变量可能出现的值的正交叉值，可以是两个或者多个，但最好不超过三个。</p>
+<ul>
+<li>标签：用来表示覆盖率点</li>
+<li>变量：被采集的信号线，变量或者标签的交叉</li>
+<li>选项：覆盖率点的控制信息</li>
+<li>仓（容器）：分为自创建仓和自定义仓，交叉覆盖率点只能包含自创建仓。</li>
+<li>忽略容器：不关心的仓</li>
+<li>非法容器：不允许被击中的仓</li>
+</ul>
 
                 
             </div>
@@ -544,13 +1007,13 @@ import definitions:: *;
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2024/050742599.html">
+                <a href="/2024/052956001.html">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8d3c667ae60de6d3a4bc3c82dccf5f0.jpg" class="responsive-img" alt="Digital_VLSI_Design(Prof_Adam)">
+                        <img src="/medias/featureimages/8d3c667ae60de6d3a4bc3c82dccf5f0.jpg" class="responsive-img" alt="PTPX功耗分析">
                         
-                        <span class="card-title">Digital_VLSI_Design(Prof_Adam)</span>
+                        <span class="card-title">PTPX功耗分析</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -561,14 +1024,14 @@ import definitions:: *;
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2024-05-07
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-05-29
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" class="post-category">
-                                    读书笔记
+                            <a href="/categories/ASIC%E6%95%B0%E5%AD%97%E5%90%8E%E7%AB%AF%E6%B5%81%E7%A8%8B/" class="post-category">
+                                    ASIC数字后端流程
                                 </a>
                             
                             
@@ -578,8 +1041,8 @@ import definitions:: *;
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/asic-flow/">
-                        <span class="chip bg-color">asic flow</span>
+                    <a href="/tags/%E5%8A%9F%E8%80%97%E5%88%86%E6%9E%90/">
+                        <span class="chip bg-color">功耗分析</span>
                     </a>
                     
                 </div>
@@ -760,7 +1223,7 @@ import definitions:: *;
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">45k</span>
+                        class="white-color">72.1k</span>
             
             
             

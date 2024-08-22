@@ -1,0 +1,1300 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="SpyGalss, RayBiiao">
+    <meta name="description" content="SPYGLASS主要用于检查设计中的跨时钟域CDC问题，包含五大模块：lint，CDC（跨时钟域检查），LP（低功耗），Constraint（约束），DFT（可测性）。类似pt，属于静态验证工具，不需要编写testbench。
+Rule：s">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>SpyGalss | RayBiiao</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+
+
+    <!-- bg-cover style     -->
+
+
+
+<link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+<link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+<link rel="stylesheet" type="text/css" href="/css/matery.css">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<link rel="stylesheet" type="text/css" href="/css/dark.css" media="none" onload="if(media!='all')media='all'">
+
+
+
+
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+    <link rel="stylesheet" href="/css/post.css">
+
+
+
+
+    
+
+
+
+    <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">RayBiiao</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+  <li>
+    <a href="javascript:;" class="waves-effect waves-light" onclick="switchNightMode()" title="深色/浅色模式" >
+      <i id="sum-moon-icon" class="fas fa-sun" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">RayBiiao</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/a7a2a865ee49e6a3e0a1efc96dd23fb.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">SpyGalss</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/SpyGalss/">
+                                <span class="chip bg-color">SpyGalss</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E4%B8%AD%E7%AB%AF/" class="post-category">
+                                数字中端
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2023-11-24
+                </div>
+                
+
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    3.3k
+                </div>
+                
+
+                
+
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h3 id="SPYGLASS"><a href="#SPYGLASS" class="headerlink" title="SPYGLASS"></a>SPYGLASS</h3><p>主要用于检查设计中的跨时钟域CDC问题，包含五大模块：lint，CDC（跨时钟域检查），LP（低功耗），Constraint（约束），DFT（可测性）。类似pt，属于静态验证工具，不需要编写testbench。</p>
+<p>Rule：spyglass进行RTL分析的最小单位.<br>Goal：是一系列相关rule的集合，组合起来完成RTL的某个特定任务，user可以用guidewave定义好的goal，也可以自定义，可以指定规则的顺序。<br>Sub-Methodology：一系列Goal的集合，用以达成某方面特定目标。</p>
+<p>SGDC：Constraints文件，包含clock和reset等约束信息</p>
+<pre class="line-numbers language-sdc" data-language="sdc"><code class="language-sdc">current_design &quot;key_top&quot;
+clock -name clk -period 10 -edge 0 5
+reset -name rstn -value 0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>Waiver：用以过滤一些结果的文件</p>
+<p>CDC：检查异步信号有没有同步处理就使用，组合逻辑是否有毛刺。</p>
+<p>parameter：可以在进行RTL分析之前设定某些参数，对检查过程进行一些约束。</p>
+<ul>
+<li>Lint 中各个goal主要检查什么？</li>
+</ul>
+<p><img src="/2023/112431792/image-20231128002240109.png"></p>
+<ul>
+<li>Lint 检查时设置方法学，检查目标集合</li>
+</ul>
+<p><img src="/2023/112431792/image-20231128002527247.png"></p>
+<p>具体操作：</p>
+<ul>
+<li><p>按 ‘e’ 修改代码。</p>
+</li>
+<li><p>对于有问题的地方，比如锁存器，可以查看原理图。</p>
+</li>
+</ul>
+<p>spyglass会生成较多报告，其中常用的是<strong>moresimple.rpt</strong>，显示源文件中的错误。</p>
+<p>使用<strong>ifdef</strong>构造来启用固定代码，添加以下内容来启用宏，从而启用<strong>Fix_W415</strong>宏：</p>
+<blockquote>
+<p><strong>set_option define { Fix_W415 }</strong></p>
+<p>可以替换掉文件开头定义的&#96;define</p>
+</blockquote>
+<ul>
+<li><p>读入的文件</p>
+<ol>
+<li>设计文件：.v或者.sv</li>
+<li>约束文件：.sgdc</li>
+<li>HDL libraries：之前编译过的verilog库</li>
+</ol>
+</li>
+</ul>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token comment"># tcl 命令</span>
+read_file <span class="token operator">-</span>type verilog  xx.v
+read_file <span class="token operator">-</span>type sourcelist filelist.f
+read_file <span class="token operator">-</span>type sgdc xxx.sgdc
+<span class="token comment"># common settings</span>
+set_option top xxx
+set_option enableSV yes
+<span class="token comment"># SDC文件可以直接被spyglass读取，自动转换成SGDC，需要进行以下设置</span>
+set_option sdc2sgdc yes
+
+current_design xxx
+sdc_data <span class="token operator">-</span>file ssss_src.sdc
+
+<span class="token comment">#设置异步复位的值</span>
+reset <span class="token operator">-</span>name <span class="token string">"xxx.xx.Z"</span> <span class="token operator">-</span>async <span class="token operator">-</span>value 0
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>约束文件 .sgdc</li>
+</ul>
+<p>​	包括clock，reset，set_case_analysis( -name -value)<br>  <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token operator">/</span><span class="token operator">/</span>指定模块顶层
+current_design training 
+<span class="token operator">/</span><span class="token operator">/</span>约束时钟, 模块顶层所有的时钟都要约束
+<span class="token keyword">clock</span> <span class="token operator">-</span>name CLKA <span class="token operator">-</span>period 10 <span class="token operator">-</span>edge <span class="token punctuation">&#123;</span>0 5<span class="token punctuation">&#125;</span>
+<span class="token keyword">clock</span> <span class="token operator">-</span>name CLKB <span class="token operator">-</span>period 100 <span class="token operator">-</span>edge <span class="token punctuation">&#123;</span>0 50<span class="token punctuation">&#125;</span>
+<span class="token operator">/</span><span class="token operator">/</span>约束复位
+reset <span class="token operator">-</span>name reset_a <span class="token operator">-</span>value 0
+reset <span class="token operator">-</span>name reset_b <span class="token operator">-</span>value 0
+<span class="token operator">/</span><span class="token operator">/</span>约束输入端口
+input <span class="token operator">-</span>name <span class="token punctuation">&#123;</span>in_a in_b reset_a<span class="token punctuation">&#125;</span> <span class="token operator">-</span>clock CLKA
+input <span class="token operator">-</span>name <span class="token punctuation">&#123;</span>resetn_b<span class="token punctuation">&#125;</span> <span class="token operator">-</span>clock CLKB
+<span class="token operator">/</span><span class="token operator">/</span>约束输出端口
+output <span class="token operator">-</span>name <span class="token punctuation">&#123;</span>dout<span class="token punctuation">&#125;</span> <span class="token operator">-</span>clock CLKB
+<span class="token operator">/</span><span class="token operator">/</span>如果有SDC约束文件
+sdc_data <span class="token operator">-</span>file ..<span class="token operator">/</span>my_file.sdc<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<ul>
+<li>文件不同颜色标识	<ul>
+<li>绿色代表该模块可分析，但是不可综合</li>
+<li>黑色表示作为黑盒子存在</li>
+<li>白色代表可分析，可综合</li>
+</ul>
+</li>
+</ul>
+<p>手动添加waiver放弃对一些电路的检查。</p>
+<h6 id="生成报告"><a href="#生成报告" class="headerlink" title="生成报告"></a>生成报告</h6><pre class="line-numbers language-none"><code class="language-none">write_aggregate_report datasheet 
+write_aggregate_report dashboard<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_21842097/article/details/122538986?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2~default~CTRLIST~Rate-1-122538986-blog-122534341.235%5Ev38%5Epc_relevant_sort_base3&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2~default~CTRLIST~Rate-1-122538986-blog-122534341.235%5Ev38%5Epc_relevant_sort_base3&utm_relevant_index=1">https://blog.csdn.net/qq_21842097/article/details/122538986?spm=1001.2101.3001.6661.1&amp;utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-122538986-blog-122534341.235%5Ev38%5Epc_relevant_sort_base3&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-122538986-blog-122534341.235%5Ev38%5Epc_relevant_sort_base3&amp;utm_relevant_index=1</a></p>
+<ul>
+<li><p>时钟和复位</p>
+<p><strong>cdc_setup中的rules</strong>：<strong>clock_info1, reset_info1, setup_clock01</strong></p>
+<ul>
+<li><p>clock_info1</p>
+<p>Primary Clocks: 普通输入时钟<br>Black box clocks：黑盒或工艺库单元输出的时钟<br>Derived：寄存器或工艺库单元输出的时钟<br>Undrived Clocks：悬空的线或者门控锁存器输出的时钟<br>Gated clocks：组合逻辑输出的时钟</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">top</span><span class="token punctuation">(</span>
+	<span class="token keyword">input</span> 		 clk1<span class="token punctuation">,</span>
+	<span class="token keyword">input</span> 		 rstn<span class="token punctuation">,</span>
+	<span class="token keyword">input</span>  <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> d<span class="token punctuation">,</span>
+    <span class="token keyword">output</span> <span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> q
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">wire</span> clk3<span class="token punctuation">,</span> clk4<span class="token punctuation">;</span>
+<span class="token keyword">reg</span> clk2<span class="token punctuation">;</span>
+<span class="token function">BB</span><span class="token punctuation">(</span>clk1<span class="token punctuation">,</span> clk3<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk1 <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span>
+	<span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rstn<span class="token punctuation">)</span> clk2 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	<span class="token keyword">else</span> clk2 <span class="token operator">&lt;=</span> <span class="token operator">~</span>clk2<span class="token punctuation">;</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk4 <span class="token keyword">or</span> <span class="token keyword">negedge</span> rstn<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+<span class="token keyword">end</span>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>clk1是primary clock，clk2是Derived clock，clk3是Black box clocks，clk4是Undrived Clocks</p>
+</li>
+<li><p>Reset_info1</p>
+<table>
+<thead>
+<tr>
+<th>普通复位</th>
+<th>Primary Presets&#x2F;Clears</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>黑盒（blackbox）或工艺库单元产生的复位</td>
+<td>Black box Presets&#x2F;Clears</td>
+</tr>
+<tr>
+<td>寄存器产生的复位</td>
+<td>Derived Presets&#x2F;Clears</td>
+</tr>
+<tr>
+<td>悬空的线产生的复位</td>
+<td>Undrived Presets&#x2F;Clears</td>
+</tr>
+<tr>
+<td>锁存器，三态器件产生的复位</td>
+<td>Gated Presets&#x2F;Clears</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>Setup_clock01</p>
+<p>报告时钟源，时钟使能信号和clock cone<br>设计中多个输入时钟通过选择器后只输出一个时钟，输出的时钟称为clock cone。</p>
+<img src="/2023/112431792/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pob25nX2V0aGFu,size_16,color_FFFFFF,t_70.png" alt style="zoom:50%;"></li>
+</ul>
+</li>
+<li><p>CDC_setup_check</p>
+<p><strong>clock_info03a，clock_info05a&#x2F;b， clock_info18</strong></p>
+<ul>
+<li><p>clock_info03a  报告设计中未被约束的时钟引脚。</p>
+<ol>
+<li>时钟经过组合逻辑被disabled，门控时钟 <img src="/2023/112431792/290753-20220707153610355-1659264831.png" alt style="zoom:67%;"></li>
+<li>约束文件中没有约束时钟引脚，且use_inferred_clocks参数被设置为No<img src="/2023/112431792/290753-20220707153634456-628658853.png" alt style="zoom: 67%;"></li>
+<li>时钟路径上有Blackbox，且Blackbox输出的时钟没有约束<img src="/2023/112431792/290753-20220707153647566-2088386241.png" alt style="zoom:67%;"></li>
+<li>时钟在设计中没有传输，断头时钟。<img src="/2023/112431792/290753-20220707153659862-637731003.png" alt styl="zoom:67%;"></li>
+</ol>
+</li>
+<li><p>clock_info05a&#x2F;b</p>
+<p>在设计如果有clock的mux选择输出，需要指定set_case_analysis命令来约束。</p>
+<pre class="line-numbers language-none"><code class="language-none">input ports: clk1, clk2
+  output port: clkout
+  enable port: in1
+  assign clkout &#x3D; in1 ? clk1 : clk2;
+  在sgdc文件中：
+  current_design test
+  clock -name clk1 
+  clock -name clk2
+  这样报违例。需要进行下面的配置
+  set_case_analysis -name in1 -value 0<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+</li>
+<li><p>clock_info18</p>
+<p>报告设计中未约束的引脚<br>sgdc中一定要约束所有的输入、输出引脚，时钟引脚以及BLACKBOX的引脚。</p>
+<p>包括：input，output，clock，reset，set_case_analysis，abstract_port</p>
+</li>
+</ul>
+</li>
+<li><p>CDC_verify_struct</p>
+<p>​	主要检查设计中是否有 未同步的信号，是否有毛刺。</p>
+<ul>
+<li><p><strong>AC_unsync01&#x2F;02</strong></p>
+<p>如果源寄存器是控制信号，检查信号是否通过一个有效同步器。<br>如果源寄存器是数据信号，检查是否使用异步fifo或握手信号。</p>
+</li>
+<li><p><strong>AC_SYNC01&#x2F;02</strong></p>
+<p>报告设计中已经同步的信号，这项规则只会报告信息，不会报告违例。</p>
+</li>
+<li><p><strong>AC_conv01&#x2F;02&#x2F;03</strong></p>
+<p>报告设计中的聚合问题，可能引起数据不一致性，即同步前后数据不一致。</p>
+<p>AC_conv01报告信号经过同步器+寄存器后的聚合违例。</p>
+</li>
+</ul>
+</li>
+</ul>
+<img src="/2023/112431792/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pob25nX2V0aGFu,size_16,color_FFFFFF,t_70-1706510260564-11.png" alt style="zoom:67%;">
+
+<p>​	多bit信号，在同步后经过不同数量的寄存器，最终在一个逻辑门聚合。在源寄存器端发送的是00-&gt;11，在目的寄存器聚合的输入端的结果是00-&gt;10-&gt;11，导致和源寄存器端发送的结果不一致（数据一致性问题）。但是如果是单bit的数据变化，就不会有这种问题。<br>​		<img src="/2023/112431792/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pob25nX2V0aGFu,size_16,color_FFFFFF,t_70-1706524314470-14.png" alt style="zoom: 67%;"></p>
+<p>​	上图所描述的问题也是一样的。</p>
+<p>​		<img src="/2023/112431792/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pob25nX2V0aGFu,size_16,color_FFFFFF,t_70-1706524438604-17.png" alt style="zoom:67%;"><br>​	这种情况下没有违例，两个信号由同一个控制信号控制。如果报出违例，检查设置确实没有问题，可以设置cdc_false_path命令约束。</p>
+<p>​	AC_conv02规则报告信号经过同步器后违例，且聚合后又通过了寄存器。</p>
+<p>​	<img src="/2023/112431792/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pob25nX2V0aGFu,size_16,color_FFFFFF,t_70-1706525364578-20.png" alt style="zoom:67%;"><br>​	这种方式和上面的conv01不同，上面的聚合发生在寄存器后，而这种方式聚合发生在同步后，同样会出现数据一致性问题。（多bit数据同步，不能采用单bit打两拍的方式）。<strong>解决办法：如果是计数器，可以将多bit数据转成格雷码，在发送端打一拍，然后再传递出去。</strong></p>
+<p>​	报告同一个信号经过多条同步路径后，又聚合的问题。类似于多比特数据的同步问题。</p>
+<img src="/2023/112431792/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pob25nX2V0aGFu,size_16,color_FFFFFF,t_70-1706525889668-23.png" alt style="zoom:67%;">
+
+<p>​	AC_conv03规则检查不同时钟域信号，经过同一个时钟域同步后的聚合问题。</p>
+<p><img src="/2023/112431792/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pob25nX2V0aGFu,size_16,color_FFFFFF,t_70-1706526000058-26.png"></p>
+<p>​	AC_glitch03 报告设计中的毛刺。</p>
+<ul>
+<li><strong>Clock_sync05&#x2F;06</strong></li>
+</ul>
+<p>​	Clock_sync05报告输入信号被多个不同的时钟域寄存器采样。</p>
+<p>​	<img src="/2023/112431792/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pob25nX2V0aGFu,size_16,color_FFFFFF,t_70-1706527099731-29.png" alt style="zoom: 80%;"></p>
+<p>​	Clock_syn06报告输出信号由多个时钟域信号组合而成。<br><img src="/2023/112431792/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3pob25nX2V0aGFu,size_16,color_FFFFFF,t_70-1706527140384-32.png"></p>
+<p>​	<strong>如果确保设计没有问题，可以使用set_case_analysis命令加强对输入信号的约束</strong></p>
+<p><strong>AC_cdc01a AC_cdcdatahold1a AC_conv02&#x2F;04&#x2F;05 AC_fifo01 AC_handshake01&#x2F;02</strong></p>
+<p>检查CDC_verify(functional cdc checks)：数据完整性、格雷码编码、FIFO上溢或下溢和握手协议。</p>
+<p>AC_cdc01a<br>    检查快时钟到慢时钟同步数据传输是否丢失。</p>
+<img src="/2023/112431792/290753-20220707155308615-135013952.png" alt style="zoom:80%;">
+
+<p>​	如果快时钟域的信号只维持一个周期，慢时钟域很容易采不到。快时钟域的信号变化至少维持慢时钟域的1.5个周期不变。</p>
+<p><img src="/2023/112431792/290753-20220707155318653-96027376.png"></p>
+<p>AC_datahold01a 检查多bit数据被另一个时钟域采样时是否稳定，与上面的cdc_01a检查单bit类似.FIFO、握手、门控同步模块都不会被检查。</p>
+<p>AC_conv02&#x2F;04&#x2F;05 检查跨时钟传输过程中没有聚合，也没有格雷码编码的多比特控制信号。<br>检查是否使用格雷码编码</p>
+<p><img src="/2023/112431792/290753-20220707155437109-1964738978.png"></p>
+<p>检查不同bit信号是否使用不同的同步方式，src_bus[0]采用多级同步器方式同步，src_bus[1]采用同步控制信号方式</p>
+<p><img src="/2023/112431792/290753-20220707155449430-751485405.png"></p>
+<p>检查不同bit信号是否使用同一个同步控制信号，src_bus[0]与src_bus[1]采用不同的同步控制信号</p>
+<p><img src="/2023/112431792/290753-20220707155459981-1844018659.png"></p>
+<p>AC_fifo01：检查fifo是否上溢或者下溢</p>
+<p>AC_handshake01&#x2F;02: </p>
+<p>01检查req-&gt;ack信号是否满足四相握手协议。REQ拉高-&gt;ACK拉高-&gt;REQ拉低-&gt;ACK拉低。valid&#x3D;》REQ，ready&#x3D;》ACK</p>
+<p><img src="/2023/112431792/290753-20220707155544879-178987688.png"></p>
+<p>02检查是否会有数据丢失 </p>
+<h3 id="项目中出现的问题"><a href="#项目中出现的问题" class="headerlink" title="项目中出现的问题"></a>项目中出现的问题</h3><h4 id="LINT检查误报生成锁存器"><a href="#LINT检查误报生成锁存器" class="headerlink" title="LINT检查误报生成锁存器"></a>LINT检查误报生成锁存器</h4><p>code如下</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        <span class="token function">for</span><span class="token punctuation">(</span>i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>i<span class="token operator">&lt;</span>W_LORA_MEM<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">;</span>i<span class="token operator">=</span>i<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span>
+            Avg_Mem_c_sum<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> 
+    <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>save_avg_data_en<span class="token punctuation">)</span> <span class="token keyword">begin</span> 
+        <span class="token function">if</span><span class="token punctuation">(</span>up_endpoint_en<span class="token punctuation">)</span>
+            Avg_Mem_c_sum<span class="token punctuation">[</span>save_data_counter<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> c_sum <span class="token operator">+</span> Mem<span class="token punctuation">[</span>acc_cnt<span class="token punctuation">]</span><span class="token punctuation">;</span> 
+        <span class="token keyword">else</span> 
+            Avg_Mem_c_sum<span class="token punctuation">[</span>save_data_counter<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> c_sum<span class="token punctuation">;</span> 
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/2023/112431792/image-20240325162129005.png" alt="image-20240325162129005"></p>
+<p>通过代码看出，Avg_Mem_c_sum[0]不会生成锁存器，但是报出来会生成。因此写出完整的代码如下，就可以解决这个问题。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+        <span class="token function">for</span><span class="token punctuation">(</span>i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>i<span class="token operator">&lt;</span>W_LORA_MEM<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">;</span>i<span class="token operator">=</span>i<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span>
+            Avg_Mem_c_sum<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> 
+    <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>save_avg_data_en<span class="token punctuation">)</span> <span class="token keyword">begin</span> 
+        <span class="token function">if</span><span class="token punctuation">(</span>up_endpoint_en<span class="token punctuation">)</span>
+            Avg_Mem_c_sum<span class="token punctuation">[</span>save_data_counter<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> c_sum <span class="token operator">+</span> Mem<span class="token punctuation">[</span>acc_cnt<span class="token punctuation">]</span><span class="token punctuation">;</span> 
+        <span class="token keyword">else</span> 
+            Avg_Mem_c_sum<span class="token punctuation">[</span>save_data_counter<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">&lt;=</span> c_sum<span class="token punctuation">;</span> 
+    <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+        <span class="token function">for</span><span class="token punctuation">(</span>i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>i<span class="token operator">&lt;</span>W_LORA_MEM<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">;</span>i<span class="token operator">=</span>i<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span>
+            Avg_Mem_c_sum<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">&lt;=</span> Avg_Mem_c_sum<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span> 
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="违例：异步复位信号作为其他寄存器的同步处理"><a href="#违例：异步复位信号作为其他寄存器的同步处理" class="headerlink" title="违例：异步复位信号作为其他寄存器的同步处理"></a>违例：异步复位信号作为其他寄存器的同步处理</h4><p>nrst一般只作为异步复位信号，如果nrst作为其他寄存器的同步信号，就会报违例。</p>
+<p>当异步复位&#x2F;置位信号作为非复位或者同步复位时，报告违例。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	<span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+		out1 <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	<span class="token keyword">else</span> 
+		out1 <span class="token operator">&lt;=</span> in<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	out2 <span class="token operator">&lt;=</span> nrst<span class="token punctuation">;</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>其中，nrst本身是异步复位信号，但nrst作为了out2寄存器的输入信号，相当于跨时钟域的信号，直接接入到同步电路中，并没有经过降低亚稳态的处理，所以静态时序分析很困难。</p>
+<p>如果同步复位和异步复位混用，同样会报该违例。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span>posedeg clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	<span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span>
+		out <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	<span class="token keyword">else</span>
+		out <span class="token operator">&lt;=</span> in<span class="token punctuation">;</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>生成的类似电路图如下，异步复位参与了同步信号运算作为输入给到寄存器。nrst需要满足setup和recovery时间</p>
+<img src="/2023/112431792/image-20240325235809883.png" alt="image-20240325235809883" style="zoom: 33%;">
+
+<p>在带有使能功能的RTL设计中，如果在敏感列表中引入了negedge nrst，在always里面没有进行复位，此时，nrst会作为参与同步使能信号（做与运算）进行综合电路。</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span>posedeg clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+	<span class="token function">if</span><span class="token punctuation">(</span>load_en<span class="token punctuation">)</span>
+		out <span class="token operator">&lt;=</span> in<span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token comment">// 报错，无法推断哪个是时钟信号。有两个时钟信号控制输出。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>nrst<span class="token punctuation">)</span> <span class="token keyword">begin</span>
+    <span class="token keyword">end</span> <span class="token keyword">else</span> <span class="token keyword">begin</span>
+		out1 <span class="token operator">&lt;=</span> in1<span class="token punctuation">;</span>
+    <span class="token keyword">end</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果nrst信号忘记写，nrst会被当做同步使能信号。该代码综合出来的结果如下图所示。</p>
+<p><img src="/2023/112431792/image-20240326003348858.png" alt="image-20240326003348858"></p>
+<p>tips：在设计中，一般只使用一种复位方案，同步或者异步复位。混合使用这两种方案可能会导致系统部分复位，并且可能不符合 SoC 的设计意图。此外，可能会对 STA 产生影响，对于异步重置，需要满足恢复时间（取消断言）。对于同步复位，需要满足setup建立时间。</p>
+<p>敏感列表中的信号，在always块中必须有作用才行，否则不知道时序电路的时钟信号是哪个。</p>
+<h4 id="违例：同步FIFO中有组合逻辑环"><a href="#违例：同步FIFO中有组合逻辑环" class="headerlink" title="违例：同步FIFO中有组合逻辑环"></a>违例：同步FIFO中有组合逻辑环</h4><pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>  <span class="token comment">// comb logic</span>
+  <span class="token function">if</span><span class="token punctuation">(</span>rd_en <span class="token operator">&amp;</span> <span class="token operator">!</span>fifo_empty<span class="token punctuation">)</span>
+    rd_data <span class="token operator">=</span> ram<span class="token punctuation">[</span>rd_ptr<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span>
+    rd_data <span class="token operator">=</span> <span class="token number">'h0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span>
+<span class="token comment">// 在FIFO输出rdata时，需要组合逻辑输出。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>按照上面的逻辑，rdata输出和rd_en有关，rd_en是输入的控制信号，如果rdata影响rd_en，rd_en也会影响rdata，两者形成了组合逻辑环。在spyglass中会报错。（取决于rden和rdata是否有组合逻辑的关联，在AXI4交叉矩阵设计的项目中确实存在组合逻辑的关联）</p>
+<p>在spyglass检查组合逻辑环是静态检查，如果是下面的代码</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>  <span class="token comment">// comb logic</span>
+  <span class="token function">if</span><span class="token punctuation">(</span>rd_en <span class="token operator">&amp;</span> <span class="token operator">!</span>fifo_empty<span class="token punctuation">)</span>
+    rd_data <span class="token operator">=</span> ram<span class="token punctuation">[</span>rd_ptr<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span>
+    rd_data <span class="token operator">=</span> ram<span class="token punctuation">[</span>rd_ptr<span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>无论rd_en为1还是0，rdata输出都是一样的，rd_ptr也是时序逻辑输出，所以并不存在组合逻辑环的情况。但是spyglass会报出组合逻辑环的违例。这是因为rdata影响了rd_en，rd_en会影响rdata。rdata的输出是取决于rd_en的，但是rdata无论是1还是0，输出一样，spyglass并不会检查输出值是否一样，而是检测是否存在分支，只要有分支，就存在组合逻辑环的潜在危险。</p>
+<p>正确逻辑的代码如下</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token important">always @</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">begin</span>  <span class="token comment">// comb logic</span>
+  <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>fifo_empty<span class="token punctuation">)</span>
+    rd_data <span class="token operator">=</span> ram<span class="token punctuation">[</span>rd_ptr<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">else</span>
+    rd_data <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">end</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>将rdata输出与rd_en解耦，不让他存在回环的可能性。且rdata的输出只与时序逻辑有关，fifo_empty是取决于时序逻辑cnt和rd_ptr的。</p>
+<p><strong>总结：spyglass报出组合逻辑环违例，并不会真正的发生组合逻辑回环。但是代码一定有问题，需要自己斟酌。</strong></p>
+<h5 id="组合逻辑环verilog-bug"><a href="#组合逻辑环verilog-bug" class="headerlink" title="组合逻辑环verilog bug"></a>组合逻辑环verilog bug</h5><p>参考网上博客 <a target="_blank" rel="noopener" href="https://blog.csdn.net/kuan__/article/details/138872121">https://blog.csdn.net/kuan__/article/details/138872121</a></p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog"><span class="token keyword">module</span> <span class="token function">test</span><span class="token punctuation">(</span>
+	<span class="token keyword">input</span> b<span class="token punctuation">;</span>
+	<span class="token keyword">output</span> a0<span class="token punctuation">;</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> a  <span class="token operator">=</span> <span class="token operator">!</span>b <span class="token operator">?</span> a0 <span class="token punctuation">:</span> <span class="token number">1'b1</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> a0 <span class="token operator">=</span> <span class="token operator">!</span>b <span class="token operator">?</span> <span class="token number">1'b0</span> <span class="token punctuation">:</span> a<span class="token punctuation">;</span>
+<span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>按照逻辑来说，b无论是0还是1，a0都是确定的，且没有组合逻辑环。但是如果b给到a和a0的mux有延迟。就可能存在组合逻辑环。</p>
+<img src="/2023/112431792/59b0aca63ec84c72ad065f91f39a7e89.png" alt="请添加图片描述" style="zoom: 50%;">
+
+<p>从上面的代码也可以看出，a0和a之间存在组合逻辑环的潜在危险。a0和a有关，a和a0有关。</p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">刘瑞彪</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://xiaoliu6688.github.io/2023/112431792.html">https://xiaoliu6688.github.io/2023/112431792.html</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">刘瑞彪</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/SpyGalss/">
+                                    <span class="chip bg-color">SpyGalss</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2023/112521332.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/5da179248997183ce078c58d12a330e.jpg" class="responsive-img" alt="vim/vscode配置和操作">
+                        
+                        <span class="card-title">vim/vscode配置和操作</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-11-25
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Linux%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-category">
+                                    Linux基础知识
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Vim-Vscode/">
+                        <span class="chip bg-color">Vim Vscode</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2023/112317390.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/d8d309c39151faf05cdb2f4f06976a6.jpg" class="responsive-img" alt="add delay to verilog models">
+                        
+                        <span class="card-title">add delay to verilog models</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            verilog中常用的延迟建模方法
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-11-23
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/RTL%E4%BB%BF%E7%9C%9F/" class="post-category">
+                                    RTL仿真
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/RTL%E5%BB%B6%E8%BF%9F%E5%BB%BA%E6%A8%A1%E6%96%B9%E6%B3%95/">
+                        <span class="chip bg-color">RTL延迟建模方法</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'PRE' || selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: RayBiiao<br />'
+            + '文章作者: 刘瑞彪<br />'
+            + '文章链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+
+    <div class="container row center-align"
+         style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2023-2024</span>
+            
+            <a href="/about" target="_blank">刘瑞彪</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            
+            <br>
+            
+                &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                        class="white-color">72.1k</span>
+            
+            
+            
+                
+            
+            
+                <span id="busuanzi_container_site_pv">
+                &nbsp;|&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;
+                    <span id="busuanzi_value_site_pv" class="white-color"></span>
+            </span>
+            
+            
+                <span id="busuanzi_container_site_uv">
+                &nbsp;|&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;
+                    <span id="busuanzi_value_site_uv" class="white-color"></span>
+            </span>
+            
+            <br>
+
+            <!-- 运行天数提醒. -->
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=1603386505" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 1603386505" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 白天和黑夜主题 -->
+<div class="stars-con">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>  
+</div>
+
+<script>
+    function switchNightMode() {
+        $('<div class="Cuteen_DarkSky"><div class="Cuteen_DarkPlanet"></div></div>').appendTo($('body')),
+        setTimeout(function () {
+            $('body').hasClass('DarkMode') 
+            ? ($('body').removeClass('DarkMode'), localStorage.setItem('isDark', '0'), $('#sum-moon-icon').removeClass("fa-sun").addClass('fa-moon')) 
+            : ($('body').addClass('DarkMode'), localStorage.setItem('isDark', '1'), $('#sum-moon-icon').addClass("fa-sun").removeClass('fa-moon')),
+            
+            setTimeout(function () {
+            $('.Cuteen_DarkSky').fadeOut(1e3, function () {
+                $(this).remove()
+            })
+            }, 2e3)
+        })
+    }
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    
+
+    
+    
+    
+
+    <!-- 雪花特效 -->
+    
+
+    <!-- 鼠标星星特效 -->
+     
+        <script type="text/javascript">
+            // 只在桌面版网页启用特效
+            var windowWidth = $(window).width();
+            if (windowWidth > 768) {
+                document.write('<script type="text/javascript" src="/libs/others/star.js"><\/script>');
+            }
+        </script>
+    
+
+     
+        <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
+        <script src="/libs/others/TencentCaptcha.js"></script>
+        <button id="TencentCaptcha" data-appid="xxxxxxxxxx" data-cbfn="callback" type="button" hidden></button>
+    
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>

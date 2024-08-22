@@ -1,0 +1,1115 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="AXI协议, RayBiiao">
+    <meta name="description" content="乱序ID给定ID事务的所有transfer需要进行排序，而不同ID事务的transfer没有顺序限制。
+同一个事务的AWID、WID和BID是一样的，ARID和RID是一样的。
+不同的transition可以有相同的ID，在执行时必须顺序返">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>AXI协议 | RayBiiao</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+
+
+    <!-- bg-cover style     -->
+
+
+
+<link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+<link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+<link rel="stylesheet" type="text/css" href="/css/matery.css">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<link rel="stylesheet" type="text/css" href="/css/dark.css" media="none" onload="if(media!='all')media='all'">
+
+
+
+
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+    <link rel="stylesheet" href="/css/post.css">
+
+
+
+
+    
+
+
+
+    <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
+
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">RayBiiao</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+  <li>
+    <a href="javascript:;" class="waves-effect waves-light" onclick="switchNightMode()" title="深色/浅色模式" >
+      <i id="sum-moon-icon" class="fas fa-sun" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">RayBiiao</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/3daf5ad37ddef9d12d8f0743a163c5d.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">AXI协议</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/%E6%80%BB%E7%BA%BF%E5%8D%8F%E8%AE%AE/">
+                                <span class="chip bg-color">总线协议</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                数字前端
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2024-02-07
+                </div>
+                
+
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    4k
+                </div>
+                
+
+                
+
+                
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h4 id="乱序ID"><a href="#乱序ID" class="headerlink" title="乱序ID"></a>乱序ID</h4><p>给定ID事务的所有transfer需要进行排序，而不同ID事务的transfer没有顺序限制。</p>
+<p>同一个事务的AWID、WID和BID是一样的，ARID和RID是一样的。</p>
+<p>不同的transition可以有相同的ID，在执行时必须顺序返回。</p>
+<h3 id="AXI协议"><a href="#AXI协议" class="headerlink" title="AXI协议"></a>AXI协议</h3><h4 id="AXI3和AXI4的区别"><a href="#AXI3和AXI4的区别" class="headerlink" title="AXI3和AXI4的区别"></a>AXI3和AXI4的区别</h4><h5 id="1-Burst"><a href="#1-Burst" class="headerlink" title="1. Burst"></a>1. Burst</h5><p>AXI4对burst length进行了扩展<br>AXI4支持最大256 beats，AxLEN位宽为8；AXI3最大支持burst 16 beats，AxLEN位宽为4；</p>
+<p>只有INCR burst类型，才支持burst 超过16 beats</p>
+<p><img src="/2024/02077053/image-20240207000854573.png"></p>
+<p>实际使用中，很少使用burst超过16 beats的操作，因为长时间占用总线会影响系统性能。而且burst 一旦开始，无法停止。</p>
+<p>axi4协议规定 一次burst，最多传输256笔数据。</p>
+<p>fixed 向固定地址写入数据，适用于向FIFO写入数据，</p>
+<p>incr：block memory传输</p>
+<p>wrap：cacheline，一般cacheline大小为8*8bytes，DRAM数据总线是64bit(8bytes)，burst len为7；</p>
+<h5 id="2-Write-interleaving"><a href="#2-Write-interleaving" class="headerlink" title="2. Write interleaving"></a>2. Write interleaving</h5><p>Q：WID取消了，为啥还有AWID？</p>
+<p>AXI4去掉了WID，不再支持写交织（write interleaving）。<br>这就限制了写入的数据必须和写入的地址顺序相同且连续。不同write burst的beat不可以相互交织。</p>
+<p>原因：发送端必须要缓存多个ID的wdata，不管是maser还是总线interconnection都必须要增加大量的缓存，所以增加了面积；另外，Write interleaving增加了系统总线设计的复杂度，而且很容易造成死锁。</p>
+<p>WID是为了写交织的，因为AXI4规定所有写数据都要顺序发送，AWID是针对多个transition，支持乱序。</p>
+<h5 id="3-Write-response-dependencies"><a href="#3-Write-response-dependencies" class="headerlink" title="3. Write response dependencies"></a>3. Write response dependencies</h5><p>修改了BVALID拉高的要求</p>
+<p>AXI3握手依赖</p>
+<p><img src="/2024/02077053/v2-0160a446a10236e56609b0bc7fcc541e_1440w.png"></p>
+<p>AXI3必须等到了WVALID和WREADY后才能把BVALID置高来响应，也就是说只要收到了所有数据，SLAVE就可以发写响应。</p>
+<p>AXI4握手依赖</p>
+<p><img src="/2024/02077053/v2-12a2457485825157ceaaa25f358b7ae7_1440w.png"></p>
+<p>​	AXI4规定，必须等到AWVALID,AWREADY,WVALID, WREADY, and WLAST 都为高(不是同一时刻都为高)后，SLAVE才能发BVALID进行写响应。也就是不仅仅要等数据通道握手，而且要等地址通道握手，并且明确了要等WLAST。这样能保证响应的时候Transaction是真正完成的。</p>
+<p><img src="/2024/02077053/image-20240720001925305.png" alt="image-20240720001925305"></p>
+<p>针对AXI4协议，不支持写交织，所以在master一侧，必须按照写地址的顺序进行写数据的传输，且在master一侧不可以进行写交织，因为没有WID。如果是AXI3协议，是可以支持写交织的。</p>
+<p><img src="/2024/02077053/82a7e18995b611b1ca1956e10247545.png" alt="82a7e18995b611b1ca1956e10247545"></p>
+<h5 id="4-Locked-transactions-原子访问"><a href="#4-Locked-transactions-原子访问" class="headerlink" title="4. Locked transactions   原子访问"></a>4. Locked transactions   原子访问</h5><p>​	AXI4去掉了locked 传输。AxLOCK缩为2bit，AxLock选择是否进行独占访问，BRESP和RRESP信号表示独占访问的成功或失败。slave必须提供额外的逻辑来支持独占访问。</p>
+<img src="/2024/02077053/v2-52896f5fa4a0dfe4c2c6a4a4645664a9_1440w.png" alt style="zoom:67%;">
+
+<p>​	Locked access作用的对象是总线，一旦发生Locked access，那么其他的master都不能使用总线了，在一个复杂的SOC系统中，Locked access对系统的影响就太大了，万一发生Locked access的master出点啥问题，整个系统就挂死了。</p>
+<p>​	Exclusive access 作用的对象是对应的Slave，支持Exclusive access的Slave会在slave中实现一个Exclusive access monitor，如果monitor记录了能够访问的master，那么对应的master就能通过Exclusive access来访问，其他的未记录的Exclusive access就都不能访问。Exclusive access对总线系统是没有要求的，只是对slave做了特殊要求，即使出错也不会影响系统其他部分，最多访问失败而已。独占访问机制不需要将总线保持锁定在特定的master，不影响其他master访问总线。</p>
+<h5 id="独占访问的过程"><a href="#独占访问的过程" class="headerlink" title="独占访问的过程"></a>独占访问的过程</h5><ol>
+<li><p>主机对slave的一个地址进行独占读操作，从机记录该事务的arid和地址。</p>
+</li>
+<li><p>一段时间后，对相同地址进行独占写来完成独占操作。</p>
+</li>
+<li><p>如果在读取和写入访问之间没有其他master写入该位置，则独占访问成功。<br>如果另外一个master在读写访问之间对该地址进行了写操作，</p>
+<p>slave将awid和arid进行比较，如果一致，说明该地址没有被其他主机访问，返回EXOKAY，否则返回OKAY，独占访问失败。</p>
+</li>
+</ol>
+<p>独占读添加一个slave的表项，独占写查表判断是否hit，hit返回exokay，否则返回okay。</p>
+<h6 id="master视角下的独占访问"><a href="#master视角下的独占访问" class="headerlink" title="master视角下的独占访问"></a>master视角下的独占访问</h6><p>master通过执行独占读来启动独占操作，通常会从salve返回exokay响应，表明slave记录了要监视的地址。</p>
+<p>如果master尝试从不支持独占访问的slave进行独占读取，则salve返回okay而不是exokay响应，master可以视为不支持独占访问的错误条件，建议master不要再发出独占写操作。</p>
+<p>在独占读操作完成之前，master不得开始独占写操作。</p>
+<h6 id="slave视角下的独占访问"><a href="#slave视角下的独占访问" class="headerlink" title="slave视角下的独占访问"></a>slave视角下的独占访问</h6><p>支持独占访问的slave必须具有监视器硬件，需要为每个master ID设置一个监视单元。单端口的slave可以在外部设置一个标准的独占访问监视器，多端口的salve可能需要内部监视。</p>
+<p>独占监视器巨鹿任何独占读操作的地址和ARID值，并监视该位置，直到该位置被执行写入操作，或者一个具有相同ARID值的独占读取将监视器的地址替换。</p>
+<p>监视器会监视AWID和AWADDR是否和监视器中的记录一致，一致返回EXOKAY，否则OKAY</p>
+<h6 id="独占访问的限制"><a href="#独占访问的限制" class="headerlink" title="独占访问的限制"></a>独占访问的限制</h6><ul>
+<li>独占访问的任务，读和写的ID、大小和长度等控制信号必须一致。</li>
+<li>地址必须和传输字节数对齐。</li>
+<li>独占访问的突发长度不能超过16 transfer。</li>
+</ul>
+<p>对于不支持独占访问的从设备，独占写总是会更新内存。对于不支持独占访问的从设备，只有在独占写成功时，才会更新内存。</p>
+<h5 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h5><h4 id="大小端问题"><a href="#大小端问题" class="headerlink" title="大小端问题"></a>大小端问题</h4><p>小端对齐：低字节在低地址；<br>大端对齐：低字节在高地址；</p>
+<p><img src="/2024/02077053/image-20240327100544616.png" alt="image-20240327100544616"></p>
+<h4 id="窄传输"><a href="#窄传输" class="headerlink" title="窄传输"></a>窄传输</h4><p>当数据传输的位宽小于数据总线的位宽时，称为窄位宽传输。通常通过wstrb来控制哪些字节有效。<br>当从机自身限制或者其他客观条件时，比如从机每次只能接收1个字节数据，且不能缓冲多字节数据，<strong>主机就要进行窄传输。</strong>可以将传输数据都放在数据总线上，每次传输只需要改变wstrb即可。</p>
+<p>32位数据总线，wstrb为4bit；64位数据总线，wstrb是8bit。</p>
+<h4 id="信号说明"><a href="#信号说明" class="headerlink" title="信号说明"></a>信号说明</h4><p>size[2:0]：</p>
+<p>AXI-Lite协议<br>    不支持突发传输，且每次传输一个数据，没有last信号；<br>    支持多master，多slave</p>
+<p>AXI和AHB传输对比：<br>    AHB突发传输的 每次传输都需要发送地址；并且每次传输都是先发地址，再传输数据；<br>    AXI突发传输，只要第一次传输地址即可，后续的地址都是计算出来的；地址和数据可以乱序，提供总线效率</p>
+<h5 id="4K边界问题"><a href="#4K边界问题" class="headerlink" title="4K边界问题"></a>4K边界问题</h5><p>在划分slave地址范围时，划分的最小单位是4K字节的地址范围。为了防止在传输过程中，出现访问slave跨界问题，需要针对跨越4k边界的传输进行处理：1. 超过4k边界的地址直接舍弃 2. 分成两次传输</p>
+<pre class="line-numbers language-verilog" data-language="verilog"><code class="language-verilog">addr<span class="token punctuation">[</span><span class="token number">11</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=></span> <span class="token number">2</span><span class="token operator">^</span><span class="token function">12</span><span class="token punctuation">(</span><span class="token number">4</span>K<span class="token punctuation">)</span> <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h5 id="握手信号间的关系"><a href="#握手信号间的关系" class="headerlink" title="握手信号间的关系"></a>握手信号间的关系</h5><p>valid信号拉高后，必须等到ready信号拉高后，才能拉低。<br>ready信号不受控制，即使在拉高ready信号后，只要发送方没有拉高valid信号，接收方仍然可以拉低ready信号。</p>
+<p>协议建议AW、AR通道的ready信号默认为高电平，否则需要两个周期才可以完成地址通道的握手。第一个周期拉高valid信号，第二个周期拉高ready信号，并完成握手。</p>
+<h5 id="互联结构类型"><a href="#互联结构类型" class="headerlink" title="互联结构类型"></a>互联结构类型</h5><p>点到点型：不同master的五个通道可以独立连接到不同的salve端口。</p>
+<img src="/2024/02077053/image-20240614233224590.png" alt="image-20240614233224590" style="zoom:50%;">
+
+<p>共享型：多个master的五个通道是共享的，当一个master传输时，其他master不可以进行。</p>
+<img src="/2024/02077053/image-20240614233338740.png" alt="image-20240614233338740" style="zoom:50%;">
+
+<p>混合型：兼容以上两种互联特点</p>
+<img src="/2024/02077053/image-20240614233407024.png" alt="image-20240614233407024" style="zoom:50%;">
+
+<h4 id="提高AXI总线性能"><a href="#提高AXI总线性能" class="headerlink" title="提高AXI总线性能"></a>提高AXI总线性能</h4><p>在AXI矩阵总线中的较长组合逻辑上，添加一级寄存器，切断关键路径，但是会带来一个周期的总线延迟。</p>
+<h4 id="减小总线的面积"><a href="#减小总线的面积" class="headerlink" title="减小总线的面积"></a>减小总线的面积</h4><p>在总线矩阵中，并非所有的slave都需要访问所有的master，根据系统需求，减小master2slave访问关系。</p>
+<h4 id="AXI-FULL和AXI-LITE区别"><a href="#AXI-FULL和AXI-LITE区别" class="headerlink" title="AXI-FULL和AXI-LITE区别"></a>AXI-FULL和AXI-LITE区别</h4><ul>
+<li><p>AXI-LITE只有single传输，不支持突发传输。AXI4-LITE低吞吐量，适合配置寄存器。</p>
+</li>
+<li><p>AXI-LITE只有一个主机master，多个slave，没有仲裁器。</p>
+</li>
+<li><p>AXI-FULL支持突发传输，outstanding，乱序，交织等。</p>
+</li>
+<li><p>AXI-FULL支持多主多从，有仲裁器。数据吞吐量大，适合大规模的数据传输。</p>
+</li>
+</ul>
+<h4 id="AXI和AHB协议的区别"><a href="#AXI和AHB协议的区别" class="headerlink" title="AXI和AHB协议的区别"></a>AXI和AHB协议的区别</h4><p>AHB是一种高性能、低延迟数据传输的协议，AXI是一种更先进的协议，提供更高的吞吐量和灵活性。</p>
+<p>AHB是一种单通道总线，读写只能有一个进行。AXI灵活性更好，读写可以同时进行。允许插入fifo缓冲数据，可以进一步提高总线性能，降低延迟。</p>
+<p>分配给每个从机的最小地址范围：AHB为1KB，AXI为4KB。</p>
+<p>AHB不支持乱序，交织，AXI支持乱序。</p>
+<p>AHB低功耗，AXI高功耗。</p>
+<p>AHB不支持写选通，AXI支持。</p>
+<p>与AXI相比，AHB总线延迟在开始传输时较低。</p>
+<p>考虑一种场景：在SRAM中，需要地址和数据都准备好，才可以将数据写入到内存中。如果写数据和写地址不是同时到达的，有两种处理方法：</p>
+<ol>
+<li>故意延迟awready和wready信号，等到awvalid和wvalid同时有效时，产生写数据动作。</li>
+<li>将先到的地址或者数据保存下来，并且控制xready信号的拉高，等到暂存的地址或者数据使用后，可释放ready信号，相当于深度为1的FIFO。</li>
+</ol>
+<h4 id="AXI原子访问"><a href="#AXI原子访问" class="headerlink" title="AXI原子访问"></a>AXI原子访问</h4><p>考虑一个场景：处理器1读取某个地址做相应的运算，再让处理器2写同样的地址，当然不希望处理器1还没有处理完，就被处理器2给改写了，导致处理器1计算的结果不确定。 <strong>最好的方法是处理器1读的时候，处理器2不要去写，等处理器1读完后再去改写。</strong></p>
+<p>在AXI中，用AxLOCK信号处理原子访问。对于AXI3，原子操作分为两种：Exclusive和Locked。AXI4没有Lock传输，只有互斥传输。</p>
+<p>Locked访问：如果master正在访问某个slave，其他master是不允许访问这个salve的，需要仲裁器支持这个机制。</p>
+<p>Exclusive访问：不会将整个访问路径都阻塞掉，允许其他master对互斥访问的salve进行访问。在salve中有个监视器记录互斥访问的地址，其他master不允许对其访问。他可能一直处于loop，也可以进入IDLE模式，当互斥访问结束后，通过中断唤醒，再去相应的访问。</p>
+<h4 id="Cache-support"><a href="#Cache-support" class="headerlink" title="Cache support"></a>Cache support</h4><p>如果是CPU发出的读写地址是MMIO的，AxCACHE的信号都不能有效。</p>
+<p><img src="/2024/02077053/image-20240723143123624.png" alt="image-20240723143123624"></p>
+<h2 id="总线性能分析"><a href="#总线性能分析" class="headerlink" title="总线性能分析"></a>总线性能分析</h2><h4 id="总线性能指标"><a href="#总线性能指标" class="headerlink" title="总线性能指标"></a>总线性能指标</h4><p>决定总线接口性能的两个主要特征是 带宽和延迟。</p>
+<p>带宽是总线的位宽，延迟是指事务启动和完成的延迟，在突发传输中，延迟通常指第一次transfer传输完成。</p>
+<p>AXI的读写地址和通道分离，可以有效提高总线带宽。</p>
+<h4 id="AXI、AHB和APB总线"><a href="#AXI、AHB和APB总线" class="headerlink" title="AXI、AHB和APB总线"></a>AXI、AHB和APB总线</h4><p>APB总线适应在低带宽的场景下，APB协议很简单，总是固定的两个周期完成一次数据传输。</p>
+<p>AHB总线适用于连接高性能和高时钟频率的模块。虽然AHB总线可以通过扩展数据位宽提高总线带宽，但在节省功耗的前提下，用户希望通过极窄的总线宽度、极低的总线频率来实现很高的数据吞吐量，AXI总线应运而生。</p>
+<p>AXI总线乱序收发，使得带宽得到了充分利用，可满足高性能SoC的需求。</p>
+<h4 id="AXI和AHB传输特点对比"><a href="#AXI和AHB传输特点对比" class="headerlink" title="AXI和AHB传输特点对比"></a>AXI和AHB传输特点对比</h4><p>AHB是固定的两级流水方式，第一拍传输地址第二拍传输数据。AXI只需要传输一次突发的首地址即可，而且可以传输多次突发任务，并且数据之间可以交织，大大提高了传输的效率。</p>
+<p>当总线中有慢速设备时，乱序的优势就非常明显，提高了总线利用率。</p>
+<h4 id="分析总线性能"><a href="#分析总线性能" class="headerlink" title="分析总线性能"></a>分析总线性能</h4><p><strong>BUS带宽计算</strong></p>
+<p>定义总线上有效数据位宽是B bit，最高工作频率F为100MHz，最大理论带宽为 T &#x3D; F * B bit&#x2F;S。但是一般总线传输都需要握手，无法达到最大带宽。</p>
+<p><strong>传输时间</strong></p>
+<p>单次传输所需的时间（总线授权开始到本次传输结束所需时间&#x2F;周期），每个传输包含一个或多个单个传输，传输时间则有长有短。通常有两种方式描述：</p>
+<ul>
+<li>最大传输时间:设备在传输过程中进行的最大传输所需要的时间</li>
+<li>平均传输时间：设备在传输过程中的平均传输时间</li>
+</ul>
+<p>影响因素包括：</p>
+<ul>
+<li>读&#x2F;写多少数据</li>
+<li>传输过程中的握手环节</li>
+<li>被访问资源的响应速度</li>
+<li>从主设备到从设备所经历的层数、bridge等</li>
+</ul>
+<p><strong>延时</strong></p>
+<p>指主设备发起请求到仲裁结束所需得时间。延迟和传输时间之和为访问时间。</p>
+<img src="/2024/02077053/image-20240802214755617.png" alt="image-20240802214755617" style="zoom:50%;">
+
+<h4 id="如何通过代码分析带宽、延迟和传输延迟"><a href="#如何通过代码分析带宽、延迟和传输延迟" class="headerlink" title="如何通过代码分析带宽、延迟和传输延迟"></a>如何通过代码分析带宽、延迟和传输延迟</h4><p>带宽</p>
+<p>分析方法：计算读写握手的次数，并实时输出(counter_r+counter_w)*4&#x2F;T_all；</p>
+<p>延迟</p>
+<p>分析方法：计算awvalid拉高后到awready拉高之间的周期，乘Tclk得到latency</p>
+<p>传输延迟</p>
+<p>分析方法：从写数据通道或者读数据通道的第一次握手开始到最后的写响应通道握手或者读数据的最后一笔之间的周期数，乘Tclk得到传输延迟。</p>
+<h3 id="AXI-BUS-OPT"><a href="#AXI-BUS-OPT" class="headerlink" title="AXI BUS OPT"></a>AXI BUS OPT</h3><p>吞吐量：Throughput</p>
+<p>Maximize Throughput</p>
+<ol>
+<li>match the internal bus throughput with the memory i&#x2F;o(PCIE) throughput.</li>
+<li>增加数据线位宽</li>
+<li>使用interleaving交织</li>
+<li>明确burst突发长度</li>
+<li>设置outstanding的能力</li>
+</ol>
+<p>在slave的接口处理AXI通道的数据，提高吞吐量</p>
+<p><img src="/2024/02077053/image-20240811154753995.png" alt="image-20240811154753995"></p>
+<p>添加FIFO将axi的数据与IP核（SRAM）的信号分隔开，因为IP核的数据吞吐量是受限的，AXI数据流是不受限制的，必须要解耦，将数据缓冲到FIFO中。在Font-end中，数据和地址独立的。在Back-end中，将地址和数据lock绑定在一起，添加一些组合逻辑，完成IP核的操作。</p>
+<p><img src="/2024/02077053/image-20240811155037615.png" alt="image-20240811155037615"></p>
+<p>AXI-stream特点</p>
+<p>用于高速数据流，没有多个通道的概念。只有一对握手信号tready和tvalid；支持无限制的突发传输，没有地址。</p>
+<h3 id="outstanding的讨论"><a href="#outstanding的讨论" class="headerlink" title="outstanding的讨论"></a>outstanding的讨论</h3><p>为什么要加outstanding机制：由于master发起请求后，收到slave返回的响应需要一段延迟，在等待响应的这段时间内数据总线处于等待状态，降低了数据总线利用率。<strong>使用outstanding机制，可以在等待过程中利用该数据总线，提高总线利用率</strong></p>
+<p>master发起请求到得到响应的延迟称为 roundtrip latency；在AXI中，影响该传输延迟的是握手信号的等待时间。</p>
+<h5 id="如何计算最佳outstanding个数"><a href="#如何计算最佳outstanding个数" class="headerlink" title="如何计算最佳outstanding个数"></a>如何计算最佳outstanding个数</h5><p>要根据roundtrip latency来确定最佳outstanding个数。目的是 在latency的时间，数据传输为最大带宽。</p>
+<p><img src="/2024/02077053/image-20240816225613005.png" alt="image-20240816225613005"></p>
+<p>最大带宽：freq_clk * data_width &#x3D; BW</p>
+<p>如果outstanding设置的过大，会导致数据阻塞在master和salve端口，过度占用外部总线的带宽。二是需要更多的资源保存未传输完成的任务，导致资源浪费。</p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">刘瑞彪</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://xiaoliu6688.github.io/2024/02077053.html">https://xiaoliu6688.github.io/2024/02077053.html</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">刘瑞彪</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/%E6%80%BB%E7%BA%BF%E5%8D%8F%E8%AE%AE/">
+                                    <span class="chip bg-color">总线协议</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2024/021721611.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/8d3c667ae60de6d3a4bc3c82dccf5f0.jpg" class="responsive-img" alt="awk用法">
+                        
+                        <span class="card-title">awk用法</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2024-02-17
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Linux%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="post-category">
+                                    Linux基础知识
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/awk%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86/">
+                        <span class="chip bg-color">awk文本处理</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2024/020534087.html">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/6b69444e908784a7792ac9b4cf55df0.jpg" class="responsive-img" alt="低功耗设计">
+                        
+                        <span class="card-title">低功耗设计</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            Here's something encrypted, password is required to continue reading.
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2024-02-05
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/%E6%95%B0%E5%AD%97%E5%89%8D%E7%AB%AF/" class="post-category">
+                                    数字前端
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
+                        <span class="chip bg-color">基础知识</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'PRE' || selection.getRangeAt(0).commonAncestorContainer.nodeName === 'CODE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: RayBiiao<br />'
+            + '文章作者: 刘瑞彪<br />'
+            + '文章链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+
+    <div class="container row center-align"
+         style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2023-2024</span>
+            
+            <a href="/about" target="_blank">刘瑞彪</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            
+            <br>
+            
+                &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                        class="white-color">72.1k</span>
+            
+            
+            
+                
+            
+            
+                <span id="busuanzi_container_site_pv">
+                &nbsp;|&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;
+                    <span id="busuanzi_value_site_pv" class="white-color"></span>
+            </span>
+            
+            
+                <span id="busuanzi_container_site_uv">
+                &nbsp;|&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;
+                    <span id="busuanzi_value_site_uv" class="white-color"></span>
+            </span>
+            
+            <br>
+
+            <!-- 运行天数提醒. -->
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=1603386505" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 1603386505" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 白天和黑夜主题 -->
+<div class="stars-con">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>  
+</div>
+
+<script>
+    function switchNightMode() {
+        $('<div class="Cuteen_DarkSky"><div class="Cuteen_DarkPlanet"></div></div>').appendTo($('body')),
+        setTimeout(function () {
+            $('body').hasClass('DarkMode') 
+            ? ($('body').removeClass('DarkMode'), localStorage.setItem('isDark', '0'), $('#sum-moon-icon').removeClass("fa-sun").addClass('fa-moon')) 
+            : ($('body').addClass('DarkMode'), localStorage.setItem('isDark', '1'), $('#sum-moon-icon').addClass("fa-sun").removeClass('fa-moon')),
+            
+            setTimeout(function () {
+            $('.Cuteen_DarkSky').fadeOut(1e3, function () {
+                $(this).remove()
+            })
+            }, 2e3)
+        })
+    }
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    
+
+    
+    
+    
+
+    <!-- 雪花特效 -->
+    
+
+    <!-- 鼠标星星特效 -->
+     
+        <script type="text/javascript">
+            // 只在桌面版网页启用特效
+            var windowWidth = $(window).width();
+            if (windowWidth > 768) {
+                document.write('<script type="text/javascript" src="/libs/others/star.js"><\/script>');
+            }
+        </script>
+    
+
+     
+        <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
+        <script src="/libs/others/TencentCaptcha.js"></script>
+        <button id="TencentCaptcha" data-appid="xxxxxxxxxx" data-cbfn="callback" type="button" hidden></button>
+    
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
