@@ -340,6 +340,7 @@
 <li>valid和ready信号是独立的，没有明确的依赖关系。（<strong>但是在AXI协议中，ready可以依赖valid拉高再拉高，反之，可能会产生死锁</strong>）</li>
 <li>valid信号需要和有效数据对齐</li>
 <li><strong>握手成功后，数据需要更新；如果没有新的数据更新，需要将valid拉低</strong></li>
+<li>valid信号一旦拉高，只有在ready信号拉高时，才允许valid拉低。</li>
 </ol>
 <h3 id="握手接口信号"><a href="#握手接口信号" class="headerlink" title="握手接口信号"></a>握手接口信号</h3><img src="/2024/02265961/image-20240227094825901.png" alt style="zoom: 50%;">
 
@@ -1235,7 +1236,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.5k</span>
+                        class="white-color">72.7k</span>
             
             
             

@@ -291,7 +291,7 @@ set_cloc">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.3k
+                    2.5k
                 </div>
                 
 
@@ -327,11 +327,10 @@ set_cloc">
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_group <span class="token operator">-</span>asynchronous <span class="token operator">-</span>group <span class="token punctuation">[</span>get_clocks CLKA<span class="token punctuation">]</span> <span class="token operator">-</span>group <span class="token punctuation">[</span>get_clocks CLKB divCLKB<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
 <ul>
-<li>logically exclusive</li>
+<li><p>logically exclusive</p>
+<p>如果两个时钟是logical exclusive的，两个时钟是同时存在的，意味着两个时钟没有任何的时序路径交互。不存在起点是CK1到CK2的路径，也不存在起点从CK2到CK1的路径。典型的场景是有一个选择信号控制两个clock输出，这两个输入时钟在逻辑上是互斥的（没有跨时钟域的路径交互），需要声明<code>logically_exclusive</code></p>
+</li>
 </ul>
-<ol>
-<li>如果一个电路中有两个clock，有一个选择信号控制两个clock输出，这两个时钟在逻辑上是互斥的，需要声明<code>logically_exclusive</code></li>
-</ol>
 <p><img src="/2024/03097089/image-20240309165524200.png" alt="image-20240309165524200"></p>
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">create_clock <span class="token operator">-</span>period 10 <span class="token operator">-</span>name C1 <span class="token punctuation">[</span>get_ports C1<span class="token punctuation">]</span>
 create_clock <span class="token operator">-</span>period 20 <span class="token operator">-</span>name C2 <span class="token punctuation">[</span>get_ports C2<span class="token punctuation">]</span>
@@ -349,15 +348,16 @@ creat_generated_clock <span class="token operator">-</span>name genclk2 <span cl
 set_clock_groups <span class="token operator">-</span>logically_exclusive <span class="token operator">-</span>group genclk1 <span class="token operator">-</span>group genclk2<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
 <ol start="2">
-<li>当两个时钟在同一时刻不可能同时存在时，这两个时钟可以设置为physical exclusive关系。</li>
+<li>当两个时钟在同一时刻不可能同时存在时，这两个时钟可以设置为physical exclusive关系。经过MUX的时钟只有一个，generated的时钟只有一个，不可能存在两个，所以要声明为physical exclusive关系。</li>
 </ol>
 <img src="/2024/03097089/image-20240309171004892.png" alt="image-20240309171004892" style="zoom:67%;">
 
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">create_generated_clock <span class="token operator">-</span>name GC1 <span class="token operator">-</span>divide_by 1 <span class="token operator">-</span>souce <span class="token punctuation">[</span>get_pins mux1<span class="token operator">/</span>A<span class="token punctuation">]</span>  \
-<span class="token punctuation">[</span>get_pins mux1<span class="token operator">/</span>Z<span class="token punctuation">]</span>
+<span class="token punctuation">[</span>get_pins mux1<span class="token operator">/</span>Z<span class="token punctuation">]</span> <span class="token operator">-</span>combinational
 create_generated_clock <span class="token operator">-</span>name GC2 <span class="token operator">-</span>divide_by 1 <span class="token operator">-</span>souce <span class="token punctuation">[</span>get_pins mux1<span class="token operator">/</span>B<span class="token punctuation">]</span>  \
-<span class="token punctuation">[</span>get_pins mux1<span class="token operator">/</span>Z<span class="token punctuation">]</span>
-set_clock_group <span class="token operator">-</span>physically_exclusive <span class="token operator">-</span>group GC1 <span class="token operator">-</span>group GC2<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token punctuation">[</span>get_pins mux1<span class="token operator">/</span>Z<span class="token punctuation">]</span> <span class="token operator">-</span>combinational
+set_clock_group <span class="token operator">-</span>physically_exclusive <span class="token operator">-</span>group GC1 <span class="token operator">-</span>group GC2
+<span class="token comment">#-combinational 表明从source clock pin到生成时钟的位置是组合逻辑，没有经过时序逻辑。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <ul>
 <li>总结</li>
@@ -365,6 +365,7 @@ set_clock_group <span class="token operator">-</span>physically_exclusive <span 
 <p>如果两个时钟可能同时存在，但是两个时钟组的信号没有交互，可以声明为<code>logically exclusive</code>。如果两个时钟在同一时刻不可能同时存在，需要声明<code>physically exclusive</code>。</p>
 <img src="/2024/03097089/image-20240309172447158.png" alt="image-20240309172447158" style="zoom: 33%;">
 
+<p>两者对于时序路径计算的区别：logical exclusive会考虑两个时钟域数据的串扰crosstalk对时序路径延迟的响应，physical exclusive不会考虑crosstalk。</p>
 <h4 id="create-generated-clock"><a href="#create-generated-clock" class="headerlink" title="create generated clock"></a>create generated clock</h4><p>明确generated clock和master clock的关系，</p>
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">create_generated_clock <span class="token punctuation">[</span><span class="token operator">-</span>name clock_name<span class="token punctuation">]</span> \
     <span class="token operator">-</span>source master_pin \
@@ -457,8 +458,8 @@ create_clock <span class="token operator">-</span>period 12 <span class="token p
 create_generated_clock <span class="token operator">-</span>name CLKm1 <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_PLL<span class="token operator">/</span>OUT1<span class="token punctuation">]</span> <span class="token operator">-</span>divide_by 4 <span class="token operator">-</span>combinational <span class="token operator">-</span>master_clock CLKb <span class="token punctuation">[</span>get_pins U_MUX<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>add<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
 <p>产生派生时钟CLKdx （<strong>不要忘记加-add，否则覆盖上条命令</strong>）</p>
-<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">create_generated_clock <span class="token operator">-</span>name CLKd0 <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_MUX<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>divide_by 3 <span class="token operator">-</span>combinational <span class="token operator">-</span>master_clock CLKm0 <span class="token punctuation">[</span>get_pins U_DIV<span class="token operator">/</span>OUT<span class="token punctuation">]</span>
-create_generated_clock <span class="token operator">-</span>name CLKd1 <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_MUX<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>divide_by 3 <span class="token operator">-</span>combinational <span class="token operator">-</span>master_clock CLKm1 <span class="token punctuation">[</span>get_pins U_DIV<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>add<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">create_generated_clock <span class="token operator">-</span>name CLKd0 <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_MUX<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>divide_by 3 <span class="token operator">-</span>master_clock CLKm0 <span class="token punctuation">[</span>get_pins U_DIV<span class="token operator">/</span>OUT<span class="token punctuation">]</span>
+create_generated_clock <span class="token operator">-</span>name CLKd1 <span class="token operator">-</span>source <span class="token punctuation">[</span>get_pins U_MUX<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>divide_by 3 <span class="token operator">-</span>master_clock CLKm1 <span class="token punctuation">[</span>get_pins U_DIV<span class="token operator">/</span>OUT<span class="token punctuation">]</span> <span class="token operator">-</span>add<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
 <p>声明物理互斥关系</p>
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_group <span class="token operator">-</span>physically_exclusive <span class="token operator">-</span>group <span class="token punctuation">&#123;</span>CLKm0 CLKd0<span class="token punctuation">&#125;</span> <span class="token operator">-</span>group <span class="token punctuation">&#123;</span>CLKm1 CLKd1<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
@@ -868,7 +869,7 @@ set_clock_gating_styple <span class="token operator">-</span>max_fanout 30 <span
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.5k</span>
+                        class="white-color">72.7k</span>
             
             
             

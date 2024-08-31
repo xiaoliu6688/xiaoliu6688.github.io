@@ -611,7 +611,7 @@ set_critical_range <span class="token comment"># 同时优化多条路径，可�
 <h3 id="report-芯片面积"><a href="#report-芯片面积" class="headerlink" title="report 芯片面积"></a>report 芯片面积</h3><p>三种方式描述面积：1. 晶体管级 transitor 2. 2输入与非门的个数 3. 实际的面积</p>
 <p>report_area 输出实际的面积,也会显示综合后的标准单元个数。如果想要转换到与非门的个数，将报出的面积除以与非门的面积，得到2输入与非门个数。</p>
 <p>查看综合后的网表有多少门</p>
-<pre class="line-numbers language-none"><code class="language-none">sizeof_collection [get_cells * h]<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">sizeof_collection <span class="token punctuation">[</span>get_cells <span class="token operator">*</span> h<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
 <p>查看2输入与非门的面积：</p>
 <ol>
@@ -623,7 +623,7 @@ set_critical_range <span class="token comment"># 同时优化多条路径，可�
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_uncertainly <span class="token operator">-</span>setup 0.25 <span class="token punctuation">[</span>get_clock clk<span class="token punctuation">]</span>
 <span class="token comment"># 0.25 = jitter（0.1+0.05ns） + skew + margin    </span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
-<p>2、dc的跨时钟域约束<br>     由于SPI模块是课题组原有的，不需要对内部逻辑进行修改；SPI按照10M约束，数字校准模块按照125M约束，定义两个时钟为异步的。针对异步时钟，作如下约束  </p>
+<p>2、dc的跨时钟域约束<br>由于SPI模块是课题组原有的，不需要对内部逻辑进行修改；SPI按照10M约束，数字校准模块按照125M约束，定义两个时钟为异步的。针对异步时钟，作如下约束  </p>
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_clock_group <span class="token operator">-</span>asynchronous <span class="token operator">-</span>group clk_100 <span class="token operator">-</span>group <span class="token operator">-</span>clk_1 
 set_max_delay 7 <span class="token operator">-</span>from <span class="token punctuation">[</span>get_pins xx<span class="token operator">/</span>Q<span class="token punctuation">]</span> <span class="token operator">-</span>to <span class="token punctuation">[</span>get_pins xx<span class="token operator">/</span>D<span class="token punctuation">]</span> <span class="token operator">-</span>datapath_only
 set_min_delay 3 <span class="token operator">-</span>from <span class="token punctuation">[</span>get_pins xx<span class="token operator">/</span>Q<span class="token punctuation">]</span> <span class="token operator">-</span>to <span class="token punctuation">[</span>get_pins xx<span class="token operator">/</span>D<span class="token punctuation">]</span> <span class="token operator">-</span>datapath_only
@@ -1034,7 +1034,7 @@ synoff <span class="token comment">#取消 工艺库lib文件中显示的底色<
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.5k</span>
+                        class="white-color">72.7k</span>
             
             
             
