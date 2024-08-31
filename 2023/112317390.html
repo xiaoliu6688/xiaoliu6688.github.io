@@ -288,7 +288,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    401
+                    443
                 </div>
                 
 
@@ -355,6 +355,10 @@
 <h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><strong>只有always块的非阻塞赋值RHS才可以准确描述组合逻辑的延迟。</strong></p>
 <h4 id="Bug"><a href="#Bug" class="headerlink" title="Bug"></a>Bug</h4><p>在tb测试时，如果输入信号是通过@(posedge clk)给出的，一定要 <strong>使用&lt;&#x3D;非阻塞赋值</strong>。否则，会导致，在上升沿时阻塞和非阻塞赋值冲突。</p>
 <p>建模中，对于延迟的信号，需要 <strong>赋初始值</strong>。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">assign #10 c &#x3D; a &amp; b;  &#x2F;&#x2F; 是允许的
+assign #10 c &lt;&#x3D; a &amp; b; &#x2F;&#x2F; 是不允许的
+assign c &#x3D; #10 a &amp; b;  &#x2F;&#x2F; 是不允许的<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -732,7 +736,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.1k</span>
+                        class="white-color">72.5k</span>
             
             
             

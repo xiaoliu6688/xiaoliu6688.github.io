@@ -486,7 +486,7 @@
 <span class="token keyword">assign</span> data_out <span class="token operator">=</span> data_in_reg<span class="token punctuation">[</span><span class="token number">7</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
 <span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<h2 id="数据位宽转换"><a href="#数据位宽转换" class="headerlink" title="数据位宽转换"></a>数据位宽转换</h2><h3 id="宽到窄传输"><a href="#宽到窄传输" class="headerlink" title="宽到窄传输"></a>宽到窄传输</h3><p>​    假设数据从模块A传入到模块B，模块A的<strong>输出数据为32位</strong>，模块B的<strong>输入数据位宽为16位</strong>，那么如何能把数据从A传入B<strong>而不损失数据</strong>呢。</p>
+<h2 id="数据位宽转换"><a href="#数据位宽转换" class="headerlink" title="数据位宽转换"></a>数据位宽转换</h2><h3 id="宽到窄传输"><a href="#宽到窄传输" class="headerlink" title="宽到窄传输"></a>宽到窄传输</h3><p>假设数据从模块A传入到模块B，模块A的<strong>输出数据为32位</strong>，模块B的<strong>输入数据位宽为16位</strong>，那么如何能把数据从A传入B<strong>而不损失数据</strong>呢。</p>
 <p>思路：<strong>通过时钟分频和倍频</strong></p>
 <p>宽数据是慢时钟，窄数据是快时钟；</p>
 <p>Input：快时钟+宽数据</p>
@@ -1325,7 +1325,7 @@ data_in <span class="token operator">&amp;</span> <span class="token operator">~
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.1k</span>
+                        class="white-color">72.5k</span>
             
             
             

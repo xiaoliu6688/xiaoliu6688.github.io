@@ -7,10 +7,9 @@
     <meta name="keywords" content="PT flow, RayBiiao">
     <meta name="description" content="
 检查反标率
+
 跑PT时，需要保证每个corner使用的lib和spef是对应的。读入设计的spef和网表netlist后，需要report_annotated_parasitics命令报出反标情况。
-
-
-​	反标问题我们是看Pin to p">
+反标问题我们是看Pin to pin ">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -293,7 +292,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.9k
+                    2k
                 </div>
                 
 
@@ -319,11 +318,10 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <ul>
-<li><p>检查反标率</p>
-<p>跑PT时，需要保证每个corner使用的lib和spef是对应的。读入设计的spef和网表netlist后，需要report_annotated_parasitics命令报出反标情况。</p>
-</li>
+<li>检查反标率</li>
 </ul>
-<p>​	反标问题我们是看Pin to pin nets的反标，如果这一行的Not Annotated非0，那么就一定存在RC反标问题。	常见反标问题原因：</p>
+<p>跑PT时，需要保证每个corner使用的lib和spef是对应的。读入设计的spef和网表netlist后，需要report_annotated_parasitics命令报出反标情况。</p>
+<p>反标问题我们是看Pin to pin nets的反标，如果这一行的Not Annotated非0，那么就一定存在RC反标问题。常见反标问题原因：</p>
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">spef正确，但netlist错误
 Netlist正确，spef错误<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
@@ -455,6 +453,11 @@ open_mw_cell FMCW_DCORE_TOP<span aria-hidden="true" class="line-numbers-rows"><s
 </ul>
 <p>​	pre-mask ECO ：在设计完成后芯片还未进入工艺制造前所进行的修改。该流程的主要目的是解决设计中存在的问题，如电路逻辑不正确、功耗太高或者时序不满足等问题。</p>
 <p>​	 post-mask ECO ：设计团队需要将已制作的芯片样品反馈回来进行修改，从而修复设计中的问题。通常，post-mask ECO 采用物理层面上的修改来解决问题，例如通过引入金属连接或者改变物理结构等方式进行修复。</p>
+<h4 id="模拟数字接口处的处理"><a href="#模拟数字接口处的处理" class="headerlink" title="模拟数字接口处的处理"></a><strong>模拟数字接口处的处理</strong></h4><ol>
+<li>环路失锁信号pll_locked 传递给数字校准电路，需要进行打两拍的方式，降低亚稳态。</li>
+<li>环路误差信号ek  由模拟传递给数字模块。需要进行打两拍的方式，降低亚稳态。</li>
+<li>dco控制字 由数字传递给模拟模块。<strong>需要在dco阵列的行列译码端进行retiming操作，完成多bit的数据对齐，在数字由时钟上升沿打拍，在DCO阵列使用下降沿的寄存器对数据进行采样。之后，通过群延迟补偿模块（Fir滤波器）完成两点调制算法中  两路高通和低通路径延迟的对齐</strong></li>
+</ol>
 
                 
             </div>
@@ -832,7 +835,7 @@ open_mw_cell FMCW_DCORE_TOP<span aria-hidden="true" class="line-numbers-rows"><s
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.1k</span>
+                        class="white-color">72.5k</span>
             
             
             

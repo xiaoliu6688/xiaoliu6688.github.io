@@ -431,7 +431,7 @@
 <p><strong>传输时间</strong></p>
 <p>单次传输所需的时间（总线授权开始到本次传输结束所需时间&#x2F;周期），每个传输包含一个或多个单个传输，传输时间则有长有短。通常有两种方式描述：</p>
 <ul>
-<li>最大传输时间:设备在传输过程中进行的最大传输所需要的时间</li>
+<li>最大传输时间：设备在传输过程中进行的最大传输所需要的时间</li>
 <li>平均传输时间：设备在传输过程中的平均传输时间</li>
 </ul>
 <p>影响因素包括：</p>
@@ -446,7 +446,7 @@
 <img src="/2024/02077053/image-20240802214755617.png" alt="image-20240802214755617" style="zoom:50%;">
 
 <h4 id="如何通过代码分析带宽、延迟和传输延迟"><a href="#如何通过代码分析带宽、延迟和传输延迟" class="headerlink" title="如何通过代码分析带宽、延迟和传输延迟"></a>如何通过代码分析带宽、延迟和传输延迟</h4><p>带宽</p>
-<p>分析方法：计算读写握手的次数，并实时输出(counter_r+counter_w)*4&#x2F;T_all；</p>
+<p>分析方法：计算读写握手的次数，并实时输出(counter_r+counter_w)*4&#x2F;T_all * freq；</p>
 <p>延迟</p>
 <p>分析方法：计算awvalid拉高后到awready拉高之间的周期，乘Tclk得到latency</p>
 <p>传输延迟</p>
@@ -849,7 +849,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.1k</span>
+                        class="white-color">72.5k</span>
             
             
             

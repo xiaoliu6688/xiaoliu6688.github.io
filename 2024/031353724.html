@@ -355,7 +355,7 @@ https://www.cnblogs.com/xzj8023tp/p/12970790.html
 
 <img src="/2024/031353724/image-20240315093334980.png" alt="image-20240315093334980" style="zoom:50%;">
 
-<p>​	解密与加密类似，固定多项式变为拟矩阵，表示如下。</p>
+<p>​	解密与加密类似，固定多项式变为逆矩阵，表示如下。</p>
 <img src="/2024/031353724/image-20240316163552550.png" alt="image-20240316163552550" style="zoom:50%;">
 
 <ul>
@@ -389,7 +389,7 @@ https://www.cnblogs.com/xzj8023tp/p/12970790.html
 <img src="/2024/031353724/image-20240702153041256.png" alt="image-20240702153041256" style="zoom:67%;">
 
 <p>通过位数扩展使得每一位都可以在下一步操作中影响更多的比特，达到扩散的效果。</p>
-<h4 id="S盒替换"><a href="#S盒替换" class="headerlink" title="S盒替换"></a>S盒替换</h4><p>扩展置换后的48bit数据，通过8个S盒得到32bit数据。具体如下：每组6bit数据的第1bit和最后1bit拼接得到{data[6]，data[1]}行索引，中间4bit作为列索引得到相应的数据。</p>
+<h4 id="S盒替换"><a href="#S盒替换" class="headerlink" title="S盒替换"></a>S盒替换</h4><p>扩展置换后的48bit数据，通过8个6*4 S盒得到32bit数据。具体如下：每组6bit数据的第1bit和最后1bit拼接得到{data[6]，data[1]}行索引，中间4bit作为列索引得到相应的数据。</p>
 <h4 id="P盒替换"><a href="#P盒替换" class="headerlink" title="P盒替换"></a>P盒替换</h4><p>和初始变换类似，替换数据的位置即可。</p>
 <img src="/2024/031353724/image-20240702155217039.png" alt="image-20240702155217039" style="zoom:67%;">
 
@@ -775,7 +775,7 @@ https://www.cnblogs.com/xzj8023tp/p/12970790.html
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.1k</span>
+                        class="white-color">72.5k</span>
             
             
             

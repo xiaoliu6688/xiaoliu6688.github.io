@@ -289,7 +289,7 @@ referencehttps://blog.csdn.net/RTL2GDS/article/details/104957522https://blog.csd
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    783
+                    961
                 </div>
                 
 
@@ -328,7 +328,7 @@ referencehttps://blog.csdn.net/RTL2GDS/article/details/104957522https://blog.csd
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl"><span class="token keyword">set</span> <span class="token variable">power_enable_analysis</span> true<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
 <p>功耗分析有两种：一种是平均功耗分析，一种是Time-based功耗分析。（默认平均功耗分析），在time-based模式下，需要提供波形文件，工具会分析峰值功耗，并生成功耗波形。</p>
-<p>vcd文件是time_based模式分析功耗，saif是average模式分析功耗</p>
+<p>vcd&#x2F;fsdb文件是time_based模式分析功耗，saif是average模式分析功耗。</p>
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">set_app_var power_analysis_mode averaged <span class="token operator">|</span> time_based<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
 <p>平均功耗对应一个报告，time-based功耗分析对应一个波形，显示每一时刻对应的瞬时功耗，报告额外给出peak-power的信息。</p>
@@ -361,6 +361,13 @@ set_app_var power_default_toggle_rate_reference_clock fastest <span class="token
 <pre class="line-numbers language-tcl" data-language="tcl"><code class="language-tcl">report_power <span class="token operator">-</span>hierarchy	<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
 <p>PTPX的输入文件：db文件、sdc文件、vcd&#x2F;fsdb波形文件、SPEF RC寄生文件、门级网表netlist。</p>
+<p>功耗分析分为两种</p>
+<ol>
+<li>pre功耗分析：综合后的功耗分析</li>
+<li>post功耗分析：布局布线后的功耗分析</li>
+</ol>
+<p>在本次流片项目中，回片测试结果 总功耗为18mW左右，和布局布线后的功耗分析差不多，其中电容充放电功耗net_switching占比大于短路电流功耗internal_power。</p>
+<p>在功耗报告中的power group，有clock network，io_pad，memory，register，combinational，sequential。其中clock_network功耗包括时钟网络的buffer，inverters，时钟门控逻辑。register功耗包括由时钟clk驱动的锁存器，寄存器。sequential功耗包括 不受时钟clk驱动的锁存器和寄存器。combinational功耗包括组合逻辑的单元。</p>
 
                 
             </div>
@@ -738,7 +745,7 @@ set_app_var power_default_toggle_rate_reference_clock fastest <span class="token
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.1k</span>
+                        class="white-color">72.5k</span>
             
             
             
