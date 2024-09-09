@@ -326,7 +326,7 @@
 <li><p><strong>cache的更新策略为写回Write Back</strong></p>
 </li>
 </ol>
-<h3 id="Icache实现"><a href="#Icache实现" class="headerlink" title="Icache实现"></a>Icache实现</h3><p>​	icache在流水线中的位置以及接口信号如下</p>
+<h3 id="Icache实现"><a href="#Icache实现" class="headerlink" title="Icache实现"></a>Icache实现</h3><p>icache在流水线中的位置以及接口信号如下</p>
 <img src="/2024/022536323/image-20240225165626395.png" style="zoom: 33%;">
 
 <p>​	包含两组握手信号，第一个是ifu和PC寄存器的握手，只有ifpc_valid &amp; ifpc_ready&#x3D;1握手后，才可以更新ifu阶段的取值地址pc_i。第二个是ifu和icache的握手，只有cache_rdy &amp;  cache_vld 握手成功后，ifu阶段才可以拿到pc对应的指令，并通过inst_valid信号指示，给到IF_ID寄存器。Icache和SRAM通过AXI协议完成读取指令。</p>
@@ -380,7 +380,7 @@
 <p>由于inst指令是32bit的，cacheline是64bit，通过判断offset[2]确定读取命中cacheline的高32bit还是低32bit。</p>
 <p><strong>在cache miss时，通过AXI访问内存时，通常需要多个周期。这个过程中，需要将流水线停顿下来，发出stall信号给PC寄存器，输出给IF_ID寄存器为nop指令。</strong></p>
 <hr>
-<h3 id="Dcache实现"><a href="#Dcache实现" class="headerlink" title="Dcache实现"></a>Dcache实现</h3><p>​	dcache在流水线中的位置以及接口信号如下</p>
+<h3 id="Dcache实现"><a href="#Dcache实现" class="headerlink" title="Dcache实现"></a>Dcache实现</h3><p>dcache在流水线中的位置以及接口信号如下</p>
 <img src="/2024/022536323/image-20240225202346217.png" alt style="zoom:33%;">
 
 <p>​	只包含一组握手信号，lus和dcache之间；对dcache进行读操作的过程跟icache差不多。<br>​	<strong>最大区别</strong>在于写操作，写缺省时，执行写分配，将写入地址的数据读取到cachemem中(这个过程和读分配差不多)，在IDLE状态将待更新的数据写入到cacheline中，并将对应的dirty位置1。在替换该cacheline时，判断dirty位为1，需要先将数据写入到内存中；因此，相比icache，多了很多状态。</p>
@@ -872,7 +872,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.7k</span>
+                        class="white-color">73.1k</span>
             
             
             

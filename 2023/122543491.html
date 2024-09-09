@@ -297,7 +297,7 @@ always @(posedge clk) begin
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    1.4k
+                    1.5k
                 </div>
                 
 
@@ -428,6 +428,11 @@ always @(posedge clk)
 <li>复位信号的扇出很大，需要特殊考虑<br>解决办法：和cts一样处理；</li>
 </ul>
 <p>FPGA通常使用 “<strong>同步复位</strong>“处理，原因：异步复位占用更多的布线资源，导致难以满足时序性能要求。</p>
+<p>异步复位信号的remove和recovery时间检查是在 <strong>同步释放</strong> 时检查的，异步信号对电路进行复位时，不需要进行removal和recovery时间检查。</p>
+<img src="/2023/122543491/bf9a1b154285b85c2cec134685452f4d.png" alt="img" style="zoom:50%;">
+
+<p>因此，电路复位使用同步复位，异步释放的方式设计。</p>
+<p>复位树和时钟树的区别，复位树不需要严格的减小skew，一般将skew约束在一个时钟周期内，保证复位有效时在一个周期内使电路进入初始状态。</p>
 <h3 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h3><blockquote>
 <p>《 硬件架构的艺术 数字电路的设计方法与技术》</p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/104550266">https://zhuanlan.zhihu.com/p/104550266</a></p>
@@ -809,7 +814,7 @@ always @(posedge clk)
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.7k</span>
+                        class="white-color">73.1k</span>
             
             
             

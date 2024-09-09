@@ -288,7 +288,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    543
+                    713
                 </div>
                 
 
@@ -340,6 +340,18 @@
 <p><img src="/2023/112324934/image-20240507185616364.png" alt="image-20240507185616364"></p>
 <p><img src="/2023/112324934/image-20240507185631196.png" alt="image-20240507185631196"></p>
 <p>使用case语句去除优先级，可以大大优化电路的逻辑</p>
+<h3 id="unique和priority-case"><a href="#unique和priority-case" class="headerlink" title="unique和priority case"></a>unique和priority case</h3><p>属于SV的语法，unique case等效为full_case+parallel_case，而priority case则等效为full_case。值得注意的是，unique case和priority case是<strong>SV语法</strong>，而full_case和parallel_case是<strong>编译选项</strong>。</p>
+<h5 id="unique-case"><a href="#unique-case" class="headerlink" title="unique case"></a>unique case</h5><p>相当于full_case+parallel_case，case_expression同时只能匹配一个case_selection_items；一个case_selection_items必须存在与之对应的case_expression。unique修饰该case语句是完整的且并行的，各case分支之间彼此互斥，没有交叠。</p>
+<h5 id="priority-case"><a href="#priority-case" class="headerlink" title="priority case"></a>priority case</h5><p>相当于full_case，有优先级的时候才使用。case分支的位置很重要，决定了优先级。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">always_comb
+priority case (1’b1)
+irq0: irq &#x3D; 4’b0001;
+irq1: irq &#x3D; 4’b0010;
+irq2: irq &#x3D; 4’b0100;
+irq3: irq &#x3D; 4’b1000;
+endcase<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果case不满足unique case和priority case，编译时会直接报错。</p>
 
                 
             </div>
@@ -717,7 +729,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">72.7k</span>
+                        class="white-color">73.1k</span>
             
             
             
