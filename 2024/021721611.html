@@ -435,7 +435,7 @@ FS的优先级大于-F指定的
 <span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"2,6s/(.*)/#<span class="token entity" title="\1">\1</span>/"</span> filename 添加注释
 <span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"1,5s/^#*/#/"</span> filename	 添加注释<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<h5 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h5><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">决定对哪些行处理
+<h5 id="删除-1"><a href="#删除-1" class="headerlink" title="删除"></a>删除</h5><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 决定对哪些行处理</span>
 <span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"/root/,5d"</span> filename		<span class="token comment">#root后，删除到第5行 </span>
 <span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"/root/,+5d"</span> filename  	<span class="token comment">#root后，删除5行</span>
 <span class="token function">sed</span> <span class="token parameter variable">-r</span> <span class="token string">"/root/!5d"</span> filename  	<span class="token comment">#取反删除</span>

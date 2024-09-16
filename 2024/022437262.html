@@ -397,7 +397,7 @@ HADDR：地址总线HTRANS[1:0]：传输类型，00：IDLE，01：BUSY，10：NO
 <ul>
 <li>等待传输</li>
 </ul>
-<p>​	 salve可以通过hreadyout拉低打断传输，master可以通过设置htrans为busy打断传输。如果hready拉低时，htrans有效，此时不可以更改总线的地址和传输类型，需要等到hreadyout拉高时才可以修改。</p>
+<p>​	salve可以通过hreadyout拉低打断传输，master可以通过设置htrans为busy打断传输。如果hready拉低时，htrans有效，此时不可以更改总线的地址和传输类型，需要等到hreadyout拉高时才可以修改。</p>
 <img src="/2024/022437262/640.png" alt="图片" style="zoom: 67%;">
 
 <p>针对定长的传输，如果hreadyout拉低，此时master的htrans为busy，允许trans更改为seq，且地址和传输类型不能更改。针对不定长的传输INCR，允许master在hreadyout为0时更改为其他类型的传输，如果为SEQ，表示继续传输当前的任务，如果为NOSEQ，表示开始新的任务。</p>

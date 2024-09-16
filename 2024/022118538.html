@@ -423,10 +423,10 @@
 
 <span class="token keyword">endmodule</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p>还有第二种方式实现占空比为50%的奇分频，N为奇数</p>
+<p>还有第二种方式实现占空比为50%的奇分频，N为奇数  (可以降低电路规模)</p>
 <ol>
 <li>设计一个计数器，计数0 - N-1</li>
-<li>设计两个使能信号，ttf1_en：当counter计数到0时拉高。ttf2_en：当counter计数到 N&#x2F;2时拉高。</li>
+<li>设计两个使能信号，ttf1_en：当counter计数到0时拉高。ttf2_en：当counter计数到(N+1)&#x2F;2时拉高（组合逻辑输出）</li>
 <li>时钟正沿控制div1的输出，当ttf1_en拉高时，div1翻转。时钟负沿控制div2输出，当ttf2_en拉高时，div2翻转</li>
 <li>最终取div1和div2的异或结果，作为输出。</li>
 </ol>

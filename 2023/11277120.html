@@ -288,7 +288,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.1k
+                    2.2k
                 </div>
                 
 
@@ -352,7 +352,10 @@ make -w 进入或者退出目录时会有提示<span aria-hidden="true" class="l
 <h3 id="Makefile中的变量"><a href="#Makefile中的变量" class="headerlink" title="Makefile中的变量"></a>Makefile中的变量</h3><pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile">Var <span class="token operator">=</span> value
 类似C的<span class="token keyword">define</span>，强烈建议变量的引用使用括号，比如 <span class="token variable">$</span><span class="token punctuation">(</span>var<span class="token punctuation">)</span>
 等号右侧的变量可以是Makefile文件后面的内容，就有可能导致递归，所以要使用 <span class="token operator">:=</span>，表示只能使用前面的变量。
-Var <span class="token operator">:=</span> value<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+Var <span class="token operator">:=</span> value
+
+<span class="token operator">:=</span> 在脚本编译过程中，就会对变量的进行替换，而不是在执行时替换。
+<span class="token operator">=</span>  在执行时才进行替换，如果该变量在后面发生了变化，会影响前面的赋值<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <pre class="line-numbers language-makefile" data-language="makefile"><code class="language-makefile"><span class="token comment">#定义一个变量，值是一个空格</span>
 Nullstring <span class="token operator">:=</span>
@@ -475,8 +478,7 @@ Makefile中定义的变量都是全局变量，<span class="token variable">$@</
 
 LDFLAGS参数		<span class="token operator">|</span><span class="token operator">|</span>链接<span class="token operator">|</span><span class="token operator">|</span>
 -lxxx	<span class="token comment"># 添加动态链接库，在搜索目录中找xxx.a，xxx.so的库文件</span>
--static	<span class="token comment"># 使用静态链接库生成目标文件，避免使用共享库</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+-static	<span class="token comment"># 使用静态链接库生成目标文件，避免使用共享库</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
                 
