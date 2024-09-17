@@ -289,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.9k
+                    3.2k
                 </div>
                 
 
@@ -739,33 +739,27 @@
 <span class="token keyword">output</span> <span class="token punctuation">[</span>DW<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> data_o<span class="token punctuation">;</span>
 
 <span class="token comment">// signals</span>
-<span class="token keyword">wire</span>          buf_valid<span class="token punctuation">;</span>
 <span class="token keyword">reg</span>  <span class="token punctuation">[</span>DW<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">0</span><span class="token punctuation">]</span> buf_data<span class="token punctuation">;</span>
 
 <span class="token comment">// data_i_ready由组合逻辑改为时序逻辑</span>
 <span class="token important">always @</span> <span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rst_n<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rst_n<span class="token punctuation">)</span>
         data_i_ready <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment">//有个buf放在那，因此复位后至少可以收一个数据。</span>
-    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_o_ready<span class="token punctuation">)</span>
-        data_i_ready <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_i_valid<span class="token punctuation">)</span>  <span class="token comment">//在data_o_ready拉低后的那一个周期，如果没有数据过来，表明buf为空，可以进数据，data_i_ready保持为1</span>
-        data_i_ready <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment">//如果有数据过来，buf被占，则不允许再进数据了，data_i_ready拉低。</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_o_valid<span class="token punctuation">)</span>
+        data_i_ready <span class="token operator">&lt;=</span> data_o_ready<span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 
-<span class="token comment">// 所有输入端口的数据都会进入buf，但其实只有(!data_o_ready &amp;&amp; data_i_valid &amp;&amp; data_i_ready)时刻进去才会发挥作用</span>
 <span class="token important">always @</span> <span class="token punctuation">(</span><span class="token keyword">posedge</span> clk <span class="token keyword">or</span> <span class="token keyword">negedge</span> rst_n<span class="token punctuation">)</span> <span class="token keyword">begin</span>
     <span class="token function">if</span><span class="token punctuation">(</span><span class="token operator">!</span>rst_n<span class="token punctuation">)</span> <span class="token comment">//可能有些控制信号通过本模块的data端口进行传输，因此有必要进行复位。</span>
         buf_data <span class="token operator">&lt;=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_i_ready<span class="token punctuation">)</span> <span class="token comment">//不挑时刻，所有数据都进，但是真正有效的还是(!data_o_ready &amp;&amp; data_i_valid &amp;&amp; data_i_ready)时刻的数据</span>
+    <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>data_i_ready<span class="token operator">&amp;</span>data_i_valid<span class="token punctuation">)</span>
         buf_data <span class="token operator">&lt;=</span> data_i<span class="token punctuation">;</span>
 <span class="token keyword">end</span>
 
-<span class="token keyword">assign</span> buf_valid <span class="token operator">=</span> <span class="token operator">~</span>data_i_ready<span class="token punctuation">;</span>
-
 <span class="token comment">// out，如果buf中有数据，优先读走buf中的数据</span>
-<span class="token keyword">assign</span> data_o_valid <span class="token operator">=</span> buf_valid <span class="token operator">?</span> buf_valid <span class="token punctuation">:</span> data_i_valid<span class="token punctuation">;</span>
-<span class="token keyword">assign</span> data_o       <span class="token operator">=</span> buf_valid <span class="token operator">?</span> buf_data <span class="token punctuation">:</span> data_i <span class="token punctuation">;</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token keyword">assign</span> data_o_valid <span class="token operator">=</span> data_i_valid <span class="token operator">|</span> <span class="token punctuation">(</span><span class="token operator">!</span>data_i_ready<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">assign</span> data_o       <span class="token operator">=</span> data_i_ready <span class="token operator">?</span> data_i <span class="token punctuation">:</span> buf_data <span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <ol start="2">
 <li><p>添加fifo</p>
@@ -856,8 +850,77 @@
     <span class="token keyword">else</span> <span class="token function">if</span><span class="token punctuation">(</span>req_rr <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>ack<span class="token punctuation">)</span>
         data_reg <span class="token operator">&lt;=</span> data_i<span class="token punctuation">;</span>
 <span class="token keyword">end</span>
-<span class="token keyword">endmodule</span> <span class="token comment">//</span>
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token keyword">endmodule</span> <span class="token comment">//</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="向后延迟打拍"><a href="#向后延迟打拍" class="headerlink" title="向后延迟打拍"></a>向后延迟打拍</h3><p>相当于切断valid信号的组合逻辑路径，在valid路径上插入寄存器，导致数据和valid信号都延迟一拍。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">module forward_delay(
+  input           clk,
+  input           nrst,
+
+  input           data_i_valid,
+  input [8-1:0]   data_i,
+  output          data_i_ready,
+  
+  input           data_o_ready,
+  output          data_o_valid,
+  output [8-1:0]  data_o
+);
+
+reg [7:0] data_reg;
+reg       valid_reg;
+
+always @(posedge clk or negedge nrst) begin
+  if(!nrst)
+    valid_reg &lt;&#x3D; 0;
+  else if(data_i_ready) &#x2F;&#x2F;如果寄存器准备好更新数据了，那么寄存器数据的有效性就可以被更新。
+    valid_reg &lt;&#x3D; data_i_valid;
+end
+
+always @(posedge clk) begin
+  if(data_i_valid &amp; data_i_ready)
+    data_reg &lt;&#x3D; data_i;
+end
+
+assign data_i_ready &#x3D; !valid_reg | data_o_ready; &#x2F;&#x2F; 当寄存器为空时（！valid_reg）或者下游的ready信号拉高，表明这个寄存器保存的数据可以被更新。
+assign data_o &#x3D; data_reg;
+assign data_i_valid &#x3D; valid_reg;
+
+endmodule<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="向前延迟打拍"><a href="#向前延迟打拍" class="headerlink" title="向前延迟打拍"></a>向前延迟打拍</h3><p>切断ready信号的组合逻辑，在ready路径上插入寄存器，并不会造成一个周期数据延迟。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">module back_delay(
+  input           clk,
+  input           nrst,
+
+  input           data_i_valid,
+  input [8-1:0]   data_i,
+  output          data_i_ready,
+  
+  input           data_o_ready,
+  output          data_o_valid,
+  output [8-1:0]  data_o
+);
+
+reg [7:0] data_reg;
+reg       ready_reg;
+
+always @(posedge clk or negedge nrst) begin
+  if(!nrst)
+    ready_reg &lt;&#x3D; 1;
+  else if(data_o_valid) &#x2F;&#x2F; 如果输出数据有效，将下游的ready信号读入，决定将数据写入寄存器中
+    ready_reg &lt;&#x3D; data_o_ready;
+end
+
+always @(posedge clk) begin
+  if(data_i_valid &amp; data_i_ready)
+    data_reg &lt;&#x3D; data_i;
+end
+
+assign data_o_valid &#x3D; data_i_valid | (!ready_reg); &#x2F;&#x2F; 如果寄存器是满的 或者 输入数据有效，表示输出数据就有效。
+assign data_o &#x3D; ready_reg ? data_i : data_reg; &#x2F;&#x2F; 如果寄存器是空的，输出直接接输入，否则取寄存器的数据。（隐含的条件是data_o_ready信号拉低了一拍）
+assign data_i_ready &#x3D; ready_reg;
+
+endmodule<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
                 
@@ -1236,7 +1299,7 @@
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">73.1k</span>
+                        class="white-color">73.4k</span>
             
             
             
