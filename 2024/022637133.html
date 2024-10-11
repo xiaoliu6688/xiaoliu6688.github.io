@@ -292,7 +292,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    2.3k
+                    2.7k
                 </div>
                 
 
@@ -948,6 +948,132 @@ data_in <span class="token operator">&amp;</span> <span class="token operator">~
 <td align="center">0</td>
 </tr>
 </tbody></table>
+<h2 id="任意整数除3求商和余数"><a href="#任意整数除3求商和余数" class="headerlink" title="任意整数除3求商和余数"></a>任意整数除3求商和余数</h2><p>参考上面的求余数方法，输入数据要一次性全部给进来，然后从高位开始遍历，每个周期都更新1bit的商和余数。余数共有3个状态，00,01,10. 根据输入是0还是1，状态跳转如下</p>
+<table>
+<thead>
+<tr>
+<th align="center">当前态余数</th>
+<th align="center">输入</th>
+<th align="center">次态余数</th>
+<th align="center">商的操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">00</td>
+<td align="center">0</td>
+<td align="center">00</td>
+<td align="center">商0</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">01</td>
+<td align="center">商0</td>
+</tr>
+<tr>
+<td align="center">01</td>
+<td align="center">0</td>
+<td align="center">10</td>
+<td align="center">商0</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">00</td>
+<td align="center">商1</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="center">0</td>
+<td align="center">01</td>
+<td align="center">商1</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center">1</td>
+<td align="center">10</td>
+<td align="center">商1</td>
+</tr>
+</tbody></table>
+<p>code如下</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">module mod_div_3(
+  input           clk,
+  input           nrst,
+  input [7:0]     data_in,
+  input           valid_i,
+
+  output reg          valid_o,
+  output reg [7:0]    quotient,
+  output reg [1:0]    reminder
+);
+
+parameter DATA_WIDTH &#x3D; 8;
+reg [1:0] state, next_state;
+parameter [1:0] IDLE &#x3D; 2&#39;b11,
+                S0 &#x3D; 2&#39;b00,
+                S1 &#x3D; 2&#39;b01,
+                S2 &#x3D; 2&#39;b10;
+reg [2:0] cnt;
+reg [7:0] data_reg;
+
+always @(posedge clk or negedge nrst) begin
+  if(!nrst)
+    state &lt;&#x3D; IDLE;
+  else 
+    state &lt;&#x3D; next_state;
+end
+
+always @(*) begin
+  if(cnt &#x3D;&#x3D; DATA_WIDTH) begin
+    case(state)
+      IDLE: if(valid_i) next_state &#x3D; S0; 
+            else        next_state &#x3D; IDLE;
+      S0: if(data_reg[7]) next_state &#x3D; S1;
+          else            next_state &#x3D; S0;
+      S1: if(data_reg[7]) next_state &#x3D; S0;
+          else            next_state &#x3D; S2;
+      S2: if(data_reg[7]) next_state &#x3D; S2;
+          else            next_state &#x3D; S1;
+      default: next_state &#x3D; IDLE;
+    endcase
+  end else begin
+    next_state &#x3D; IDLE;
+  end
+end
+
+always @(posedge clk or negedge nrst) begin
+  if(!nrst)   
+    cnt &lt;&#x3D; &#39;h0;
+  else if(state &#x3D;&#x3D; IDLE) 
+    cnt &lt;&#x3D; &#39;h0;    
+  else 
+    cnt &lt;&#x3D; cnt + &#39;h1;
+end
+
+always @(posedge clk or negedge nrst) begin
+  if(!nrst)
+    quotient &lt;&#x3D; &#39;h0;
+  else if(state !&#x3D; IDLE) begin
+    if(data_reg[7])
+      quotient &lt;&#x3D; &#123;quotient[6:0], state[0]|state[1]&#125;;
+    else 
+      quotient &lt;&#x3D; &#123;quotient[6:0], state[1]&#125;;
+end
+
+always @(posedge clk or negedge nrst) begin
+  if(!nrst) begin
+    reminder &lt;&#x3D; &#39;h0;
+    valid_o &lt;&#x3D; 0;
+  end else if(cnt &#x3D;&#x3D; DATA_WIDTH) begin
+    reminder &lt;&#x3D; state;
+    valid_o &lt;&#x3D; 1;
+  end else begin
+    valid_o &lt;&#x3D; 1;
+  end
+end
+
+endmodule<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 
                 
             </div>
@@ -1325,7 +1451,7 @@ data_in <span class="token operator">&amp;</span> <span class="token operator">~
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">73.4k</span>
+                        class="white-color">77.1k</span>
             
             
             

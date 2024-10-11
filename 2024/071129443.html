@@ -289,7 +289,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    6.1k
+                    8.9k
                 </div>
                 
 
@@ -345,7 +345,7 @@
 <p>注意，外部声明不可综合。<strong>不要在$unit空间进行任何声明，所有声明在package包中</strong> 外部编译单元域声明不是全局的，sv的编译单元域之作用域同时编译的源文件，每次编译源文件，就会创建一个唯一针对此次编译的编译单元域。必要时将包导入$unit中。</p>
 <p>为了防止重复定义，使用 <strong>条件编译</strong>。带条件编译的包</p>
 <pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">&#96;ifndef DFF_DONE
-  &#96;define DFF_DONE
+&#96;define DFF_DONE
 package definitions 
     parameter Version &#x3D; &quot;1.1&quot;
     typedef enum &#123;ADD, SUB, MUL&#125; opcode_t;
@@ -374,17 +374,69 @@ import definitions:: *;
 <li>包导入</li>
 </ol>
 <h2 id="第3章-SV文本值和数据类型"><a href="#第3章-SV文本值和数据类型" class="headerlink" title="第3章 SV文本值和数据类型"></a>第3章 SV文本值和数据类型</h2><p>sv中给变量赋值全1：<code>reg [31:0] data; data = &#39;1;</code></p>
-<p>verilog数据类型<br>    reg、integer和time是四值逻辑。wire和其他net类型的共有120种逻辑（四态逻辑+多个驱动强度）。</p>
-<p>sv数据类型<br>    定义的信号同时具有类型和数据类型。类型指示信号是 <strong>线网还是变量</strong>。数据类型指示是四值逻辑还是二值逻辑。</p>
-<h2 id="System-Verilog基础"><a href="#System-Verilog基础" class="headerlink" title="System Verilog基础"></a>System Verilog基础</h2><p>构造函数 new：在声明时，不能有返回值，void也不可以。</p>
+<p>verilog数据类型<br>reg、integer和time是四值逻辑。wire和其他net类型的共有120种逻辑（四态逻辑+多个驱动强度）。</p>
+<p>sv数据类型<br>定义的信号同时具有类型和数据类型。类型指示信号是 <strong>线网还是变量</strong>。数据类型指示是四值逻辑还是二值逻辑。</p>
+<h2 id="SV-for-Design"><a href="#SV-for-Design" class="headerlink" title="SV for Design"></a>SV for Design</h2><p>inside {a,b,c} 可以代替||；</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">if(v inside &#123;3&#39;b001, 3&#39;b010, 3&#39;b100&#125;)
+	$display(&quot;v &#x3D; %b&quot;, v);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="System-Verilog基础"><a href="#System-Verilog基础" class="headerlink" title="System Verilog基础"></a>System Verilog基础</h2><h4 id="SV中的参数传递：input，output，ref"><a href="#SV中的参数传递：input，output，ref" class="headerlink" title="SV中的参数传递：input，output，ref"></a>SV中的参数传递：input，output，ref</h4><p>两种原则：值传递和地址传递</p>
+<p>对于数组的传递，<br>如果是input，是标准的值传递。不会改变原来的值。<br>如果是output，是地址传递，数组共有两份，函数内部看到的是新创建的一份，在函数退出时，原来的数据丢弃掉<br>如果是ref，是标准的地址传递，数组只有一份，函数里面和外面共同维护同一组数据。</p>
+<p>对于类的传递，<br>如果是input和ref，是标准的地址传递。<br>如果是output，报null point的error</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41467882/article/details/121684326#_output__42">https://blog.csdn.net/qq_41467882/article/details/121684326#_output__42</a></p>
+</blockquote>
+<p>构造函数 new：在声明时，不能有返回值，void也不可以。</p>
 <h4 id="静态属性"><a href="#静态属性" class="headerlink" title="静态属性"></a>静态属性</h4><p>静态变量在多个实例之间是共享的。</p>
 <p>静态方法只能访问静态变量，访问非静态变量是非法的。静态方法不能是virtual的。</p>
 <p>在不创建对象的情况下，可以访问静态变量和静态方法。</p>
+<p><strong>声明为automatic的函数&#x2F;任务，支持迭代，否则不支持。另外一个用途是在fork join中，如果没有生命auto则只能允许一个函数，如果调用两次，可能会有冲突</strong></p>
 <h4 id="浅拷贝和深拷贝"><a href="#浅拷贝和深拷贝" class="headerlink" title="浅拷贝和深拷贝"></a>浅拷贝和深拷贝</h4><p>浅拷贝中，所有变量的值都被复制，但是不复制对象，只复制句柄。</p>
 <p>要想实现深拷贝，需要实现自定义的方法，完成对象的复制。每次调用copy方法时，句柄都指向新的对象。</p>
-<h4 id="类的继承"><a href="#类的继承" class="headerlink" title="类的继承"></a>类的继承</h4><p>派生类继承父类的方法和属性；允许多级继承；子类可以修改父类的属性和方法；</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">class basic_test;
+    int def;
+    int fin;
+    virtual function void copy_data(basic_test t);
+        t.def &#x3D; def;
+        t.fin &#x3D; fin;
+    endfunction
+    virtual function basic_test copy();
+        basic_test t;
+        t &#x3D; new();
+        copy_data(t);
+        return t;  &#x2F;&#x2F; 必须要返回值
+    endfunction
+endclass
+
+class wr_test extends basic_test;
+    int def;
+    function void copy_data(basic_test t);
+        wr_test wr;
+        super.copy_data(t);
+        $cast(wr, t);
+        wr.def &#x3D; def;
+    endfunction
+    function basic_test copy();
+        wr_test t &#x3D; new();
+        copy_data(t);
+        return t; &#x2F;&#x2F; 必须要返回值
+    endfunction
+endclass
+
+&#x2F;&#x2F;tb
+module tb;
+    test_wr wr;
+    test_wr h;
+    wr &#x3D; new();
+    $cast(h, wr.copy());
+    &#x2F;&#x2F; h和wr指向两个独立的test_wr对象
+endmodule<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="类的继承"><a href="#类的继承" class="headerlink" title="类的继承"></a>类的继承</h4><p>派生类继承父类的方法和变量；允许多级继承；子类可以修改父类的属性和方法；</p>
 <h4 id="多态性"><a href="#多态性" class="headerlink" title="多态性"></a>多态性</h4><p>子类可以对继承的父类方法进行修改，当使用父类句柄指向子类对象时，所对应的方法是子类修改后的。</p>
-<p>同一个方法的不同实现形式，称为多态性。具体执行哪个方法，取决于指向的对象。</p>
+<p>同一个方法的不同实现形式，称为多态性。具体执行哪个方法，取决于句柄的类型。</p>
 <h4 id="转换cast"><a href="#转换cast" class="headerlink" title="转换cast"></a>转换cast</h4><h5 id="静态转换"><a href="#静态转换" class="headerlink" title="静态转换"></a>静态转换</h5><p>在编译过程中完成静态转换，运行时不会有检查和错误报告。</p>
 <p>不适用于对象句柄转换。</p>
 <p>使用<code>‘</code> 强制转换更改数据类型。int’(123.0)</p>
@@ -395,10 +447,11 @@ import definitions:: *;
 <pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">child_class &#x3D; parent_class; &#x2F;&#x2F; 不允许<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
 <p><strong>如果父类句柄的值是指向子类对象的，可以将父类句柄的值赋给子类句柄</strong></p>
-<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">parent_class &#x3D; child_class;
-child_class &#x3D; parent_class; &#x2F;&#x2F;允许
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">parent_class &#x3D; child_class1;
+child_class2 &#x3D; parent_class; &#x2F;&#x2F;允许
 
-$cast(child_class, parent_class);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+$cast(child_class, parent_class);、
+&#x2F;&#x2F;$cast(dst,src); 需要保证src父类句柄指向子类对象<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>由于父类句柄的值是变化的，在执行过程中，可以被赋值给子类句柄。因此，$cast被称为动态转换。</p>
 <h4 id="数据隐藏和封装"><a href="#数据隐藏和封装" class="headerlink" title="数据隐藏和封装"></a>数据隐藏和封装</h4><p>将数据隐藏在类中，并仅通过方法对其访问。</p>
@@ -406,16 +459,47 @@ $cast(child_class, parent_class);<span aria-hidden="true" class="line-numbers-ro
 <h5 id="protected"><a href="#protected" class="headerlink" title="protected"></a>protected</h5><p>不允许通过句柄访问该变量，但是在子类声明中可以访问保护的变量。</p>
 <h4 id="virtual-抽象类"><a href="#virtual-抽象类" class="headerlink" title="virtual 抽象类"></a>virtual 抽象类</h4><p>用virtual声明为抽象类，抽象类为子类设置了原型。抽象类不能实例化，只能派生。</p>
 <p>抽象类可以包含只有方法的声明，而没有实现。</p>
-<h4 id="virtual-虚拟方法"><a href="#virtual-虚拟方法" class="headerlink" title="virtual 虚拟方法"></a>virtual 虚拟方法</h4><p>当父类使用virtual定义的函数和方法，父类句柄在指向子类对象时，可以动态索引到子类重写的方法。</p>
+<h4 id="virtual-虚方法"><a href="#virtual-虚方法" class="headerlink" title="virtual 虚方法"></a>virtual 虚方法</h4><p>当父类使用virtual定义的函数和方法，父类句柄在指向子类对象时，可以动态索引到子类重写的方法。</p>
+<p>通过虚方法，无需担心句柄类型是父类还是子类，实现动态绑定。</p>
 <ul>
 <li>在为父类定义方法时，如果该方法后面会被覆盖或者继承，需要加virtual。需要保证子类和父类方法的参数和返回值类型都是一样的。</li>
 <li>virtual在父类中声明一次即可</li>
 <li>不能给变量添加virtual</li>
 </ul>
-<p>范围解析运算法：：，允许从类的外部访问静态变量和方法。</p>
+<p>范围解析运算法::，允许从类的外部访问静态变量和方法。</p>
+<h4 id="virtual-虚接口-interface"><a href="#virtual-虚接口-interface" class="headerlink" title="virtual 虚接口 interface"></a>virtual 虚接口 interface</h4><p>引入interface可以简化硬件模块间的信号连接，即interface是连接硬件的。对于验证来说，环境是软件的，面向对象的。interface无法再软件环境中实例化，无法通过interface将激励给到DUT。为了解决这个问题，引入了virtual interface，使得基于OOP的验证环境可以通过interface将激励给到DUT。</p>
+<h4 id="回调函数"><a href="#回调函数" class="headerlink" title="回调函数"></a>回调函数</h4><p><img src="/2024/071129443/image-20241004221230128.png" alt="image-20241004221230128"></p>
+<ol>
+<li><p>预留回调函数的入口</p>
+</li>
+<li><p>定义回调类以及回调函数</p>
+<p><img src="/2024/071129443/image-20241004222800234.png" alt="image-20241004222800234"></p>
+<p><img src="/2024/071129443/image-20241004222834670.png" alt="image-20241004222834670"></p>
+</li>
+<li><p>例化以及添加回调实例</p>
+<p><img src="/2024/071129443/image-20241004222910139.png" alt="image-20241004222910139"></p>
+</li>
+</ol>
+<p><img src="/2024/071129443/image-20241004223100735.png" alt="image-20241004223100735"></p>
 <h4 id="外部方法-extern"><a href="#外部方法-extern" class="headerlink" title="外部方法 extern"></a>外部方法 extern</h4><p>在类中需要使用extern声明方法；</p>
 <p>在外部实现时，需要使用类解析运算符指定类名，表明方法对应于哪个类。</p>
 <p>外部的方法&#x2F;任务必须和类中声明的方法&#x2F;任务 <strong>参数名称 一样</strong></p>
+<h4 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h4><pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">bit [7:0] unpacked_word [3:0]; &#x2F;&#x2F; 非组合型
+&#x2F;&#x2F; [7:0]是深度，[3:0]是深度，表示深度为4；   不可以设置为[1:0]
+unpacked_word &#x3D; &#39;&#123;8&#39;h12,8&#39;h34,8&#39;h56,8&#39;h78&#125;;
+bit [3:0] [7:0] packed_word; &#x2F;&#x2F; 组合型
+packed_word &#x3D; &#123;&#39;h12345678&#125;;
+
+&#x2F;&#x2F;动态数组
+int dyn1[], dyn2[];
+initial begin
+   dyn1 &#x3D; new[10];
+   foreach(dyn1[i]) dyn1[i] &#x3D; i;
+   dyn2 &#x3D; new[15](dyn1);
+end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
 <h4 id="typedef类"><a href="#typedef类" class="headerlink" title="typedef类"></a>typedef类</h4><p>提供类的前向声明。在某些情况下，需要再类声明之前例化类。</p>
 <h4 id="随机化"><a href="#随机化" class="headerlink" title="随机化"></a>随机化</h4><p>verilog使用$random生成随机整数，sv提供 rand和randomize方法，便于类对象的随机化。</p>
 <p>rand和randc的区别：randc在随机化时，变量值不会重复。</p>
@@ -425,6 +509,7 @@ $cast(child_class, parent_class);<span aria-hidden="true" class="line-numbers-ro
 p.rand_mode(0&#x2F;1);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
 <p>在调用randomize时，系统会调用pre_randomize()和post_randomize()函数，用户可以覆盖该函数，进行自定义的处理。</p>
+<p>类中所有被指定或者没有被rand修饰的变量，在constrain如果使用到了，都可以作为randomize被随机化。</p>
 <h4 id="约束随机化"><a href="#约束随机化" class="headerlink" title="约束随机化"></a>约束随机化</h4><p>约束块是类成员，跟变量、函数、任务一样的地位；由条件或表达式组成，用来限制随机变量的值；</p>
 <p>约束块用大括号{}括起来；</p>
 <p>可以在类中定义，也可以像extern在外部定义，在类外定义的约束块称为extern约束块。</p>
@@ -436,9 +521,53 @@ p.rand_mode(0&#x2F;1);<span aria-hidden="true" class="line-numbers-rows"><span><
 <li>constrain addr_range { addr &gt; 3;}；</li>
 <li>可以使用其他随机变量作为限制条件； constraint addr_range { addr inside {[start_addr:end_addr]}; }</li>
 <li>范围取反，constraint addr_range { addr !(inside {[5:10]}); }</li>
+<li>限定特殊值 constraint con {addr <strong>&#x3D;&#x3D;</strong> 16’h1234};</li>
 </ol>
 <h5 id="dist约束"><a href="#dist约束" class="headerlink" title="dist约束"></a>dist约束</h5><p>dist可以设置随机值出现的概率;dist {value :&#x3D; 3, value2 :&#x3D; 4, [value3：value4] :&#x2F; 4}；</p>
 <pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">addr dist &#123;2 :&#x3D; 5, [10：12] :&#x3D; 4&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h5 id="数组约束"><a href="#数组约束" class="headerlink" title="数组约束"></a>数组约束</h5><pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">constraint con &#123;a.size inside &#123;[1:10]&#125;;&#125;
+
+constraint con1 &#123;foreach(a[i]) a[i] inside [1:100];
+                 a.sum() &lt; 1024;
+                &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="句柄数组"><a href="#句柄数组" class="headerlink" title="句柄数组"></a>句柄数组</h5><p>rand修饰句柄数组，需要在new中对数组创建最大数目的对象；</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">class RandStuff;
+	rand bit [1:0] stuff;
+endclass
+class RandArray;
+	rand Randstuff array[];
+	constraint con &#123;
+		arrary.size inside &#123;[1:10]&#125;;
+	&#125; 
+	funciton new();
+		array &#x3D; new[10];
+		foreach(array[i])
+			array[i] &#x3D; new();
+	endfunction
+endclass<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h5 id="随机控制"><a href="#随机控制" class="headerlink" title="随机控制"></a>随机控制</h5><pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">randsequence (stream)
+	stream: cfg_read :&#x3D; 1 |
+			io_read :&#x3D; 2 |
+			mem_read : &#x3D; 5;
+	cfg_read: &#123;cfg_read_task;&#125; | &#123;cfg_read_task;&#125; cfg_read;
+	io_read: &#123;io_read_task;&#125; | &#123;io_read_task;&#125; io_read;
+	mem_read: &#123;mem_read_task;&#125; | &#123;mem_read_task;&#125; mem_read;
+endsequence
+&#x2F;&#x2F; 对随机安排原子automic测试序列很有帮助
+
+&#x2F;&#x2F; randcase 创建随机决策树
+int len;
+randcase 
+1: len &#x3D; $unrandom_range(0,2);
+8: len &#x3D; $unrandom_range(3,5);
+1: len &#x3D; $unrandom_range(6,7);
+endcase
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
 
 <h5 id="隐含约束"><a href="#隐含约束" class="headerlink" title="隐含约束"></a>隐含约束</h5><p>使用 -&gt; 隐含运算符，如果LHS为真，则约束有效；</p>
 <pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">string addr_range;
@@ -483,7 +612,7 @@ constraint unique_name &#123;unique &#123;array&#125;&#125;;<span aria-hidden="t
 <p>$random()；&#x2F;&#x2F; 有符号32bit随机数</p>
 <p>$urandom_range()；&#x2F;&#x2F; 有范围的无符号32bit随机数</p>
 <h4 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h4><p>实现共享资源的控制和基本同步。</p>
-<p>使用信号量的进程必须首先获取信号量，然后才能一直执行，直到其他进程释放信号量。</p>
+<p>使用信号量的进程必须首先获取信号量，然后才能执行。</p>
 <pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">semaphore sem_name;
 sem_name &#x3D; new(nums_of_keys); &#x2F;&#x2F; 默认信号量为0
 sem_name.put(nums_of_keys); &#x2F;&#x2F; 将信号量释放，默认释放1.
@@ -496,7 +625,7 @@ sem_name.try_get(nums_of_keys); &#x2F;&#x2F; 尝试获取信号量，不会阻�
 <p>参数化邮箱</p>
 <pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">mailbox#(type) mailbox_name;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-<pre class="line-numbers language-none"><code class="language-none">new();		 &#x2F;&#x2F; 无界的邮箱
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">new();		 &#x2F;&#x2F; 无界的邮箱
 new(m_size); &#x2F;&#x2F; 有大小的邮箱
 
 put();
@@ -553,7 +682,7 @@ wait_order(a,b,c) success &#x3D; 1; else success &#x3D; 0;  &#x2F;&#x2F; 不会�
 <li>不能使用非阻塞赋值</li>
 </ul>
 <p>program在设计和测试平台之间提供了无竞争的交互，程序块在REACTIVE反应区执行；模块内的非阻塞在ACTIVE活动区执行。</p>
-<h4 id="接口interface"><a href="#接口interface" class="headerlink" title="接口interface"></a>接口interface</h4><p>SV添加了接口，封装了模块之间的通信。接口是一组信号的集合，虚拟接口表示接口实例的变量。</p>
+<h4 id="接口interface"><a href="#接口interface" class="headerlink" title="接口interface"></a>接口interface</h4><p>SV添加了接口，封装了模块之间的通信。接口interface是硬件的概念，和module是平级的。接口是一组信号的集合，虚拟接口表示接口实例的变量。</p>
 <ul>
 <li>接口指定了方向，即modport</li>
 <li>时序信息：时钟模块</li>
@@ -581,6 +710,7 @@ wait_order(a,b,c) success &#x3D; 1; else success &#x3D; 0;  &#x2F;&#x2F; 不会�
 <h4 id="时钟块"><a href="#时钟块" class="headerlink" title="时钟块"></a>时钟块</h4><p>可以在接口、模块或者程序块program中声明；</p>
 <p>采样时发生竞争，会导致采样数据错误。为了避免在RTL仿真中出现信号竞争的问题，建议通过非阻塞赋值延迟的方式解决同步问题。</p>
 <p>由于各种可能性，如果clk和采样数据之间只存在若干个delta-cycle延迟，采样就有可能出现问题。clocking块基于时钟周期对信号进行采样和驱动的方式，可以消除信号竞争的问题。</p>
+<p>在时钟这个延迟时，需要引用时钟块的信号才可以看到延迟。</p>
 <p><img src="/2024/071129443/image-20240813011123859.png" alt="image-20240813011123859"></p>
 <pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">clocking cb @(posedge clk);
   default input #1ps output #2;
@@ -846,6 +976,223 @@ endsequence
 <li>忽略容器：不关心的仓</li>
 <li>非法容器：不允许被击中的仓</li>
 </ul>
+<h3 id="验证的方法"><a href="#验证的方法" class="headerlink" title="验证的方法"></a>验证的方法</h3><p>主要验证方法类型：</p>
+<ol>
+<li><p>功能仿真</p>
+<p>按照激励生成和检查方式，分为：</p>
+<ul>
+<li>定向测试</li>
+<li>随机测试</li>
+<li>参考模型检查</li>
+<li>断言检查</li>
+</ul>
+</li>
+<li><p>静态检查</p>
+<p>不需要添加激励</p>
+<ul>
+<li>语法检查syntax</li>
+<li>语义检查lint</li>
+<li>跨时钟域检查CDC</li>
+<li>形式验证formality</li>
+</ul>
+</li>
+<li><p>虚拟模型（ESL、SystemC）</p>
+<p>建模，可以在其上面开发软件或者获取性能数据，并对其进行修改，给硬件设计提供指导。判断硬件和软件的协同任务是否可以满足功耗目标。</p>
+<p><img src="/2024/071129443/image-20241004000647978.png" alt="image-20241004000647978"></p>
+</li>
+<li><p>硬件加速</p>
+<p>FPGA和专用的模拟器；FPGA主要是为软件开发提供平台，而模拟器是为了硬件和软件协同验证仿真。</p>
+</li>
+<li><p>电源功耗（UPF）</p>
+<p>功能验证：采用PA（Power Aware）通过与仿真器结合，模拟电源域的开关进行设计检查</p>
+<p>功耗预测与优化:通过功耗分析工具，结合仿真数据（FSDB&#x2F;VCD&#x2F;SAIF）进行功耗预测，并且给出分析结果。</p>
+</li>
+<li><p>性能评估</p>
+</li>
+</ol>
+<h3 id="UVM简介"><a href="#UVM简介" class="headerlink" title="UVM简介"></a>UVM简介</h3><p><img src="/2024/071129443/image-20241004091458318.png" alt="image-20241004091458318"></p>
+<p>UVM组件 uvm_component</p>
+<p><img src="/2024/071129443/image-20241004092041835.png" alt="image-20241004092041835"></p>
+<p>UVM环境</p>
+<p>phase机制，通过该机制可以将UVM仿真阶段层次化，不单单是各个phase的先后执行顺序，而且处于同一phase中的层次化组件之间的phase也有先后顺序。</p>
+<p><img src="/2024/071129443/image-20241004093030910.png" alt="image-20241004093030910"></p>
+<p><img src="/2024/071129443/image-20241004093305985.png" alt="image-20241004093305985"></p>
+<h3 id="覆盖率-1"><a href="#覆盖率-1" class="headerlink" title="覆盖率"></a>覆盖率</h3><p>覆盖率类型</p>
+<p><img src="/2024/071129443/image-20241004094703858.png" alt="image-20241004094703858"></p>
+<p>先使用一个反馈回路分析覆盖率结果，并决定采用哪些行动来达到100%的覆盖率</p>
+<p>首先选择是使用更多的种子运行程序，如果对于覆盖率没有明显变化，考虑建立新的约束，只有在确实需要的时候才会创建定向测试。</p>
+<p><img src="/2024/071129443/image-20241004095048849.png" alt="image-20241004095048849"></p>
+<p><img src="/2024/071129443/image-20241004100154360.png" alt="image-20241004100154360"></p>
+<p>仿真结束后，eda工具可以自动生成断言覆盖率数据。断言覆盖率数据被集成在同一个覆盖率数据库中，verifier可以进行分析。</p>
+<h4 id="覆盖组coverage"><a href="#覆盖组coverage" class="headerlink" title="覆盖组coverage"></a>覆盖组coverage</h4><p>coverage可以包含一个或者多个coverpoint，且全部在同一时间采集</p>
+<p>coverage可以定义在类中，也可以定义在interface或者module中。定义时必须有一个coverpoint。</p>
+<p>covergroup可以采样任何可见的变量，例如程序变量、接口信号或者设计端口</p>
+<p>一个类中可以包含多个covergroup，每个covergroup可以单独设置使能或者禁止。</p>
+<p>covergroup必须被例化才可以用来收集数据。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">class Transactor;
+	Transaction tr;
+	covergroup CovPort;
+		coverpoint tr.port;
+	endgroup
+	function new();
+		CovPort &#x3D; new();
+		&#x2F;&#x2F; CovPort cg1 &#x3D; new();
+	endfunction
+task main;
+    CovPort.sample();&#x2F;&#x2F; 采样数据
+endtask
+endclass<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">&#x2F;&#x2F; way2 
+event trans_ready;
+covergroup CovPort @(posedge clk)
+	coverpoint tr.point;
+endgroup<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="数据采样"><a href="#数据采样" class="headerlink" title="数据采样"></a>数据采样</h4><p>当coverpoint指定采样一个变量或者表达式时，sv会创建很多仓bin来记录每个数据捕获到的次数。</p>
+<p>bin是衡量功能覆盖率的基本单位</p>
+<p>covergroup中可以定义多个coverpoint，coverpoint中可以定义多个cover bin或者sv帮助自动定义多个cover bin</p>
+<p>每次covergroup采样数据后，sv会在一个或者多个cover bin中留下标记，用来记录采样时变量的数值和匹配的cover bin</p>
+<p>仿真结束后，使用eda工具读取这些数据库生成功能覆盖率</p>
+<p>coverpoint中变量可能存在的个数，称为域，所有coverpoint的覆盖率最终构成一个covergroup的覆盖率。所有的covergroup的覆盖率构成整体的功能覆盖率。</p>
+<p>如果coverpoint的域范围太大，系统会默认分配64个bin，将值域范围平均分配给这64个bin，可以通过<code>auto_bin_max</code>来指定自动创建bin的最大数目。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">covergroup CovPort;
+	options.auto_bin_max &#x3D; 8;
+	coverpoint tr.point&#123;
+		options.auto_bin_max &#x3D; 2;
+	&#125;
+    coverpoint tr.kind &#123;
+        bins zero &#x3D; &#123;0&#125;;
+        bins lo &#x3D; &#123;[1:3], 5&#125;; &#x2F;&#x2F; 1个仓代表1:3和5
+        bins hi[] &#x3D; &#123;8:$&#125;;&#x2F;&#x2F; 8个独立的仓。
+        bins defaults &#x3D; default; 
+    &#125; &#x2F;&#x2F; 没有分号;
+endgroup<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>coverpoint使用{}，而不是begin  end；</p>
+<h4 id="条件覆盖率"><a href="#条件覆盖率" class="headerlink" title="条件覆盖率"></a>条件覆盖率</h4><p>使用关键词iff给cover point添加条件；也可以使用start和stop函数控制cover group各个独立实例；</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">covergroup CoverPort;
+	coverpoint port iff
+		(!bus_if.reset)
+endgroup
+&#x2F;&#x2F; iff 条件也可以加在covergroup上
+
+&#x2F;&#x2F; way2 
+initial begin
+	CoverPort ck &#x3D; new();
+	ck.stop();
+	#1ns;
+	bus_if.reset &#x3D; 1;
+	#20ns; bus_if.reset &#x3D; 0;
+	ck.start();
+end<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="翻转覆盖率"><a href="#翻转覆盖率" class="headerlink" title="翻转覆盖率"></a>翻转覆盖率</h4><p>coverpoint也可以用来记录变量从a变化到b的跳变情况。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">covergroup CovPort;
+	coverpoint port&#123;
+		bins t1 &#x3D; (0 &#x3D;&gt; 1), (0 &#x3D;&gt; 2), (0 &#x3D;&gt; 4);
+	&#125;
+endgroup<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="wildcard覆盖率"><a href="#wildcard覆盖率" class="headerlink" title="wildcard覆盖率"></a>wildcard覆盖率</h4><p>使用关键词wildcard创建多个状态或者翻转，在表达式中任何x，z或者？都当成0或1的通配符</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">bit [2:0] port;
+covergroup CovPort;
+	coverpoint port&#123;
+		wildcard bins even &#x3D; &#123;3&#39;b??0&#125;;
+		wildcard bins odd &#x3D; &#123;3&#39;d??1&#125;;
+	&#125;
+endgroup<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>忽略的bins，使用<code>ignore_bins</code>来排除，最终不会计入coverpoint的覆盖率</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">bin [2:0] low_ports_0_5;
+covergroup CoverPort;
+	coverpiont low_ports_0_5&#123;
+		ignore_bins hi &#x3D; &#123;[6,7]&#125;;
+	&#125;
+endgroup<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>非法的bins，如果采样到会报错，程序停下来</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">bin [2:0] low_ports_0_5;
+covergroup CoverPort;
+	coverpiont low_ports_0_5&#123;
+        illegal_bins hi &#x3D; &#123;[6,7]&#125;;&#x2F;&#x2F;如果出现6-7报错
+	&#125;
+endgroup<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="交叉覆盖率"><a href="#交叉覆盖率" class="headerlink" title="交叉覆盖率"></a>交叉覆盖率</h4><p>coverpoint是记录单个变量或者表达式的观测值，如果像记录在某一时刻，多个变量之间值的组合情况，需要使用交叉（cross）覆盖率。</p>
+<p>cross只允许带coverpoint或者简单的变量名</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">class Transaction;
+	rand bit [3:0] kind;
+	rand bit [2:0] port;
+endclass
+Transaction tr;
+covergroup CovPort;
+	kind: coverpoint tr.kind;
+	port: coverpoint tr.port;
+	cross kind, port;
+endgroup<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">covergroup CovPort;
+	port: coverpint tr.port&#123;
+		bins port[] &#x3D; &#123;[0:$]&#125;;
+	&#125;
+	kind: coverpoint tr.kind&#123;
+		bins zero &#x3D; &#123;0&#125;;
+		bins lo &#x3D; &#123;[1:3]&#125;;
+		bins hi[] &#x3D; &#123;[8:$]&#125;;
+		bins misc &#x3D; default;
+	&#125;
+	corss port, kind&#123;
+		ignore_bins hi &#x3D; binsof(port) intersect &#123;7&#125;;
+        ignore_bins md &#x3D; binsof(port) intersect &#123;0&#125; &amp;&amp; binsof(kind) intersect &#123;[9:11]&#125;;
+        ignore_bins lo &#x3D; binsof(kind.lo);
+	&#125;
+endgroup<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>一般在使用cross时，指定特定的匹配状态，比忽略bins更方便</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">covergroup CovPort;
+    a: coverpoint tr.a &#123;
+        bins a0 &#x3D; &#123;0&#125;;
+        bins a1 &#x3D; &#123;1&#125;;
+    &#125;
+    b: coverpoint tr.b &#123;
+        bins b0 &#x3D; &#123;0&#125;;
+        bins b1 &#x3D; &#123;1&#125;;
+    &#125;
+    cross a, b &#123;
+        bins a0b0 &#x3D; binsof(a.a0) &amp;&amp; binsof(b.b0);
+        bins a1b0 &#x3D; binsof(a.a1) &amp;&amp; binsof(b.b0);
+        bins b1 &#x3D; binsof(b.b1);
+    &#125;
+endgroup<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="覆盖选项"><a href="#覆盖选项" class="headerlink" title="覆盖选项"></a>覆盖选项</h4><p>如果covergroup例化多次，默认情况下SV会将所有的实例的覆盖率合并在一起，如果需要单独列出每个covergroup的覆盖率，可以设置per_instance&#x3D;1。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">coverpoint CovPort;
+	coverpoint tr.length;
+	option.per_instance &#x3D; 1;
+endgroup<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>注释，comment。通过传入参数，对每个实例指定单独的注释。</p>
+<pre class="line-numbers language-systemverilog" data-language="systemverilog"><code class="language-systemverilog">covergroup CovPort(int lo,hi, string comment);
+	option.per_instance &#x3D; 1;
+    option.comment &#x3D; comment;
+    coverpoint port&#123;
+        bins range &#123;[lo,hi]&#125;;
+    &#125;
+endgroup
+CovPort cg1 &#x3D; new(0,3,&quot;Low port numbers&quot;);
+CovPort cg2 &#x3D; new(4,7,&quot;High port numbers&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>覆盖次数限制，at_least，如果低于at_least的数值，不会计数到bin中。</p>
+<p>覆盖率目标，默认为100%，可以通过goal设置为90；</p>
+<h5 id="covergroup方法"><a href="#covergroup方法" class="headerlink" title="covergroup方法"></a>covergroup方法</h5><p>sample()：采样</p>
+<p>get_coverage()&#x2F;get_inst_coverage(); 获取覆盖率，返回0-100的real类型数值</p>
+<p>set_inst_name(string);设置covergroup的名称</p>
+<p>start()&#x2F;stop()；使能打开或关闭覆盖率的收集</p>
+<h4 id="数据分析"><a href="#数据分析" class="headerlink" title="数据分析"></a>数据分析</h4><p>使用$get_coverage()得到总体的覆盖率，也可以使用coverage_inst.get_inst_coverage()获取单个covergroup实例的覆盖率。</p>
+<p>这些函数的用处是在一个测试中监视覆盖率的变化，如果覆盖率水平一段时间后没有提升，那么这个测试应该停止。</p>
+<p>启动新的随机种子后者测试可能会提高覆盖率</p>
+<h4 id="验证结构"><a href="#验证结构" class="headerlink" title="验证结构"></a>验证结构</h4><p>agent包括generator和initiator，generator是产生一些激励。</p>
 
                 
             </div>
@@ -1223,7 +1570,7 @@ endsequence
             <br>
             
                 &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                        class="white-color">73.4k</span>
+                        class="white-color">77.1k</span>
             
             
             
